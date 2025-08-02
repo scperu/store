@@ -108,6 +108,8 @@
   <img class="modal-content" id="modalImg">
 </div>
 
+
+
 <footer style="margin-top:40px;padding:20px;background:#f1f5f9;color:#374151;border-radius:8px;">
   <h3 style="margin-bottom:10px;">⚠️ Condiciones de la cotización</h3>
   <ul style="padding-left:20px;line-height:1.6;">
@@ -147,7 +149,7 @@ function crearFila(p, destacados) {
 
   tr.innerHTML = `
     <td>${miniHTML}</td>
-    <td>${p["DESCRIPCION"]}</td>
+    <td><a href="https://www.deltron.com.pe/modulos/productos/items/postsql.php?from=new_product&item_number=${p["CODIGO"]}" target="_blank" style="color:#1a73e8;text-decoration:none;">${p["DESCRIPCION"]}</a></td>
     <td>${p["DETALLES"]}</td>
     <td>${p["STOCK"]}</td>
     <td>S/ ${precio.toLocaleString('es-PE')}</td>
@@ -170,17 +172,17 @@ function generateSafeLargeUrl(codigo) {
 }
 
 async function cargarFiltro() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtro.txt");
+  const res = await fetch("https://raw.githubusercontent.com/Digicodeperu/RED/main/filtro.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
 async function cargarCoti() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const res = await fetch("https://raw.githubusercontent.com/Digicodeperu/RED/main/coti.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
 async function cargarExcel() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/pro118.xlsx");
+  const res = await fetch("https://raw.githubusercontent.com/Digicodeperu/RED/main/productos.xlsx");
   const data = await res.arrayBuffer();
   const workbook = XLSX.read(data, { type: "array" });
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -227,13 +229,9 @@ function mostrarModal(src) {
   }
 }
 
-else {
-    document.getElementById("errorClave").innerText = "Clave incorrecta.";
-  }
-}
 
 async function cargarDatosEncabezado() {
-  const resCliente = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const resCliente = await fetch("https://raw.githubusercontent.com/Digicodeperu/RED/main/coti.txt");
   const textoCliente = await resCliente.text();
   const cliente = textoCliente.trim().split('\n')[0] || "Cliente";
 
