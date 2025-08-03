@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Extractor de Minicódigos</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+    textarea { width: 100%; height: 200px; margin-bottom: 10px; }
+    #resultado { border: 1px solid #ccc; padding: 10px; min-height: 100px; background: #f9f9f9; white-space: pre-wrap; }
+    button { margin: 5px 0; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>Extractor de Minicódigos</h2>
+
+  <textarea id="entrada" placeholder="Pega aquí el texto desordenado..."></textarea>
+  <br>
+  <button onclick="extraerMinicodigos()">Extraer</button>
+
+  <h3>Minicódigos Extraídos</h3>
+  <div id="resultado"></div>
+  <button onclick="copiarMinicodigos()">Copiar Minicódigos</button>
+  <button onclick="enviarAGitHub()">Enviar a GitHub</button>
+
+  <script>
+    let minicodigos = [];
+
+    function extraerMinicodigos() {
+      const texto = document.getElementById("entrada").value;
+      const regex = /Minicod:\s*(\d{5,6})/g;
+      minicodigos = [...texto.matchAll(regex)].map(m => m[1]);
+
+      const resultadoHTML = minicodigos.length
+        ? minicodigos.join('\n')
+        : 'No se encontraron minicódigos.';
+
+      document.getElementById("resultado").textContent = resultadoHTML;
+    }
+
+    async function enviarAGitHub() {
+      if (minicodigos.length === 0) {
+        alert("No hay minicódigos para enviar.");
+        return;
+      }
+
+      const contenido = minicodigos.join('\n');
+      const base64Content = btoa(unescape(encodeURIComponent(contenido)));
+
+      const repo = "scperu/store";
+      const path = "filtro.txt";
+      const branch = "main";
+      const token = "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";
+
+      let sha = null;
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          sha = data.sha;
+        }
+      } catch (e) {
+        console.log("El archivo filtro.txt no existe, se creará.");
+      }
+
+      const body = {
+        message: "Subida de filtro.txt con minicódigos extraídos",
+        content: base64Content,
+        branch,
+        committer: {
+          name: "MiniCódigoBot",
+          email: "bot@micodigos.io"
+        }
+      };
+
+      if (sha) body.sha = sha;
+
+      const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) {
+        alert("✅ Archivo filtro.txt subido a GitHub.");
+      } else {
+        const error = await res.json();
+        console.error(error);
+        alert("❌ Error: " + error.message);
+      }
+    }
+  
+    function copiarMinicodigos() {
+      if (minicodigos.length === 0) {
+        alert("No hay minicódigos para copiar.");
+        return;
+      }
+
+      const contenido = minicodigos.join('\n');
+      navigator.clipboard.writeText(contenido)
+        .then(() => alert("✅ Minicódigos copiados al portapapeles."))
+        .catch(err => alert("❌ Error al copiar: " + err));
+    }
+  </script>
+
+</body>
+</html>
