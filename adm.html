@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ServiComp Admin - Promo </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    thead {
+      background-color: #2d6cdf;
+      color: white;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f0f4fa;
+    }
+    .loading {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 40px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .close {
+      position: absolute;
+      top: 25px;
+      right: 35px;
+      color: white;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tr-destacada {
+      background-color: #e0f2fe;
+      animation: fadeInHighlight 0.6s ease-in-out;
+    }
+    @keyframes fadeInHighlight {
+      from { background-color: #f0f9ff; opacity: 0; }
+      to { background-color: #e0f2fe; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header style="background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:20px;text-align:center;">
+  <h1 style="margin:0;font-size:24px;">ServiComp – Cotización Personalizada</h1>
+  <p style="margin:4px 0;font-style:italic;">"Equipos confiables, soluciones inteligentes”</p>
+  <p id="encabezado-info" style="margin-top:10px;font-weight:500;"></p>
+</header>
+
+<div class="loading">Cargando productos...</div>
+<table style="display: none;">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Descripción</th>
+      <th>Detalles</th>
+      <th>Stock</th>
+      <th>Precio</th>
+      <th>Foto</th>
+    </tr>
+  </thead>
+  <tbody id="tabla-productos"></tbody>
+</table>
+
+<div id="imgModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImg">
+</div>
+
+
+
+<footer style="margin-top:40px;padding:20px;background:#f1f5f9;color:#374151;border-radius:8px;">
+  <h3 style="margin-bottom:10px;">⚠️ Condiciones de la cotización</h3>
+  <ul style="padding-left:20px;line-height:1.6;">
+    <li><strong>Vigencia:</strong> 48 horas a partir de la fecha de emisión.</li>
+    <li>Los precios y el stock pueden variar sin previo aviso.</li>
+    <li>No incluye flete ni costos de traslado.</li>
+    <li>Garantía brindada directamente por el fabricante.</li>
+  </ul>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+function generarLinkImagen(codigo, conLarge = false) {
+  const cod = codigo.toLowerCase();
+  const sub1 = cod.substring(0, 2);
+  let sub2 = cod.substring(2, 4);
+  if (cod.includes("wd")) sub2 = "dw";
+  const base = "https://imagenes.deltron.com.pe/images/productos//items";
+  return conLarge 
+    ? `${base}/large/${sub1}/${sub2}/${cod}.jpg` 
+    : `${base}/${sub1}/${sub2}/${cod}.jpg`;
+}
+
+function crearFila(p, destacados) {
+  const tr = document.createElement("tr");
+  const precio = Math.round(Number(p["PRECIO EN SOLES"] || 0));
+  const mini = String(p["MINI CODIGO"]).trim();
+  const esDestacado = destacados.includes(mini);
+  const miniHTML = esDestacado ? `<strong style="color:#0f172a;">⭐ ${mini}</strong>` : mini;
+  const thumbUrl = generarLinkImagen(p["CODIGO"], false);
+  const largeUrl = generateSafeLargeUrl(p["CODIGO"]);
+
+  if (esDestacado) {
+    tr.classList.add("tr-destacada");
+    tr.title = "Producto sugerido por ServiComp";
+  }
+
+  tr.innerHTML = `
+    <td>${miniHTML}</td>
+    <td><a href="https://www.deltron.com.pe/modulos/productos/items/postsql.php?from=new_product&item_number=${p["CODIGO"]}" target="_blank" style="color:#1a73e8;text-decoration:none;">${p["DESCRIPCION"]}</a></td>
+    <td>${p["DETALLES"]}</td>
+    <td>${p["STOCK"]}</td>
+    <td>S/ ${precio.toLocaleString('es-PE')}</td>
+    <td>
+      <img src="${thumbUrl}" 
+           alt="Foto de ${p["DESCRIPCION"]}" 
+           style="max-height: 100px; cursor: pointer; border-radius: 4px;" 
+           onclick="mostrarModal('${largeUrl}')">
+    </td>
+  `;
+  return tr;
+}
+
+function generateSafeLargeUrl(codigo) {
+  const cod = codigo.toLowerCase();
+  const sub1 = cod.substring(0, 2);
+  let sub2 = cod.substring(2, 4);
+  if (cod.includes("wd")) sub2 = "dw";
+  return `https://imagenes.deltron.com.pe/images/productos//items/large/${sub1}/${sub2}/${cod}.jpg`;
+}
+
+async function cargarFiltro() {
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtro.txt");
+  const txt = await res.text();
+  return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
+}
+async function cargarCoti() {
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const txt = await res.text();
+  return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
+}
+async function cargarExcel() {
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/productos.xlsx");
+  const data = await res.arrayBuffer();
+  const workbook = XLSX.read(data, { type: "array" });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  return XLSX.utils.sheet_to_json(sheet);
+}
+
+async function mostrarProductos() {
+  const [filtro, productos, destacados] = await Promise.all([
+    cargarFiltro(),
+    cargarExcel(),
+    cargarCoti()
+  ]);
+
+  const cuerpo = document.getElementById("tabla-productos");
+  const tabla = document.querySelector("table");
+  const loading = document.querySelector(".loading");
+
+  productos
+    .filter(p => filtro.includes(String(p["MINI CODIGO"]).trim()))
+    .forEach(p => cuerpo.appendChild(crearFila(p, destacados)));
+
+  tabla.style.display = "table";
+  loading.style.display = "none";
+}
+
+function mostrarModal(src) {
+  const modal = document.getElementById("imgModal");
+  const modalImg = document.getElementById("modalImg");
+  const span = document.querySelector(".close");
+
+  modal.style.display = "block";
+  modalImg.src = src;
+
+  span.onclick = function () {
+    modal.style.display = "none";
+    modalImg.src = "";
+  }
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+      modalImg.src = "";
+    }
+  }
+}
+
+async function verificarClave() {
+  const claveIngresada = document.getElementById("claveInput").value.trim();
+  const respuesta = await fetch('https://raw.githubusercontent.com/scperu/store/main/filtro.txt');
+  const texto = await respuesta.text();
+  const claves = texto.trim().split('\n');
+  const claveCorrecta = claves[0].trim();
+  if (claveIngresada === claveCorrecta) {
+    document.getElementById("login").style.display = "none";
+  } else {
+    document.getElementById("errorClave").innerText = "Clave incorrecta.";
+  }
+}
+
+async function cargarDatosEncabezado() {
+  const resCliente = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const textoCliente = await resCliente.text();
+  const cliente = textoCliente.trim().split('\n')[0] || "Cliente";
+
+  let tipoCambio = "3.59";
+  try {
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const fecha = `${yyyy}-${mm}-${dd}`;
+    const bcrp = await fetch(`https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha=${fecha}`);
+    const data = await bcrp.json();
+    tipoCambio = data.venta || tipoCambio;
+  } catch (err) {
+    console.warn("No se pudo obtener tipo de cambio:", err);
+  }
+
+  const hoy = new Date();
+  const start = new Date(hoy.getFullYear(), 0, 0);
+  const diff = hoy - start + ((start.getTimezoneOffset() - hoy.getTimezoneOffset()) * 60 * 1000);
+  const diaDelAnio = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const visitante = `${String(hoy.getFullYear()).slice(2)}${String(diaDelAnio).padStart(3, '0')}`;
+
+  document.getElementById("encabezado-info").innerHTML = 
+    `💼 <strong>Cliente:</strong> ${cliente}  💱 <strong>Dólar:</strong> S/ ${parseFloat(tipoCambio).toFixed(2)}  👁️ <strong>Visitante N.º</strong> ${visitante}`;
+}
+
+mostrarProductos();
+cargarDatosEncabezado();
+</script>
+</body>
+</html>
