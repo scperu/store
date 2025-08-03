@@ -172,12 +172,12 @@ function generateSafeLargeUrl(codigo) {
 }
 
 async function cargarFiltro() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtro.txt");
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtropro.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
 async function cargarCoti() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/cotipro.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
@@ -231,7 +231,7 @@ function mostrarModal(src) {
 
 async function verificarClave() {
   const claveIngresada = document.getElementById("claveInput").value.trim();
-  const respuesta = await fetch('https://raw.githubusercontent.com/scperu/store/main/filtro.txt');
+  const respuesta = await fetch('https://raw.githubusercontent.com/scperu/store/main/filtropro.txt');
   const texto = await respuesta.text();
   const claves = texto.trim().split('\n');
   const claveCorrecta = claves[0].trim();
