@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ServiComp - Cotización Personalizada</title>
+  <title>ServiComp - Promociones</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -82,7 +82,7 @@
 <body>
 
 <header style="background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:20px;text-align:center;">
-  <h1 style="margin:0;font-size:24px;">ServiComp – Cotización Personalizada</h1>
+  <h1 style="margin:0;font-size:24px;">ServiComp – Promociones</h1>
   <p style="margin:4px 0;font-style:italic;">"Equipos confiables, soluciones inteligentes”</p>
   <p id="encabezado-info" style="margin-top:10px;font-weight:500;"></p>
 </header>
@@ -170,12 +170,12 @@ function generateSafeLargeUrl(codigo) {
 }
 
 async function cargarFiltro() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtro.txt");
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/filtropro.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
 async function cargarCoti() {
-  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const res = await fetch("https://raw.githubusercontent.com/scperu/store/main/cotipro.txt");
   const txt = await res.text();
   return txt.split("\n").map(x => x.trim()).filter(x => x.length > 0);
 }
@@ -229,7 +229,7 @@ function mostrarModal(src) {
 
 
 async function cargarDatosEncabezado() {
-  const resCliente = await fetch("https://raw.githubusercontent.com/scperu/store/main/coti.txt");
+  const resCliente = await fetch("https://raw.githubusercontent.com/scperu/store/main/cotipro.txt");
   const textoCliente = await resCliente.text();
   const cliente = textoCliente.trim().split('\n')[0] || "Cliente";
 
