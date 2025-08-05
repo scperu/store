@@ -1,66 +1,11 @@
 
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<title>Catálogo Dinámico con Filtros</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
-let carrito = [];
-
-function agregarAlCarrito(producto) {
-  const index = carrito.findIndex(p => p.CODIGO === producto.CODIGO);
-  if (index >= 0) {
-    carrito[index].cantidad += 1;
-  } else {
-    carrito.push({ ...producto, cantidad: 1 });
-  }
-  actualizarCarrito();
-}
-
-function actualizarCarrito() {
-  const lista = document.getElementById("lista-carrito");
-  lista.innerHTML = "";
-  let total = 0;
-
-  carrito.forEach((item, i) => {
-    const li = document.createElement("li");
-    const subtotal = item.PRECIO * item.cantidad;
-    total += subtotal;
-    li.innerHTML = `${item.CODIGO} (${item.cantidad}) - S/ ${subtotal} 
-      <button onclick="eliminarDelCarrito(${i})">❌</button>`;
-    lista.appendChild(li);
-  });
-
-  document.getElementById("total-carrito").textContent = "Total: S/ " + total.toFixed(2);
-  document.getElementById("contador-carrito").textContent = carrito.length;
-}
-
-function eliminarDelCarrito(index) {
-  carrito.splice(index, 1);
-  actualizarCarrito();
-}
-
-function mostrarCarrito() {
-  const panel = document.getElementById("carrito-panel");
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
-}
-
-function enviarPorWhatsApp() {
-  const texto = carrito.map(p => `• ${p.CODIGO} x${p.cantidad}`).join("\n") +
-                `\nTotal: S/ ${carrito.reduce((t, p) => t + p.PRECIO * p.cantidad, 0).toFixed(2)}`;
-  const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-  window.open(url, "_blank");
-}
-
-function enviarPorCorreo() {
-  const asunto = "Pedido de productos";
-  const cuerpo = carrito.map(p => `• ${p.CODIGO} x${p.cantidad}`).join("%0A") +
-                 `%0ATotal: S/ ${carrito.reduce((t, p) => t + p.PRECIO * p.cantidad, 0).toFixed(2)}`;
-  const mailto = `mailto:?subject=${asunto}&body=${cuerpo}`;
-  window.location.href = mailto;
-}</script>
-<style>
+  <meta charset="UTF-8">
+  <title>Catálogo Dinámico con Filtros</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f5f5;
@@ -176,87 +121,43 @@ function enviarPorCorreo() {
     .close:hover {
       background-color: rgba(255, 255, 255, 0.2);
     }
-  
-.agregar-btn {
-  padding: 6px 12px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.agregar-btn:hover {
-  background: #0056b3;
-}
-#carrito-panel {
-  position: fixed;
-  top: 60px;
-  right: 20px;
-  width: 300px;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  z-index: 10000;
-  display: none;
-}
-#carrito-panel ul {
-  list-style: none;
-  padding: 0;
-}
-#carrito-panel li {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-#abrir-carrito {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #28a745;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 50px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-#abrir-carrito:hover {
-  background: #218838;
-}
-</style>
+  </style>
 </head>
 <body>
-<h2>Catálogo de Productos</h2>
-<div class="filtros">
-<input id="busqueda" placeholder="Buscar..." type="text"/>
-<select id="filtroStock">
-<option value="todos">Todos</option>
-<option selected="" value="disponibles">Disponibles</option>
-<option value="agotados">Agotados</option>
-</select>
-<select id="filtroCategoria">
-<option value="todas">Todas las categorías</option>
-</select>
-</div>
-<table id="tabla">
-<thead>
-<tr>
-<th>Foto</th>
-<th>Código</th>
-<th>Descripción</th>
-<th>Detalles</th>
-<th>Stock</th>
-<th>Precio (S/)</th>
-<th>Multimedia</th>
-<th>Agregar</th></tr>
-</thead>
-<tbody></tbody>
-</table>
-<div class="modal" id="modal">
-<span class="close" id="cerrar">×</span>
-<div class="modal-content" id="modal-contenido"></div>
-</div>
-<script>
+  <h2>Catálogo de Productos</h2>
+  <div class="filtros">
+    <input type="text" id="busqueda" placeholder="Buscar...">
+    <select id="filtroStock">
+      <option value="todos">Todos</option>
+      <option value="disponibles" selected>Disponibles</option>
+      <option value="agotados">Agotados</option>
+    </select>
+    <select id="filtroCategoria">
+      <option value="todas">Todas las categorías</option>
+    </select>
+  </div>
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Detalles</th>
+        <th>Stock</th>
+        <th>Precio (S/)</th>
+        <th>Multimedia</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="modal" class="modal">
+    <span class="close" id="cerrar">&times;</span>
+    <div class="modal-content" id="modal-contenido"></div>
+  </div>
+
+  <script>
     let productos = [];
 
     async function cargarExcel() {
@@ -396,13 +297,5 @@ function enviarPorCorreo() {
 
     cargarExcel();
   </script>
-<div class="carrito oculto" id="carrito-panel">
-<h3>🛒 Mi Carrito</h3>
-<ul id="lista-carrito"></ul>
-<p id="total-carrito">Total: S/ 0</p>
-<button onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
-<button onclick="enviarPorCorreo()">Enviar por Correo</button>
-</div>
-<button id="abrir-carrito" onclick="mostrarCarrito()">🛍️ Ver Carrito (<span id="contador-carrito">0</span>)</button>
 </body>
 </html>
