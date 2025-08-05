@@ -1,230 +1,408 @@
 
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Catálogo de Productos</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<title>Catálogo Dinámico con Filtros</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+let carrito = [];
+
+function agregarAlCarrito(producto) {
+  const index = carrito.findIndex(p => p.CODIGO === producto.CODIGO);
+  if (index >= 0) {
+    carrito[index].cantidad += 1;
+  } else {
+    carrito.push({ ...producto, cantidad: 1 });
+  }
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  const lista = document.getElementById("lista-carrito");
+  lista.innerHTML = "";
+  let total = 0;
+
+  carrito.forEach((item, i) => {
+    const li = document.createElement("li");
+    const subtotal = item.PRECIO * item.cantidad;
+    total += subtotal;
+    li.innerHTML = `${item.CODIGO} (${item.cantidad}) - S/ ${subtotal} 
+      <button onclick="eliminarDelCarrito(${i})">❌</button>`;
+    lista.appendChild(li);
+  });
+
+  document.getElementById("total-carrito").textContent = "Total: S/ " + total.toFixed(2);
+  document.getElementById("contador-carrito").textContent = carrito.length;
+}
+
+function eliminarDelCarrito(index) {
+  carrito.splice(index, 1);
+  actualizarCarrito();
+}
+
+function mostrarCarrito() {
+  const panel = document.getElementById("carrito-panel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
+function enviarPorWhatsApp() {
+  const texto = carrito.map(p => `• ${p.CODIGO} x${p.cantidad}`).join("\n") +
+                `\nTotal: S/ ${carrito.reduce((t, p) => t + p.PRECIO * p.cantidad, 0).toFixed(2)}`;
+  const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+  window.open(url, "_blank");
+}
+
+function enviarPorCorreo() {
+  const asunto = "Pedido de productos";
+  const cuerpo = carrito.map(p => `• ${p.CODIGO} x${p.cantidad}`).join("%0A") +
+                 `%0ATotal: S/ ${carrito.reduce((t, p) => t + p.PRECIO * p.cantidad, 0).toFixed(2)}`;
+  const mailto = `mailto:?subject=${asunto}&body=${cuerpo}`;
+  window.location.href = mailto;
+}</script>
+<style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
-      padding: 20px;
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
+
+    h2 {
+      margin-bottom: 1rem;
     }
-    #filtros {
-      text-align: center;
-      margin-bottom: 20px;
+
+    .filtros {
+      margin-bottom: 1rem;
     }
-    select, input[type="text"] {
-      padding: 6px 12px;
-      font-size: 16px;
-      margin: 6px;
+
+    .filtros input, .filtros select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background-color: #fff;
       border-radius: 8px;
       overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     th, td {
-      padding: 10px 12px;
+      padding: 12px 15px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
     }
-    thead {
-      background-color: #1e40af;
-      color: white;
+
+    th {
+      background-color: #333;
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 14px;
     }
-    tbody tr:nth-child(even) {
-      background-color: #f1f5f9;
+
+    tr:hover {
+      background-color: #f1f1f1;
     }
+
     img {
-      max-height: 100px;
+      width: 90px;
       border-radius: 6px;
       cursor: pointer;
+      display: block;
+      margin-bottom: 6px;
     }
+
+    .ver-video {
+      font-size: 13px;
+      color: #007bff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .precio {
+      font-weight: bold;
+      color: #28a745;
+    }
+
     .modal {
       display: none;
       position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.8);
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
     }
+
     .modal-content {
-      display: block;
       margin: 5% auto;
-      max-width: 80%;
-      text-align: center;
-    }
-    iframe {
-      width: 100%;
-      height: 500px;
-      display: none;
-    }
-    .modal-img {
+      display: block;
       max-width: 90%;
-      max-height: 90vh;
-      display: none;
-      border-radius: 8px;
+      max-height: 90%;
     }
+
+    .modal-content img, .modal-content video {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+
     .close {
       position: absolute;
       top: 20px;
-      right: 40px;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
+      right: 30px;
+      color: #fff;
+      font-size: 42px;
+      font-weight: bold;
+      background-color: rgba(0,0,0,0.3);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
     }
-  </style>
+
+    .close:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  
+.agregar-btn {
+  padding: 6px 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.agregar-btn:hover {
+  background: #0056b3;
+}
+#carrito-panel {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  z-index: 10000;
+  display: none;
+}
+#carrito-panel ul {
+  list-style: none;
+  padding: 0;
+}
+#carrito-panel li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+#abrir-carrito {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #28a745;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+#abrir-carrito:hover {
+  background: #218838;
+}
+</style>
 </head>
 <body>
-<h1>Catálogo de Productos</h1>
-<div id="filtros">
-  <label><strong>Elija una categoría:</strong></label>
-  <select id="filtro-cat" onchange="filtrarProductos()"></select>
-  <label><strong>Filtrar por stock:</strong></label>
-  <select id="filtro-stock" onchange="filtrarProductos()">
-    <option value="todos">Mostrar todo</option>
-    <option value="disponibles">Disponibles</option>
-    <option value="agotados">Agotados</option>
-    <option value="en_transito">En tránsito</option>
-  </select>
-  <br>
-  <input type="text" id="busqueda" placeholder="🔍 Buscar..." onkeyup="filtrarProductos()">
+<h2>Catálogo de Productos</h2>
+<div class="filtros">
+<input id="busqueda" placeholder="Buscar..." type="text"/>
+<select id="filtroStock">
+<option value="todos">Todos</option>
+<option selected="" value="disponibles">Disponibles</option>
+<option value="agotados">Agotados</option>
+</select>
+<select id="filtroCategoria">
+<option value="todas">Todas las categorías</option>
+</select>
 </div>
-
-<table>
-  <thead>
-    <tr>
-      <th>Imagen</th>
-      <th>Código</th>
-      <th>Descripción</th>
-      <th>Stock</th>
-      <th>Detalles</th>
-      <th>Precio</th>
-    </tr>
-  </thead>
-  <tbody id="tabla-productos"></tbody>
+<table id="tabla">
+<thead>
+<tr>
+<th>Foto</th>
+<th>Código</th>
+<th>Descripción</th>
+<th>Detalles</th>
+<th>Stock</th>
+<th>Precio (S/)</th>
+<th>Multimedia</th>
+<th>Agregar</th></tr>
+</thead>
+<tbody></tbody>
 </table>
-
-<div id="modal" class="modal">
-  <span class="close" onclick="cerrarModal()">&times;</span>
-  <div class="modal-content">
-    <iframe id="videoFrame" allowfullscreen></iframe>
-    <img id="modalImg" class="modal-img" />
-  </div>
+<div class="modal" id="modal">
+<span class="close" id="cerrar">×</span>
+<div class="modal-content" id="modal-contenido"></div>
 </div>
-
 <script>
-const urlExcel = "https://raw.githubusercontent.com/scperu/store/main/proali.xlsx";
-let productos = [];
+    let productos = [];
 
-function obtenerColor(descripcion) {
-  const map = {
-    "NEGRO": "#000000", "ROJO": "#FF0000", "AZUL": "#0000FF", "AMARILLO": "#FFD700"
-  };
-  for (const clave in map) {
-    if (descripcion.toUpperCase().includes(clave)) return map[clave];
-  }
-  return null;
-}
+    async function cargarExcel() {
+      const url = "https://raw.githubusercontent.com/scperu/store/main/proali.xlsx";
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
+      const workbook = XLSX.read(data, { type: "array" });
+      const hoja = workbook.Sheets[workbook.SheetNames[0]];
+      productos = XLSX.utils.sheet_to_json(hoja);
 
-function cargarExcel() {
-  fetch(urlExcel)
-    .then(res => res.arrayBuffer())
-    .then(data => {
-      const wb = XLSX.read(data, { type: "array" });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      productos = XLSX.utils.sheet_to_json(sheet);
-      poblarCombos();
-      renderizarTabla(productos);
-    });
-}
+      cargarCategorias();
+      aplicarFiltros();
+    }
 
-function poblarCombos() {
-  const categorias = [...new Set(productos.map(p => p.CATEGORIA).filter(Boolean))].sort();
-  const selectCat = document.getElementById("filtro-cat");
-  selectCat.innerHTML = '<option value="todos">Mostrar todo</option>';
-  categorias.forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    selectCat.appendChild(opt);
-  });
-}
+    function cargarCategorias() {
+      const select = document.getElementById("filtroCategoria");
+      const categorias = [...new Set(productos.map(p => p.CATEGORIA).filter(Boolean))];
+      categorias.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
 
-function renderizarTabla(datos) {
-  const cuerpo = document.getElementById("tabla-productos");
-  cuerpo.innerHTML = "";
-  datos.forEach(p => {
-    const tr = document.createElement("tr");
-    const stock = parseInt(p.STOCK) || 0;
-    const stockEstado = stock > 0 ? "disponibles" :
-                        /transito/i.test(p.DETALLES) ? "en_transito" : "agotados";
-    const color = obtenerColor(p.DESCRIPCION || "");
-    const codigo = color
-      ? `<span style="background:${color};color:white;padding:2px 6px;border-radius:4px;">${p.CODIGO}</span>`
-      : `<span style="color:gray;">${p.CODIGO}</span>`;
-    const stockHTML = stock === 0 ? `<span style="color:red;">0</span>` : stock;
-    const img = `<img src="${p.FOTO}" alt="Imagen" onclick="abrirModal('${p.VIDEO}', '${p.FOTO}')">`;
-    tr.innerHTML = `
-      <td>${img}</td>
-      <td>${codigo}</td>
-      <td>${p.DESCRIPCION}</td>
-      <td>${stockHTML}</td>
-      <td>${p.DETALLES}</td>
-      <td>S/ ${parseInt(p.PRECIO)}</td>
-    `;
-    tr.dataset.cat = (p.CATEGORIA || "").toLowerCase();
-    tr.dataset.stock = stockEstado;
-    tr.dataset.texto = (p.CODIGO + " " + p.DESCRIPCION + " " + p.DETALLES).toLowerCase();
-    cuerpo.appendChild(tr);
-  });
-}
+    function aplicarFiltros() {
+      const termino = document.getElementById("busqueda").value.toLowerCase();
+      const stockFiltro = document.getElementById("filtroStock").value;
+      const catFiltro = document.getElementById("filtroCategoria").value;
 
-function filtrarProductos() {
-  const cat = document.getElementById("filtro-cat").value.toLowerCase();
-  const stock = document.getElementById("filtro-stock").value.toLowerCase();
-  const texto = document.getElementById("busqueda").value.toLowerCase();
-  document.querySelectorAll("#tabla-productos tr").forEach(tr => {
-    const matchCat = (cat === "todos" || tr.dataset.cat === cat);
-    const matchStock = (stock === "todos" || tr.dataset.stock === stock);
-    const matchTexto = texto === "" || tr.dataset.texto.includes(texto);
-    tr.style.display = matchCat && matchStock && matchTexto ? "" : "none";
-  });
-}
+      const tbody = document.querySelector("#tabla tbody");
+      tbody.innerHTML = "";
 
-function abrirModal(video, foto) {
-  const modal = document.getElementById("modal");
-  const iframe = document.getElementById("videoFrame");
-  const img = document.getElementById("modalImg");
-  if (video) {
-    iframe.src = video;
-    iframe.style.display = "block";
-    img.style.display = "none";
-  } else {
-    iframe.style.display = "none";
-    img.src = foto;
-    img.style.display = "block";
-  }
-  modal.style.display = "block";
-}
+      productos.forEach(row => {
+        const texto = (row.DESCRIPCION + " " + row.DETALLES + " " + row.CODIGO).toLowerCase();
+        const stock = parseInt(row.STOCK) || 0;
+        const cumpleBusqueda = texto.includes(termino);
+        const cumpleStock = stockFiltro === "todos" || 
+                            (stockFiltro === "disponibles" && stock > 0) || 
+                            (stockFiltro === "agotados" && stock === 0);
+        const cumpleCategoria = catFiltro === "todas" || row.CATEGORIA === catFiltro;
 
-function cerrarModal() {
-  document.getElementById("modal").style.display = "none";
-  document.getElementById("videoFrame").src = "";
-  document.getElementById("modalImg").src = "";
-}
+        if (cumpleBusqueda && cumpleStock && cumpleCategoria) {
+          const tr = document.createElement("tr");
 
-cargarExcel();
-</script>
+          const tdImg = document.createElement("td");
+          const img = document.createElement("img");
+          img.src = row.FOTO;
+          img.onclick = () => mostrarModalImagen(row.FOTO);
+          tdImg.appendChild(img);
+
+          const tdCodigo = document.createElement("td");
+          const desc = row.DESCRIPCION ? row.DESCRIPCION.toLowerCase() : "";
+          let colorTexto = "pink";
+          if (desc.includes("negro")) colorTexto = "black";
+          else if (desc.includes("amarillo")) colorTexto = "gold";
+          else if (desc.includes("azul")) colorTexto = "blue";
+          else if (desc.includes("rojo")) colorTexto = "red";
+          else if (desc.includes("verde")) colorTexto = "green";
+          else if (desc.includes("celeste")) colorTexto = "deepskyblue";
+          else if (desc.includes("marrón") || desc.includes("marron")) colorTexto = "#8B4513";
+          else if (desc.includes("guindo")) colorTexto = "#800000";
+          else if (desc.includes("naranja")) colorTexto = "orange";
+          else if (desc.includes("blanco")) colorTexto = "white";
+          else if (desc.includes("gris")) colorTexto = "gray";
+          else if (desc.includes("plata")) colorTexto = "silver";
+
+          tdCodigo.textContent = row.CODIGO || "";
+          tdCodigo.style.color = colorTexto;
+          tdCodigo.style.fontWeight = "bold";
+
+          const tdDesc = document.createElement("td");
+          tdDesc.textContent = row.DESCRIPCION || "";
+
+          const tdDet = document.createElement("td");
+          tdDet.textContent = row.DETALLES || "";
+
+          const tdStock = document.createElement("td");
+          tdStock.textContent = stock;
+
+          const tdPrecio = document.createElement("td");
+          tdPrecio.classList.add("precio");
+          tdPrecio.textContent = "S/ " + Math.round(row.PRECIO || 0);
+
+          const tdMultimedia = document.createElement("td");
+          if (row.VIDEO && row.VIDEO.trim() !== "") {
+            const verVideo = document.createElement("div");
+            verVideo.textContent = "Ver video";
+            verVideo.className = "ver-video";
+            verVideo.onclick = () => mostrarModalVideo(row.VIDEO);
+            tdMultimedia.appendChild(verVideo);
+          } else {
+            tdMultimedia.textContent = "-";
+          }
+
+          tr.appendChild(tdImg);
+          tr.appendChild(tdCodigo);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdDet);
+          tr.appendChild(tdStock);
+          tr.appendChild(tdPrecio);
+          tr.appendChild(tdMultimedia);
+
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function mostrarModalImagen(src) {
+      const modal = document.getElementById("modal");
+      const contenido = document.getElementById("modal-contenido");
+      contenido.innerHTML = "<img src='" + src + "'>";
+      modal.style.display = "block";
+    }
+
+    function mostrarModalVideo(videoUrl) {
+      const modal = document.getElementById("modal");
+      const contenido = document.getElementById("modal-contenido");
+      contenido.innerHTML = "<video controls autoplay src='" + videoUrl + "'></video>";
+      modal.style.display = "block";
+    }
+
+    document.getElementById("cerrar").onclick = function () {
+      document.getElementById("modal").style.display = "none";
+    };
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("modal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    document.getElementById("busqueda").addEventListener("input", aplicarFiltros);
+    document.getElementById("filtroStock").addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroCategoria").addEventListener("change", aplicarFiltros);
+
+    cargarExcel();
+  </script>
+<div class="carrito oculto" id="carrito-panel">
+<h3>🛒 Mi Carrito</h3>
+<ul id="lista-carrito"></ul>
+<p id="total-carrito">Total: S/ 0</p>
+<button onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
+<button onclick="enviarPorCorreo()">Enviar por Correo</button>
+</div>
+<button id="abrir-carrito" onclick="mostrarCarrito()">🛍️ Ver Carrito (<span id="contador-carrito">0</span>)</button>
 </body>
 </html>
