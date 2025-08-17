@@ -597,6 +597,7 @@
         let stockMsg = '';
         if (stock <= 3 && stock > 0) stockMsg = '<div class="promo-msg stock-red">⏳ ¡Últimas unidades!</div>';
         else if (stock > 3 && stock <= 10) stockMsg = '<div class="promo-msg stock-orange">⏳ Pocas unidades</div>';
+        else if (stock <1) stockMsg = '<div class="promo-msg stock-black">🙁 AGOTADO</div>';
         else if (stock > 10) stockMsg = '<div class="promo-msg stock-green">🚀 Stock garantizado</div>';
 
         const card = document.createElement('div');
