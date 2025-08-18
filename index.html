@@ -131,9 +131,47 @@
   .old-price { color: #9ca3af; text-decoration: line-through; font-size: 0.9em; }
   .promo-msg { font-size: 0.83em; padding: 5px 8px; border-radius: 6px; margin-top: 6px; font-weight: 700; display:inline-block; }
 
-  .stock-red { background: #fdecec; color: #b91c1c; }
-  .stock-orange { background: #fff4e5; color: #a16207; }
-  .stock-green { background: #e8f5e9; color: #166534; }
+/* 🔥 Últimos disponibles (parpadeo suave) */
+@keyframes softBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.stock-red {
+  background: #fdecec;
+  color: #b91c1c;
+  animation: softBlink 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* ⚠️ Disponibilidad limitada (oscila colores) */
+@keyframes limitedPulse {
+  0%   { background: #fdecec; color: #b91c1c; }
+  33%  { background: #fff4e5; color: #a16207; }
+  66%  { background: #fffde7; color: #ca8a04; }
+  100% { background: #fdecec; color: #b91c1c; }
+}
+.stock-orange {
+  animation: limitedPulse 3s infinite ease-in-out;
+  border-radius: 6px;
+}
+
+/* ⚡ Alta disponibilidad con ícono animado */
+@keyframes flashIcon {
+  0%, 100% { text-shadow: 0 0 6px #22c55e; }
+  50% { text-shadow: 0 0 12px #4ade80; }
+}
+.stock-green {
+  background: #e8f5e9;
+  color: #166534;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.stock-green::before {
+  content: "⚡ ";
+  animation: flashIcon 2s infinite;
+}
+
 
   .badge-recomendado {
     position: absolute;
@@ -267,13 +305,14 @@
       <input type="search" id="searchInput" placeholder='Ej: laptop AND "HP Victus" NOT impresora (también búsqueda normal)' />
     </div>
     <div class="group">
-      <label for="marcaFiltro">Marca</label>
-      <select id="marcaFiltro"><option value="">Todas</option></select>
-    </div>
-    <div class="group">
       <label for="categoriaFiltro">Categoría</label>
       <select id="categoriaFiltro"><option value="">Todas</option></select>
     </div>
+    <div class="group">
+      <label for="marcaFiltro">Marca</label>
+      <select id="marcaFiltro"><option value="">Todas</option></select>
+    </div>
+
     <div class="group">
       <label for="ordenPrecio">Ordenar</label>
       <select id="ordenPrecio">
@@ -595,10 +634,10 @@
 
         let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
         let stockMsg = '';
-        if (stock <= 3 && stock > 0) stockMsg = '<div class="promo-msg stock-red">⏳ ¡Últimas unidades!</div>';
-        else if (stock > 3 && stock <= 10) stockMsg = '<div class="promo-msg stock-orange">⏳ Pocas unidades</div>';
-        else if (stock <1) stockMsg = '<div class="promo-msg stock-black">🙁 AGOTADO</div>';
-        else if (stock > 10) stockMsg = '<div class="promo-msg stock-green">🚀 Stock garantizado</div>';
+        if (stock <= 5 && stock > 0) stockMsg = '<div class="promo-msg stock-red">🔥 ¡Últimos disponibles!</div>';
+        else if (stock > 6 && stock <= 19) stockMsg = '<div class="promo-msg stock-orange">⚠️ Disponibilidad limitada</div>';
+        else if (stock <1) stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
+        else if (stock > 19) stockMsg = '<div class="promo-msg stock-green"> Alta disponibilidad</div>';
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -711,7 +750,8 @@
       let shipping = Number(document.getElementById('shippingInput').value || 0);
       let coupon = (document.getElementById('couponInput').value || '').trim().toUpperCase();
       if (coupon === "SCFREE") shipping = 0;
-
+      if (coupon === "SCWELCOME") shipping = -10;
+      
       let total = subtotal + shipping;
       totalSpan.textContent = formatMoney(total);
 
