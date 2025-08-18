@@ -157,8 +157,8 @@
 
 /* ⚡ Alta disponibilidad con ícono animado */
 @keyframes flashIcon {
-  0%, 100% { text-shadow: 0 0 6px #22c55e; }
-  50% { text-shadow: 0 0 12px #4ade80; }
+  0%, 100% { text-shadow: 0 0 6px #FFD700; }
+  50% { text-shadow: 0 0 12px #FFC107; }
 }
 .stock-green {
   background: #e8f5e9;
@@ -626,8 +626,8 @@
         const mini = String(p['MINI CODIGO'] || '').trim();
         const stock = Number(p['STOCK'] || 0);
         const precioOriginal = Number(p['PRECIO EN SOLES'] || 0);
-        const precioActual = Math.round(precioOriginal / 1.073);
-        const precioTachado = Math.round(precioOriginal);
+        const precioActual = Math.round(precioOriginal);
+        const precioTachado = Math.round(precioOriginal * 1.18);
         const thumbUrl = generarLinkImagen(p['CODIGO'], false);
         const largeUrl = generateSafeLargeUrl(p['CODIGO']);
         const marca = (p['MARCA'] || '').toString().trim();
