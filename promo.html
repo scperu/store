@@ -54,7 +54,7 @@
     color: white;
     text-align: center;
     padding: 60px 20px 20px;
-    margin-top: 40px;
+    margin-top: 8px;
   }
   header h1 { margin: 0; font-size: 1.9em; letter-spacing:.3px; }
   header p { margin: 6px 0 0; font-size: 1.05em; opacity:.95; }
@@ -95,6 +95,25 @@
   }
   .filters button:active { transform: scale(.98); }
 
+  /* ===== Carrusel de destacados ===== */
+  #bannerWrap{ position:relative; display:none; }
+  .banner-title { padding:10px 16px; color:#374151; font-weight:800; }
+  .banner-carousel{
+    display:flex; gap:16px; padding: 8px 16px 16px;
+    overflow-x:auto; scroll-snap-type: x mandatory;
+    scrollbar-width:none;
+  }
+  .banner-carousel::-webkit-scrollbar{ display:none; }
+  .banner-carousel .card{
+    min-width: 260px; flex:0 0 auto; scroll-snap-align:start;
+    border:2px solid var(--pri2);
+  }
+  #bannerWrap::after{
+    content:""; position:absolute; right:0; top:0; bottom:0; width:40px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.9));
+    pointer-events:none;
+  }
+
   .products {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -131,82 +150,43 @@
   .old-price { color: #9ca3af; text-decoration: line-through; font-size: 0.9em; }
   .promo-msg { font-size: 0.83em; padding: 5px 8px; border-radius: 6px; margin-top: 6px; font-weight: 700; display:inline-block; }
 
-/* 🔥 Últimos disponibles (parpadeo suave) */
-@keyframes softBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.stock-red {
-  background: #fdecec;
-  color: #b91c1c;
-  animation: softBlink 1.5s infinite;
-  border-radius: 6px;
-}
+  /* 🔥 Últimos disponibles (parpadeo suave) */
+  @keyframes softBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .stock-red {
+    background: #fdecec;
+    color: #b91c1c;
+    animation: softBlink 1.5s infinite;
+    border-radius: 6px;
+  }
 
-/* ⚠️ Disponibilidad limitada (oscila colores) */
-@keyframes limitedPulse {
-  0%   { background: #fdecec; color: #b91c1c; }
-  33%  { background: #fff4e5; color: #a16207; }
-  66%  { background: #fffde7; color: #ca8a04; }
-  100% { background: #fdecec; color: #b91c1c; }
-}
-.stock-orange {
-  animation: limitedPulse 3s infinite ease-in-out;
-  border-radius: 6px;
-}
+  /* ⚠️ Disponibilidad limitada (oscila colores) */
+  @keyframes limitedPulse {
+    0%   { background: #fdecec; color: #b91c1c; }
+    33%  { background: #fff4e5; color: #a16207; }
+    66%  { background: #fffde7; color: #ca8a04; }
+    100% { background: #fdecec; color: #b91c1c; }
+  }
+  .stock-orange { animation: limitedPulse 3s infinite ease-in-out; border-radius: 6px; }
 
-/* ⚡ Alta disponibilidad con ícono animado */
-@keyframes flashIcon {
-  0%, 100% { text-shadow: 0 0 6px #FFD700; }
-  50% { text-shadow: 0 0 12px #FFC107; }
-}
-.stock-green {
-  background: #e8f5e9;
-  color: #166534;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-.stock-green::before {
-  content: "⚡ ";
-  animation: flashIcon 2s infinite;
-}
+  /* ⚡ Alta disponibilidad con ícono animado */
+  @keyframes flashIcon { 0%, 100% { text-shadow: 0 0 6px #FFD700; } 50% { text-shadow: 0 0 12px #FFC107; } }
+  .stock-green { background: #e8f5e9; color: #166534; font-weight: bold; border-radius: 6px; padding: 6px 10px; }
+  .stock-green::before { content: "⚡ "; animation: flashIcon 2s infinite; }
 
+  /* 🟡↔🔴 Amarillo a rojo */
+  @keyframes yellowToRed { 0% { background: #fff4e5; color: #a16207; } 100% { background: #fdecec; color: #b91c1c; } }
+  .stock-yellow { animation: yellowToRed 2s infinite alternate; border-radius: 6px; }
 
-/* 🟡↔🔴 Amarillo a rojo */
-@keyframes yellowToRed {
-  0%   { background: #fff4e5; color: #a16207; }
-  100% { background: #fdecec; color: #b91c1c; }
-}
-.stock-yellow {
-  animation: yellowToRed 2s infinite alternate;
-  border-radius: 6px;
-}
+  /* 🟢↔🟡 Verde a amarillo */
+  @keyframes greenToYellow { 0% { background: #e8f5e9; color: #166534; } 100% { background: #fffde7; color: #ca8a04; } }
+  .stock-limited { animation: greenToYellow 2s infinite alternate; border-radius: 6px; }
 
-/* 🟢↔🟡 Verde a amarillo */
-@keyframes greenToYellow {
-  0%   { background: #e8f5e9; color: #166534; }
-  100% { background: #fffde7; color: #ca8a04; }
-}
-.stock-limited {
-  animation: greenToYellow 2s infinite alternate;
-  border-radius: 6px;
-}
-
-/* 🔵↔🟢 Azul a verde */
-@keyframes blueToGreen {
-  0%   { background: #e0f2fe; color: #075985; }
-  100% { background: #e8f5e9; color: #166534; }
-}
-.stock-blue {
-  animation: blueToGreen 2.5s infinite alternate;
-  border-radius: 6px;
-}
-
-
-
-
-
+  /* 🔵↔🟢 Azul a verde */
+  @keyframes blueToGreen { 0% { background: #e0f2fe; color: #075985; } 100% { background: #e8f5e9; color: #166534; } }
+  .stock-blue { animation: blueToGreen 2.5s infinite alternate; border-radius: 6px; }
 
   .badge-recomendado {
     position: absolute;
@@ -288,9 +268,7 @@
     width:40px; text-align:center; border:none; background:transparent; font-weight:700;
   }
   .cart-item .amount { font-weight:800; }
-  .cart-item .remove {
-    border:none; background:#fff; color:var(--danger); cursor:pointer; font-size:18px;
-  }
+  .cart-item .remove { border:none; background:#fff; color:var(--danger); cursor:pointer; font-size:18px; }
 
   #cartFooter {
     padding:12px 14px 16px; border-top:1px solid var(--border);
@@ -310,8 +288,8 @@
   }
 
   .cart-btn {
-    background: #111827;
-    color: #fff;
+  background: #111827;  /* ← este color negro se aplica primero */
+  color: #fff;
     border: none;
     padding: 8px 12px;
     border-radius: 10px;
@@ -320,16 +298,22 @@
     box-shadow: var(--shadow-sm);
   }
 </style>
+
+/* Espacio extra para que el contenido no quede tapado por la barra inferior */
+body { 
+  padding-bottom: 52px; 
+}
+
 </head>
 <body>
 
   <div class="top-bar">
-    🚀 ¡Mega Ofertas por tiempo limitado!
+    <span id="topBarMsg">🚀 ¡Bienvenido!</span>
     <div class="countdown" id="countdown">Cargando...</div>
   </div>
 
   <header>
-    <h1>🔥 ServiComp – Mega Ofertas 🔥</h1>
+    <h1>🔥 Mega Ofertas ServiComp 🔥</h1>
     <p>"Equipos confiables, soluciones inteligentes"</p>
   </header>
 
@@ -362,6 +346,12 @@
       <button onclick="toggleCart()">🛒 Carrito (<span id="cartCount">0</span>)</button>
     </div>
   </div>
+
+  <!-- Carrusel de destacados -->
+  <section id="bannerWrap">
+    <div class="banner-title">⭐ Destacados</div>
+    <div class="banner-carousel" id="bannerCarousel"></div>
+  </section>
 
   <div class="products" id="product-list">Cargando productos...</div>
 
@@ -400,7 +390,157 @@
     let G_FILTRO = [];
     let G_DESTACADOS = [];
     let G_CATEGORIAS = [];
+    let G_BANNER = [];             // 👈 NUEVO
     let CART = [];
+
+    // ===================== CICLO DE OFERTAS (1h activa / espera aleatoria 1-10h) =====================
+    const OFFER_DURATION_MS = 60 * 60 * 1000;   // 1 hora
+    const WAIT_MIN_HOURS = 1;                   // espera mínima (horas)
+    const WAIT_MAX_HOURS = 10;                  // espera máxima (horas)
+    const DISCOUNT_FACTOR = 0.90;               // 10% de descuento (ajustable)
+    const LS_OFFER_START = "offerStart";
+    const LS_NEXT_OFFER_START = "nextOfferStart";
+
+    function nowMs(){ return Date.now(); }
+
+    function getOfferStart(){ const v = localStorage.getItem(LS_OFFER_START); return v ? Number(v) : null; }
+    function setOfferStart(ms){ localStorage.setItem(LS_OFFER_START, String(ms)); }
+    function clearOfferStart(){ localStorage.removeItem(LS_OFFER_START); }
+
+    function getNextOfferStart(){ const v = localStorage.getItem(LS_NEXT_OFFER_START); return v ? Number(v) : null; }
+    function setNextOfferStart(ms){ localStorage.setItem(LS_NEXT_OFFER_START, String(ms)); }
+    function clearNextOfferStart(){ localStorage.removeItem(LS_NEXT_OFFER_START); }
+
+    function randomWaitMs(){
+      const hours = Math.floor(Math.random() * (WAIT_MAX_HOURS - WAIT_MIN_HOURS + 1)) + WAIT_MIN_HOURS;
+      return hours * 60 * 60 * 1000;
+    }
+
+    function isOfferActiveAt(t){
+      const s = getOfferStart();
+      if (!s) return false;
+      return t >= s && t < (s + OFFER_DURATION_MS);
+    }
+
+    function msToOfferEnd(t){
+      const s = getOfferStart();
+      if (!s) return 0;
+      return Math.max(0, (s + OFFER_DURATION_MS) - t);
+    }
+
+    function msToNextOffer(t){
+      const n = getNextOfferStart();
+      if (!n) return 0;
+      return Math.max(0, n - t);
+    }
+
+    function startOffer(ts){
+      const t = ts ?? nowMs();
+      setOfferStart(t);
+      clearNextOfferStart();
+      renderizarBanner();
+      renderizarProductos();
+      updateOfferUI();
+setBottomPhraseForState();
+
+    }
+
+    function scheduleNextOffer(ts){
+      const t = ts ?? nowMs();
+      const wait = randomWaitMs();
+      setNextOfferStart(t + wait);
+      clearOfferStart();
+      renderizarBanner();
+      renderizarProductos();
+      updateOfferUI();
+setBottomPhraseForState();
+
+    }
+
+    function initOfferCycle(){
+      const t = nowMs();
+      const s = getOfferStart();
+      const n = getNextOfferStart();
+
+      // Al entrar el usuario: si no existe estado previo, inicia oferta 1h y guarda offerStart
+      if (!s && !n){
+        startOffer(t);
+      } else if (s){
+        if (t >= s + OFFER_DURATION_MS){
+          // Oferta vencida -> programar espera aleatoria
+          scheduleNextOffer(t);
+        } else {
+          // Oferta aún activa
+          updateOfferUI();
+        }
+      } else if (n){
+        if (t >= n){
+          // Espera terminada -> iniciar nueva oferta
+          startOffer(t);
+        } else {
+          // Aún en espera
+          updateOfferUI();
+        }
+      }
+
+      // Heartbeat cada segundo para avanzar el ciclo automáticamente
+      setInterval(tickOfferCycle, 1000);
+    }
+
+    function tickOfferCycle(){
+      const t = nowMs();
+      if (isOfferActiveAt(t)){
+        // Cuando termine la hora de oferta, pasamos a espera
+        if (msToOfferEnd(t) === 0){
+          scheduleNextOffer(t);
+        }
+      } else {
+        const n = getNextOfferStart();
+        if (!n){
+          // Estado inconsistente -> iniciar oferta
+          startOffer(t);
+          return;
+        }
+        if (t >= n){
+          startOffer(t);
+        }
+      }
+      updateOfferUI();
+    }
+
+    function formatHMS(msTotal){
+      const hh = Math.floor(msTotal / 3600000);
+      const mm = Math.floor((msTotal % 3600000) / 60000);
+      const ss = Math.floor((msTotal % 60000) / 1000);
+      return `${hh}h ${mm}m ${ss}s`;
+    }
+
+    function updateOfferUI(){
+      const t = nowMs();
+      const msgEl = document.getElementById('topBarMsg');
+      const cdEl = document.getElementById('countdown');
+      if (!msgEl || !cdEl) return;
+
+      if (isOfferActiveAt(t)){
+        msgEl.textContent = " ¡Oferta activa!";
+        cdEl.textContent = formatHMS(msToOfferEnd(t));
+      } else {
+        msgEl.textContent = " Próxima oferta en";
+        cdEl.textContent = formatHMS(msToNextOffer(t));
+      }
+    }
+
+    // Helper centralizado para calcular precios según estado de oferta
+    function getPrecios(producto){
+      const base = Number(producto['PRECIO EN SOLES'] || 0);
+      if (isOfferActiveAt(nowMs())){
+        return { actual: Math.round(base * DISCOUNT_FACTOR), tachado: Math.round(base) };
+      } else {
+        return { actual: Math.round(base), tachado: Math.round(base * 1.18) };
+      }
+    }
+
+    let _bannerInterval = null;    // 👈 NUEVO
 
     /* --------- UTIL: imágenes --------- */
     function generarLinkImagen(codigo, conLarge = false) {
@@ -439,6 +579,12 @@
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       return XLSX.utils.sheet_to_json(sheet);
     }
+    // 👇 NUEVO: carga de mini-códigos para el carrusel
+    async function cargarBanner() {
+      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/banner.txt');
+      const txt = await res.text();
+      return txt.split('\n').map(x => x.trim()).filter(Boolean);
+    }
 
     /* --------- Modal imagen --------- */
     function mostrarModal(src) {
@@ -452,27 +598,32 @@
 
     /* --------- INIT --------- */
     async function init() {
-      const [filtro, productos, destacados] = await Promise.all([cargarFiltro(), cargarExcel(), cargarCoti()]);
+      const [filtro, productos, destacados, banner] = await Promise.all([
+        cargarFiltro(), cargarExcel(), cargarCoti(), cargarBanner()
+      ]);
       G_FILTRO = filtro;
       G_PRODUCTOS = productos;
       G_DESTACADOS = destacados;
+      G_BANNER = banner;
       G_CATEGORIAS = filtro.filter(x => isNaN(x));
 
       poblarMarcas();
       poblarCategoriasDesdeTxt();
+      renderizarBanner();     // 👈 primero el carrusel
       renderizarProductos();
-      iniciarCuentaRegresiva();
+      initOfferCycle();
 
-      document.getElementById('marcaFiltro').addEventListener('change', renderizarProductos);
-      document.getElementById('categoriaFiltro').addEventListener('change', renderizarProductos);
+      document.getElementById('marcaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
+      document.getElementById('categoriaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
       document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
-      document.getElementById('searchInput').addEventListener('input', renderizarProductos);
+      document.getElementById('searchInput').addEventListener('input', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
       document.getElementById('btnLimpiar').addEventListener('click', () => {
         document.getElementById('marcaFiltro').value = '';
         document.getElementById('categoriaFiltro').value = '';
         document.getElementById('ordenPrecio').value = 'asc';
         document.getElementById('searchInput').value = '';
         renderizarProductos();
+        // renderizarBanner(); // si quieres que el carrusel responda a filtros, descomenta
       });
       document.getElementById('shippingInput').addEventListener('input', updateCart);
       document.getElementById('couponInput').addEventListener('input', updateCart);
@@ -491,51 +642,46 @@
       });
     }
     function poblarCategoriasDesdeTxt() {
-      const sel = document.getElementById('categoriaFiltro');
-      sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
-      G_CATEGORIAS.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c; opt.textContent = c;
-        sel.appendChild(opt);
-      });
-    }
+  const sel = document.getElementById('categoriaFiltro');
+
+  // Limpiar todas las opciones excepto "Todas"
+  sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
+
+  // Agregar categorías desde el filtro.txt
+  G_CATEGORIAS.forEach(c => { 
+    const opt = document.createElement('option'); 
+    opt.value = c; 
+    opt.textContent = c;   // sin iconos, limpio y pro
+    sel.appendChild(opt); 
+  });
+
+  // ✅ Seleccionar automáticamente la primera categoría del filtro.txt
+  if (G_CATEGORIAS.length > 0) {
+    sel.value = G_CATEGORIAS[0];
+  }
+}
 
     /* ===================== BUSCADOR BOOLEANO ===================== */
-    // Soporta: AND, OR, NOT, paréntesis, "frases", equivalentes: &&, ||, !
-    // Si no hay operadores, funciona como búsqueda normal (substring).
-    function hasBooleanOps(q) {
-      return /(\bAND\b|\bOR\b|\bNOT\b|\(|\)|&&|\|\||!)/i.test(q);
-    }
+    function hasBooleanOps(q) { return /(\bAND\b|\bOR\b|\bNOT\b|\(|\)|&&|\|\||!)/i.test(q); }
     function normalizeOps(q) {
-      // Acepta español también
-      q = q.replace(/\bY\b/gi, ' AND ')
-           .replace(/\bO\b/gi, ' OR ')
-           .replace(/\bNO\b/gi, ' NOT ');
-      // símbolos
-      q = q.replace(/\&\&/g, ' AND ')
-           .replace(/\|\|/g, ' OR ')
-           .replace(/\!/g, ' NOT ');
-      // espacios
+      q = q.replace(/\bY\b/gi, ' AND ').replace(/\bO\b/gi, ' OR ').replace(/\bNO\b/gi, ' NOT ');
+      q = q.replace(/\&\&/g, ' AND ').replace(/\|\|/g, ' OR ').replace(/\!/g, ' NOT ');
       return q.replace(/\s+/g, ' ').trim();
     }
     function tokenizeQuery(q) {
       const s = normalizeOps(q).trim();
-      const tokens = [];
-      let i = 0;
+      const tokens = []; let i = 0;
       while (i < s.length) {
         const ch = s[i];
         if (ch === '(') { tokens.push({t:'LP'}); i++; continue; }
         if (ch === ')') { tokens.push({t:'RP'}); i++; continue; }
         if (ch === '"') {
-          // frase
           let j = i+1, buf = '';
           while (j < s.length && s[j] !== '"') { buf += s[j]; j++; }
           tokens.push({t:'TERM', v: buf.toLowerCase()});
-          i = (j < s.length) ? j+1 : j;
-          continue;
+          i = (j < s.length) ? j+1 : j; continue;
         }
         if (/\s/.test(ch)) { i++; continue; }
-        // palabra
         let j = i, buf = '';
         while (j < s.length && !/[\s\(\)"]/.test(s[j])) { buf += s[j]; j++; }
         const word = buf.toUpperCase();
@@ -543,13 +689,10 @@
         else tokens.push({t:'TERM', v: buf.toLowerCase()});
         i = j;
       }
-      // Insertar AND implícito entre TERM/RP y TERM/LP/NOT
       const out = [];
       for (let k=0; k<tokens.length; k++) {
-        const a = tokens[k];
-        out.push(a);
-        const b = tokens[k+1];
-        if (!b) break;
+        const a = tokens[k]; out.push(a);
+        const b = tokens[k+1]; if (!b) break;
         const aTermOrRP = (a.t==='TERM' || a.t==='RP');
         const bTermOrLPOrNOT = (b.t==='TERM' || b.t==='LP' || b.t==='NOT');
         if (aTermOrRP && bTermOrLPOrNOT) out.push({t:'AND'});
@@ -557,8 +700,7 @@
       return out;
     }
     function toPostfix(tokens){
-      const prec = { NOT:3, AND:2, OR:1 };
-      const rightAssoc = { NOT:true };
+      const prec = { NOT:3, AND:2, OR:1 }; const rightAssoc = { NOT:true };
       const out=[]; const st=[];
       tokens.forEach(tok=>{
         if (tok.t==='TERM') out.push(tok);
@@ -581,34 +723,105 @@
       return out;
     }
     function evalPostfix(postfix, text){
-      const stack=[];
-      const contains=(term)=> text.includes(term);
+      const stack=[]; const contains=(term)=> text.includes(term);
       postfix.forEach(tok=>{
         if (tok.t==='TERM') stack.push( contains(tok.v) );
-        else if (tok.t==='NOT') {
-          const a = stack.pop()||false; stack.push(!a);
-        } else if (tok.t==='AND') {
-          const b = stack.pop()||false, a = stack.pop()||false; stack.push(a && b);
-        } else if (tok.t==='OR') {
-          const b = stack.pop()||false, a = stack.pop()||false; stack.push(a || b);
-        }
+        else if (tok.t==='NOT') { const a = stack.pop()||false; stack.push(!a); }
+        else if (tok.t==='AND') { const b = stack.pop()||false, a = stack.pop()||false; stack.push(a && b); }
+        else if (tok.t==='OR') { const b = stack.pop()||false, a = stack.pop()||false; stack.push(a || b); }
       });
       return !!stack.pop();
     }
     function matchesQuery(query, text) {
       if (!query) return true;
-      query = query.trim();
-      text = text.toLowerCase();
-      if (!hasBooleanOps(query)) {
-        // búsqueda normal (substring simple)
-        return text.includes(query.toLowerCase());
-      }
+      query = query.trim(); text = text.toLowerCase();
+      if (!hasBooleanOps(query)) return text.includes(query.toLowerCase());
       const tokens = tokenizeQuery(query);
       const postfix = toPostfix(tokens);
       return evalPostfix(postfix, text);
     }
 
-    /* ===================== RENDER ===================== */
+    /* ===================== RENDER: CARRUSEL ===================== */
+    function startBannerAutoplay(){
+      stopBannerAutoplay();
+      _bannerInterval = setInterval(()=> {
+        const carr = document.getElementById('bannerCarousel');
+        if (!carr || !carr.firstElementChild) return;
+        const card = carr.querySelector('.card');
+        const step = (card?.offsetWidth || 260) + 16; // ancho + gap
+        const atEnd = Math.ceil(carr.scrollLeft + carr.clientWidth) >= carr.scrollWidth;
+        if (atEnd) {
+          carr.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carr.scrollBy({ left: step, behavior: 'smooth' });
+        }
+      }, 5000);
+    }
+    function stopBannerAutoplay(){ if (_bannerInterval){ clearInterval(_bannerInterval); _bannerInterval = null; } }
+
+    function renderizarBanner(){
+      const wrap = document.getElementById('bannerWrap');
+      const carr = document.getElementById('bannerCarousel');
+      carr.innerHTML = '';
+
+      const base = G_PRODUCTOS.filter(p =>
+        G_FILTRO.includes(String(p['MINI CODIGO']).trim()) &&
+        G_BANNER.includes(String(p['MINI CODIGO']).trim())
+      );
+
+      if (!base.length){ wrap.style.display = 'none'; stopBannerAutoplay(); return; }
+      wrap.style.display = '';
+
+      base.forEach(p=>{
+        const mini = String(p['MINI CODIGO'] || '').trim();
+        const stock = Number(p['STOCK'] || 0);
+        const precios = getPrecios(p);
+        const precioActual = precios.actual;
+        const precioTachado = precios.tachado;
+        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
+        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
+        const marca = (p['MARCA'] || '').toString().trim();
+
+        let stockMsg = '';
+        if (stock === 0) stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
+        else if (stock >= 1 && stock <= 3) stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
+        else if (stock >= 4 && stock <= 10) stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
+        else if (stock >= 11 && stock <= 19) stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
+        else if (stock >= 20) stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="position:relative;">
+            <div class="badge-recomendado">🔥</div>
+            <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" loading="lazy" onclick="mostrarModal('${largeUrl}')">
+          </div>
+          <div class="card-content">
+            <h3>${p['DESCRIPCION'] || ''}</h3>
+            <div class="meta">
+              <span>${marca || '—'}</span>
+              <span class="mini-code">${mini || ''}</span>
+            </div>
+            ${stockMsg}
+            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+            </div>
+            <button class="cart-btn" onclick="addToCart('${mini}','${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}','${precioActual}')">Agregar 🛒</button>
+          </div>
+        `;
+        carr.appendChild(card);
+      });
+
+      startBannerAutoplay();
+      carr.addEventListener('mouseenter', stopBannerAutoplay);
+      carr.addEventListener('mouseleave', startBannerAutoplay);
+      document.addEventListener('visibilitychange', ()=> {
+        if (document.hidden) stopBannerAutoplay(); else startBannerAutoplay();
+      });
+    }
+
+    /* ===================== RENDER: GRID ===================== */
     function renderizarProductos() {
       const lista = document.getElementById('product-list');
       lista.innerHTML = '';
@@ -660,27 +873,26 @@
       productos.forEach(p => {
         const mini = String(p['MINI CODIGO'] || '').trim();
         const stock = Number(p['STOCK'] || 0);
-        const precioOriginal = Number(p['PRECIO EN SOLES'] || 0);
-        const precioActual = Math.round(precioOriginal);
-        const precioTachado = Math.round(precioOriginal * 1.18);
+        const precios = getPrecios(p);
+        const precioActual = precios.actual;
+        const precioTachado = precios.tachado;
         const thumbUrl = generarLinkImagen(p['CODIGO'], false);
         const largeUrl = generateSafeLargeUrl(p['CODIGO']);
         const marca = (p['MARCA'] || '').toString().trim();
 
         let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
         let stockMsg = '';
-        
-	if (stock === 0) {
-	stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-	} else if (stock >= 1 && stock <= 3) {
-	 stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-	} else if (stock >= 4 && stock <= 10) {
-	 stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-	} else if (stock >= 11 && stock <= 19) {
-	  stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-	} else if (stock >= 20) {
-	  stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-	}
+        if (stock === 0) {
+          stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
+        } else if (stock >= 1 && stock <= 3) {
+          stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
+        } else if (stock >= 4 && stock <= 10) {
+          stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
+        } else if (stock >= 11 && stock <= 19) {
+          stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
+        } else if (stock >= 20) {
+          stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+        }
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -708,53 +920,22 @@
       });
     }
 
-    /* --------- Countdown --------- */
-    function iniciarCuentaRegresiva() {
-      const fin = new Date(); fin.setHours(fin.getHours() + 24);
-      function actualizar() {
-        const ahora = new Date().getTime();
-        const distancia = fin - ahora;
-        if (distancia < 0) { document.getElementById('countdown').innerHTML = 'Oferta finalizada'; return; }
-        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
-        document.getElementById('countdown').innerHTML = `${horas}h ${minutos}m ${segundos}s`;
-      }
-      actualizar(); setInterval(actualizar, 1000);
-    }
-
     /* ===================== CARRITO ===================== */
-    function toggleCart() {
-      document.getElementById('cartPanel').classList.toggle('open');
-    }
+    function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
     function addToCart(code, desc, price) {
       price = Number(price);
       let item = CART.find(i => i.code === code);
       if (item) item.qty++; else CART.push({code, desc, price, qty:1});
       updateCart();
-      // abrir carrito al agregar
       if (!document.getElementById('cartPanel').classList.contains('open')) toggleCart();
     }
-    function removeFromCart(code) {
-      CART = CART.filter(i => i.code !== code);
-      updateCart();
-    }
+    function removeFromCart(code) { CART = CART.filter(i => i.code !== code); updateCart(); }
     function changeQty(code, qty) {
       let item = CART.find(i => i.code === code);
-      if (item) {
-        const n = Math.max(1, Number(qty) || 1);
-        item.qty = n;
-        updateCart();
-      }
+      if (item) { const n = Math.max(1, Number(qty) || 1); item.qty = n; updateCart(); }
     }
-    function incQty(code) {
-      let it = CART.find(i => i.code === code);
-      if (it) { it.qty++; updateCart(); }
-    }
-    function decQty(code) {
-      let it = CART.find(i => i.code === code);
-      if (it) { it.qty = Math.max(1, it.qty - 1); updateCart(); }
-    }
+    function incQty(code) { let it = CART.find(i => i.code === code); if (it) { it.qty++; updateCart(); } }
+    function decQty(code) { let it = CART.find(i => i.code === code); if (it) { it.qty = Math.max(1, it.qty - 1); updateCart(); } }
 
     function formatMoney(n){ return Number(n||0).toLocaleString('es-PE',{minimumFractionDigits:2, maximumFractionDigits:2}); }
 
@@ -765,9 +946,7 @@
       const totalSpan = document.getElementById('cartTotal');
 
       itemsDiv.innerHTML = '';
-      if (!CART.length) {
-        itemsDiv.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>';
-      }
+      if (!CART.length) { itemsDiv.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>'; }
 
       let subtotal = 0;
       CART.forEach(item => {
@@ -794,7 +973,7 @@
       let coupon = (document.getElementById('couponInput').value || '').trim().toUpperCase();
       if (coupon === "SCFREE") shipping = 0;
       if (coupon === "SCWELCOME") shipping = -10;
-      
+
       let total = subtotal + shipping;
       totalSpan.textContent = formatMoney(total);
 
@@ -806,7 +985,180 @@
       document.getElementById('whatsappCheckout').href = `https://wa.me/51973952322?text=${waText}`;
     }
 
-    init();
+
+// 🎨 Paleta de colores para rotar
+const COLORES_ROTATIVOS = [
+  "#e63946", // rojo
+  "#1d4ed8", // azul
+  "#f59e0b", // amarillo
+  "#22c55e", // verde
+  "#9333ea", // morado
+  "#14b8a6", // turquesa
+  "#ef4444", // rojo fuerte
+  "#f97316", // naranja
+  "#3b82f6", // celeste
+  "#a855f7"  // violeta
+];
+
+let indiceColor = Math.floor(Math.random() * COLORES_ROTATIVOS.length); // aleatorio al inicio
+
+function rotarColor() {
+  const colorActual = COLORES_ROTATIVOS[indiceColor];
+  let nuevoIndice;
+
+  do {
+    nuevoIndice = Math.floor(Math.random() * COLORES_ROTATIVOS.length);
+  } while (nuevoIndice === indiceColor);
+
+  const siguiente = COLORES_ROTATIVOS[nuevoIndice];
+
+  const gradiente = `linear-gradient(90deg, ${colorActual}, ${siguiente})`;
+  document.querySelector(".top-bar").style.background = gradiente;
+  document.querySelector("header").style.background = gradiente;
+
+  // 🎨 Fondo para los botones (incluye los que se agregan dinámicamente)
+  document.querySelectorAll(".cart-btn, .filters button").forEach(btn => {
+    btn.style.setProperty("background", colorActual, "important");
+    btn.style.setProperty("color", "#fff", "important");
+  });
+
+  // 🎨 Color dinámico para los mini-códigos
+  document.querySelectorAll(".mini-code").forEach(span => {
+    span.style.setProperty("background", colorActual, "important");
+    span.style.setProperty("color", "#fff", "important");
+  });
+
+  indiceColor = nuevoIndice;
+}
+// 👉 Ejecutar al cargar
+rotarColor();
+
+// ⏳ Cambiar cada 5 minutos (300000 ms)
+setInterval(rotarColor, 300000);
+
+
+const FRASES_ACTIVAS = [
+  "🔥 ¡Oferta activa! Aprovecha ahora",
+  "💥 Descuentos disponibles por 1 hora",
+  "⚡ Promos relámpago, no te duermas",
+  "🏷️ Precios rebajados por tiempo limitado",
+  "🎉 Ahorra mientras dure la oferta",
+  "🚀 Solo descuentos exclusivos",
+  "🔥 ¡El momento de comprar es ahora!",
+  "⭐ Ofertas especiales en esta hora",
+  "💣 Rebajas temporales, no las dejes pasar",
+  "⚡ 60 minutos de super descuentos"
+];
+
+const FRASES_INACTIVAS = [
+  "⏳ Próxima oferta en",
+  "🕒 Prepárate: nuevas promos pronto",
+  "🎯 Estate atento a la próxima hora feliz",
+  "🔔 Vuelven los descuentos en breve",
+  "📅 La siguiente oferta está cerca",
+  "😎 Relájate, pronto volverán las promos",
+  "⚡ La próxima hora feliz se acerca",
+  "🏷️ Más descuentos en camino",
+  "💡 Consejo: agrega productos al carrito y espera la oferta",
+  "🛎️ Recuerda: los precios bajan otra vez pronto"
+];
+
+let _bottomTimer = null;
+let _ultimaFrase = "";
+const ROTACION_MS = 120000; // cada 2 minutos
+
+function pickRandomDifferent(lista, ultima) {
+  if (!lista.length) return "";
+  if (lista.length === 1) return lista[0];
+  let cand;
+  do {
+    cand = lista[Math.floor(Math.random() * lista.length)];
+  } while (cand === ultima);
+  return cand;
+}
+
+function setBottomPhraseForState() {
+  const activo = isOfferActiveAt(nowMs());
+  const lista = activo ? FRASES_ACTIVAS : FRASES_INACTIVAS;
+  const msgEl = document.getElementById("bottomMsg");
+  if (!msgEl) return;
+
+  const nueva = pickRandomDifferent(lista, _ultimaFrase);
+
+  msgEl.style.opacity = "0";
+  setTimeout(() => {
+    msgEl.textContent = nueva;
+    msgEl.style.opacity = "1";
+    _ultimaFrase = nueva;
+  }, 160);
+}
+
+function startBottomRotation() {
+  stopBottomRotation();
+  _bottomTimer = setInterval(setBottomPhraseForState, ROTACION_MS);
+}
+
+function stopBottomRotation() {
+  if (_bottomTimer) {
+    clearInterval(_bottomTimer);
+    _bottomTimer = null;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setBottomPhraseForState();
+  startBottomRotation();
+});
+
+const FRASES_HEADER = [
+  "🔥 Mega Ofertas ServiComp 🔥",
+  "⚡ Ofertas Exclusivas ServiComp ⚡",
+  "💥 Descuentos ServiComp 💥",
+  "🏷️ Promos ServiComp 🏷️",
+  "🚀 Super Ofertas ServiComp 🚀",
+  "⭐ Ahorra con ServiComp ⭐",
+  "🔥 Rebajas ServiComp 🔥"
+];
+  
+let indiceHeader = -1; // para recordar la última usada
+
+function rotarHeader() {
+  const h1 = document.querySelector("header h1"); // selecciona el título
+  if (!h1) return;
+
+  // elegir un índice aleatorio distinto al anterior
+  let nuevo;
+  do {
+    nuevo = Math.floor(Math.random() * FRASES_HEADER.length);
+  } while (nuevo === indiceHeader);
+
+  indiceHeader = nuevo;
+
+  // transición suave de opacidad
+  h1.style.transition = "opacity 0.3s ease";
+  h1.style.opacity = "0";
+  setTimeout(() => {
+    h1.textContent = FRASES_HEADER[indiceHeader];
+    h1.style.opacity = "1";
+  }, 300);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  rotarHeader();                 // ✅ mostrar primera frase al cargar
+  setInterval(rotarHeader, 300000); // ✅ cambiar cada 5 min (300000 ms)
+});
+
+
+
+  init();
   </script>
+
+
+<!-- Barra inferior de frases dinámicas -->
+<div id="bottomBar" style="position:fixed;bottom:0;left:0;width:100%;background:#111827;color:#fff;text-align:center;padding:10px;font-weight:800;letter-spacing:.2px;z-index:900;box-shadow:0 -8px 20px rgba(0,0,0,.08)">
+  <span id="bottomMsg">Cargando ofertas…</span>
+</div>
+
+
 </body>
 </html>
