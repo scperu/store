@@ -394,7 +394,7 @@ body {
     let CART = [];
 
     // ===================== CICLO DE OFERTAS (1h activa / espera aleatoria 1-10h) =====================
-    const OFFER_DURATION_MS = 60 * 60 * 1000;   // 1 hora
+    const OFFER_DURATION_MS = 1 * 60 * 1000;   // 1 hora
     const WAIT_MIN_HOURS = 1;                   // espera mínima (horas)
     const WAIT_MAX_HOURS = 10;                  // espera máxima (horas)
     const DISCOUNT_FACTOR = 0.90;               // 10% de descuento (ajustable)
@@ -531,14 +531,24 @@ setBottomPhraseForState();
     }
 
     // Helper centralizado para calcular precios según estado de oferta
-    function getPrecios(producto){
-      const base = Number(producto['PRECIO EN SOLES'] || 0);
-      if (isOfferActiveAt(nowMs())){
-        return { actual: Math.round(base * DISCOUNT_FACTOR), tachado: Math.round(base) };
-      } else {
-        return { actual: Math.round(base), tachado: Math.round(base * 1.18) };
-      }
-    }
+function getPrecios(producto){
+  const base = Number(producto['PRECIO EN SOLES'] || 0);
+
+  if (isOfferActiveAt(nowMs())) {
+    // Oferta activa → mostrar precio base directo
+    return { 
+      actual: Math.round(base), 
+      tachado: Math.round(base * 1.18) 
+    };
+  } else {
+    // Fuera de oferta → base ajustado +7.2% y tachado +36% sobre base
+    const ajustado = base * 1.072;
+    return { 
+      actual: Math.round(ajustado), 
+      tachado: Math.round(base * 1.36) 
+    };
+  }
+}
 
     let _bannerInterval = null;    // 👈 NUEVO
 
@@ -819,6 +829,8 @@ setBottomPhraseForState();
       document.addEventListener('visibilitychange', ()=> {
         if (document.hidden) stopBannerAutoplay(); else startBannerAutoplay();
       });
+  rotarColor();
+
     }
 
     /* ===================== RENDER: GRID ===================== */
@@ -918,6 +930,8 @@ setBottomPhraseForState();
         `;
         lista.appendChild(card);
       });
+  rotarColor();
+
     }
 
     /* ===================== CARRITO ===================== */
