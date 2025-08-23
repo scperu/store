@@ -581,6 +581,18 @@ body {
     let G_DESTACADOS = [];
     let G_CATEGORIAS = [];
     let G_BANNER = [];             // 👈 NUEVO
+let primeraBusqueda = true; // 👈 controlamos si es la primera búsqueda
+
+// 👇 Utilidad debounce: retrasa ejecución hasta que el usuario deja de tipear
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+
 // --- Manejo de localStorage ---
 function loadCart(){
   try { 
@@ -829,7 +841,18 @@ function getPrecios(producto){
       document.getElementById('marcaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
       document.getElementById('categoriaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
       document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
-      document.getElementById('searchInput').addEventListener('input', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
+      
+// 👇 función con retardo (espera 300ms después de dejar de tipear)
+const buscarConDelay = debounce(() => {
+  if (primeraBusqueda) {
+    document.getElementById('categoriaFiltro').value = ''; // fuerza "Todas"
+    primeraBusqueda = false; // solo en la primera búsqueda
+  }
+  renderizarProductos();
+}, 300);
+
+document.getElementById('searchInput').addEventListener('input', buscarConDelay);
+
 
         document.getElementById('btnLimpiar').addEventListener('click', () => {
         document.getElementById('marcaFiltro').value = '';
