@@ -728,7 +728,7 @@ setBottomPhraseForState();
         msgEl.textContent = " ¡Oferta activa!";
         cdEl.textContent = formatHMS(msToOfferEnd(t));
       } else {
-        msgEl.textContent = " Próxima oferta en";
+        msgEl.textContent = " Próxima oferta en:";
         cdEl.textContent = formatHMS(msToNextOffer(t));
       }
     }
@@ -1045,7 +1045,7 @@ const base = G_PRODUCTOS.filter(p =>
       document.addEventListener('visibilitychange', ()=> {
         if (document.hidden) stopBannerAutoplay(); else startBannerAutoplay();
       });
- // rotarColor();
+ rotarColor();
 
     }
 
@@ -1158,7 +1158,7 @@ const base = G_PRODUCTOS.filter(p =>
         `;
         lista.appendChild(card);
       });
-//  rotarColor();
+  rotarColor();
 
     }
 
@@ -1410,7 +1410,7 @@ const FRASES_ACTIVAS = [
 ];
 
 const FRASES_INACTIVAS = [
-  "⏳ Próxima oferta en",
+  "⏳ Próximas ofertas en breve",
   "🕒 Prepárate: nuevas promos pronto",
   "🎯 Estate atento a la próxima hora feliz",
   "🔔 Vuelven los descuentos en breve",
