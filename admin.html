@@ -458,6 +458,9 @@ body {
 }
 
 
+#bannerWrap {
+  display: none !important;
+}
 
 </style>
 
@@ -787,24 +790,59 @@ function getPrecios(producto){
     }
 
     /* --------- Cargas --------- */
-    async function cargarFiltro() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/filtro.txt');
-      const txt = await res.text();
-      return txt.split('\n').map(x => x.trim()).filter(x => x.length > 0);
+    
+    
+async function cargarExcel() {
+  const url = 'https://raw.githubusercontent.com/scperu/store/main/productos.xlsx';
+  console.log("🔄 Cargando Excel desde:", url);
+
+  try {
+    const res = await fetch(url);
+    const data = await res.arrayBuffer();
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    console.log("📑 Hojas:", workbook.SheetNames);
+
+    // ----------------------------
+    // Productos (hoja Sheet1)
+    // ----------------------------
+    const productos = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"], { defval: "" });
+    console.log("📦 Productos:", productos.length);
+
+    // ----------------------------
+    // Filtro (categorías + mini códigos)
+    // ----------------------------
+    const filtroData = XLSX.utils.sheet_to_json(workbook.Sheets["filtro"], { header: 1 });
+    let filtro = [];
+    for (let col = 0; col < filtroData[0].length; col++) {
+      const categoria = String(filtroData[0][col] || "").trim();
+      if (!categoria) continue;
+      filtro.push(categoria);
+      for (let row = 1; row < filtroData.length; row++) {
+        const val = filtroData[row][col];
+        if (val) filtro.push(String(val).trim());
+      }
     }
-    async function cargarCoti() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/coti.txt');
-      const txt = await res.text();
-      return txt.split('\n').map(x => x.trim()).filter(x => x.length > 0);
-    }
-    async function cargarExcel() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/productos.xlsx');
-      const data = await res.arrayBuffer();
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      return XLSX.utils.sheet_to_json(sheet);
-    }
-    // 👇 NUEVO: carga de mini-códigos para el carrusel
+    console.log("📂 Filtro cargado:", filtro.length, "items");
+
+    // ----------------------------
+    // Coti (destacados, solo mini códigos, sin encabezados)
+    // ----------------------------
+    const cotiData = XLSX.utils.sheet_to_json(workbook.Sheets["coti"], { header: 1 });
+    const coti = cotiData.slice(1).flat().map(x => String(x).trim()).filter(Boolean);
+    console.log("⭐ Destacados cargados:", coti.length);
+
+    return { productos, filtro, coti };
+
+  } catch (e) {
+    console.error("❌ Error cargando Excel:", e);
+    return { productos: [], filtro: [], coti: [] };
+  }
+}
+
+
+
+// 👇 NUEVO: carga de mini-códigos para el carrusel
     async function cargarBanner() {
       const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/banner.txt');
       const txt = await res.text();
@@ -822,21 +860,18 @@ function getPrecios(producto){
     window.onclick = (event) => { if (event.target === document.getElementById('imgModal')) document.getElementById('imgModal').style.display = 'none'; };
 
     /* --------- INIT --------- */
-    async function init() {
-      const [filtro, productos, destacados, banner] = await Promise.all([
-        cargarFiltro(), cargarExcel(), cargarCoti(), cargarBanner()
-      ]);
-      G_FILTRO = filtro;
-      G_PRODUCTOS = productos;
-      G_DESTACADOS = destacados;
-      G_BANNER = banner;
-      G_CATEGORIAS = filtro.filter(x => isNaN(x));
+async function init() {
+  const { productos, filtro, coti } = await cargarExcel();
+  
+  G_PRODUCTOS = productos;
+  G_FILTRO = filtro;
+  G_DESTACADOS = coti;
+  G_CATEGORIAS = filtro.filter(x => isNaN(x));
 
-      poblarMarcas();
-      poblarCategoriasDesdeTxt();
-      renderizarBanner();     // 👈 primero el carrusel
-      renderizarProductos();
-      initOfferCycle();
+  poblarMarcas();
+  poblarCategoriasDesdeTxt();
+  renderizarProductos();
+  initOfferCycle();
 
       document.getElementById('marcaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
       document.getElementById('categoriaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
@@ -1082,9 +1117,7 @@ const base = G_PRODUCTOS.filter(p =>
       const ordenPrecio = document.getElementById('ordenPrecio').value;
       const searchValue = document.getElementById('searchInput').value;
 
-      let productos = G_PRODUCTOS
-  .filter(p => G_FILTRO.includes(String(p['MINI CODIGO']).trim()))
-  .filter(p => Number(p['STOCK'] || 0) > 0); // 👈 oculta los agotados
+      let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
 
 
       if (marcaSeleccionada) {
