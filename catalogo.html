@@ -803,7 +803,7 @@ function getPrecios(producto){
 
 
     async function cargarExcel() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/producto.xlsx');
+      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/catalogo.xlsx');
       const data = await res.arrayBuffer();
       const workbook = XLSX.read(data, { type: 'array' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
