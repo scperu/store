@@ -471,6 +471,19 @@ body {
 }
 
 
+
+@keyframes reposicionBlink {
+  0%, 100% { background: #f3f4f6; color: #111827; } /* gris claro → gris oscuro */
+  50%      { background: #e5e7eb; color: #000000; } /* intermedio negro */
+}
+
+.stock-reposicion {
+  animation: reposicionBlink 2s infinite ease-in-out;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+
 </style>
 
 
@@ -1153,121 +1166,107 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
   const ordenPrecio = document.getElementById('ordenPrecio').value;
   const searchValue = document.getElementById('searchInput').value;
 
-  let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
+  // ✅ Ahora se muestran todos excepto stock = 0
+  let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) !== 0);
 
   if (marcaSeleccionada) {
     productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
   }
 
+  if (searchValue && searchValue.trim()) {
+    productos = productos.filter(p =>
+      matchesQuery(
+        searchValue,
+        (String(p['DESCRIPCION'] || '') + ' ' +
+         String(p['DETALLES'] || '') + ' ' +
+         String(p['MARCA'] || '') + ' ' +
+         String(p['MINI CODIGO'] || '')
+        ).toLowerCase()
+      )
+    );
+  }
 
-      if (searchValue && searchValue.trim()) {
-        productos = productos.filter(p =>
-          matchesQuery(
-            searchValue,
-            (String(p['DESCRIPCION'] || '') + ' ' +
-             String(p['DETALLES'] || '') + ' ' +
-             String(p['MARCA'] || '') + ' ' +
-             String(p['MINI CODIGO'] || '')
-            ).toLowerCase()
-          )
-        );
-      }
+  productos.sort((a, b) => {
+    const pa = Number(a['PRECIO EN SOLES'] || 0);
+    const pb = Number(b['PRECIO EN SOLES'] || 0);
+    return ordenPrecio === 'asc' ? pa - pb : pb - pa;
+  });
 
-      productos.sort((a, b) => {
-        const pa = Number(a['PRECIO EN SOLES'] || 0);
-        const pb = Number(b['PRECIO EN SOLES'] || 0);
-        return ordenPrecio === 'asc' ? pa - pb : pb - pa;
-      });
+  if (!productos.length) {
+    lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
+    return;
+  }
 
-      if (!productos.length) {
-        lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
-        return;
-      }
+  productos.forEach(p => {
+    let desc = (p['DESCRIPCION'] || '').toString().trim();
 
-      productos.forEach(p => {
-
-let desc = (p['DESCRIPCION'] || '').toString().trim();
-
-// 👉 Extraer color al final de la descripción
-const color = extraerColor(desc);
-
-// 👉 Si se detecta color, lo quitamos del texto
-if (color) {
-  desc = desc.replace(new RegExp("\\s*" + color + "$"), "");
-}
-
-
-        const mini = String(p['MINI CODIGO'] || '').trim();
-        const stock = Number(p['STOCK'] || 0);
-        const precios = getPrecios(p);
-        const precioActual = precios.actual;
-        const precioTachado = precios.tachado;
-        const thumbUrl = p['IMAGEN'];
-const largeUrl = p['IMAGEN'];
-
-        const marca = (p['MARCA'] || '').toString().trim();
-
-        let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
-        let stockMsg = '';
-        if (stock === 0) {
-          stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        } else if (stock >0 && stock <2) {
-          stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        } else if (stock >= 2 && stock <4) {
-          stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        } else if (stock >=4 && stock <9) {
-          stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        } else if (stock >9) {
-          stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-        }
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-
-<div style="position:relative;">
-  ${badgeRecomendado}
-  ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"></div>` : ""}
-
-  <img src="${thumbUrl}" alt="${desc}" 
-       onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
-</div>
-
-
-
-          <div class="card-content">
-            
-<h3>${desc}</h3>
-<div class="meta">
-
-  <span>${marca || '—'}</span>
-  <span class="mini-code">${mini || ''}</span>
-</div>
-
-
-            ${stockMsg}
-            <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${p['DETALLES'] || ''}</p>
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
-
-          </div>
-        `;
-        lista.appendChild(card);
-      });
-  rotarColor();
-
+    // 👉 Extraer color al final de la descripción
+    const color = extraerColor(desc);
+    if (color) {
+      desc = desc.replace(new RegExp("\\s*" + color + "$"), "");
     }
+
+    const mini = String(p['MINI CODIGO'] || '').trim();
+    const stock = Number(p['STOCK'] || 0);
+    const precios = getPrecios(p);
+    const precioActual = precios.actual;
+    const precioTachado = precios.tachado;
+    const thumbUrl = p['IMAGEN'];
+    const marca = (p['MARCA'] || '').toString().trim();
+
+    let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
+
+    // ✅ Mensajes de stock (incluye “En reposición”)
+    let stockMsg = '';
+    if (stock < 0) {
+      stockMsg = '<div class="promo-msg stock-reposicion">🔄 En reposición</div>';
+    } else if (stock > 0 && stock < 2) {
+      stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
+    } else if (stock >= 2 && stock < 4) {
+      stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
+    } else if (stock >= 4 && stock < 9) {
+      stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
+    } else if (stock > 9) {
+      stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+    }
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="position:relative;">
+        ${badgeRecomendado}
+        ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"></div>` : ""}
+        <img src="${thumbUrl}" alt="${desc}" 
+             onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
+      </div>
+      <div class="card-content">
+        <h3>${desc}</h3>
+        <div class="meta">
+          <span>${marca || '—'}</span>
+          <span class="mini-code">${mini || ''}</span>
+        </div>
+        ${stockMsg}
+        <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${p['DETALLES'] || ''}</p>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+          <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+          <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+        </div>
+        <button class="cart-btn" 
+          onclick="addToCart(
+            '${mini}',
+            '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
+            '${precioActual}',
+            '${p['CODIGO']}'
+          )">
+          Agregar 🛒
+        </button>
+      </div>
+    `;
+    lista.appendChild(card);
+  });
+
+  rotarColor();
+}
 
     /* ===================== CARRITO ===================== */
     function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
@@ -1633,6 +1632,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+<script>
+  // 🚫 Deshabilitar clic derecho
+  document.addEventListener("contextmenu", e => e.preventDefault());
+</script>
 
 
 </body>
