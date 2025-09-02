@@ -1158,7 +1158,10 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
     }
 
     /* ===================== RENDER: GRID ===================== */
-    function renderizarProductos() {
+
+
+
+function renderizarProductos() {
   const lista = document.getElementById('product-list');
   lista.innerHTML = '';
 
@@ -1166,7 +1169,7 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
   const ordenPrecio = document.getElementById('ordenPrecio').value;
   const searchValue = document.getElementById('searchInput').value;
 
-  // ✅ Ahora se muestran todos excepto stock = 0
+  // ✅ Mostrar todo excepto stock = 0
   let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) !== 0);
 
   if (marcaSeleccionada) {
@@ -1216,7 +1219,7 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
 
     let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
 
-    // ✅ Mensajes de stock (incluye “En reposición”)
+    // ✅ Mensajes de stock
     let stockMsg = '';
     if (stock < 0) {
       stockMsg = '<div class="promo-msg stock-reposicion">🔄 En reposición</div>';
@@ -1228,6 +1231,22 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
       stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
     } else if (stock > 9) {
       stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+    }
+
+    // ✅ Botón según stock
+    let addButton = '';
+    if (stock < 0) {
+      addButton = `<button class="cart-btn" disabled style="background:#9ca3af;cursor:not-allowed;">⏳ Pronto </button>`;
+    } else {
+      addButton = `<button class="cart-btn" 
+        onclick="addToCart(
+          '${mini}',
+          '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
+          '${precioActual}',
+          '${p['CODIGO']}'
+        )">
+        Agregar 🛒
+      </button>`;
     }
 
     const card = document.createElement('div');
@@ -1251,15 +1270,7 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
           <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
           <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
         </div>
-        <button class="cart-btn" 
-          onclick="addToCart(
-            '${mini}',
-            '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-            '${precioActual}',
-            '${p['CODIGO']}'
-          )">
-          Agregar 🛒
-        </button>
+        ${addButton}
       </div>
     `;
     lista.appendChild(card);
@@ -1267,6 +1278,8 @@ ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"><
 
   rotarColor();
 }
+
+
 
     /* ===================== CARRITO ===================== */
     function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
