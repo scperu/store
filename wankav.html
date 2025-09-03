@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>ServiComp - Mega Ofertas</title>
+<title>Wanka Valley</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
@@ -458,9 +458,31 @@ body {
 }
 
 
-#bannerWrap {
-  display: none !important;
+
+
+.ribbon-color {
+  position: absolute;
+  top: 10px;
+  right: -55px;        /* mueve un poquito más a la derecha */
+  padding: 10px 60px;   /* 👈 más alto (8px) y más ancho (60px) */
+  transform: rotate(45deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border-radius: 2px;  /* opcional, para bordes un poco suaves */
 }
+
+
+
+@keyframes reposicionBlink {
+  0%, 100% { background: #f3f4f6; color: #111827; } /* gris claro → gris oscuro */
+  50%      { background: #e5e7eb; color: #000000; } /* intermedio negro */
+}
+
+.stock-reposicion {
+  animation: reposicionBlink 2s infinite ease-in-out;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
 
 </style>
 
@@ -474,8 +496,8 @@ body {
   </div>
 
   <header>
-    <h1>🔥 Mega Ofertas ServiComp 🔥</h1>
-    <p>"Equipos confiables, soluciones inteligentes"</p>
+    <h1>🔥 Catalogo 2025 🔥</h1>
+    <p>"“Todo en uno, siempre para ti”"</p>
   </header>
 
   <!-- Barra de filtros -->
@@ -485,11 +507,7 @@ body {
       <input type="search" id="searchInput" placeholder='Ej: laptop AND "HP Victus" NOT impresora (también búsqueda normal)' />
     </div>
     <div class="group">
-      <label for="categoriaFiltro">Categoría</label>
-      <select id="categoriaFiltro"><option value="">Todas</option></select>
-    </div>
-    <div class="group">
-      <label for="marcaFiltro">Marca</label>
+      <label for="marcaFiltro">Categoria</label>
       <select id="marcaFiltro"><option value="">Todas</option></select>
     </div>
 
@@ -572,10 +590,12 @@ body {
 
 
 
-  <div id="imgModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="modalImg" />
+  <div id="mediaModal" class="modal">
+  <span class="close">&times;</span>
+  <div id="modalBody" style="display:flex;justify-content:center;align-items:center;height:100%;">
+    <!-- aquí insertaremos img o video según el Excel -->
   </div>
+</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
@@ -656,7 +676,7 @@ let CART = loadCart();
       const t = ts ?? nowMs();
       setOfferStart(t);
       clearNextOfferStart();
-      renderizarBanner();
+      
       renderizarProductos();
       updateOfferUI();
 setBottomPhraseForState();
@@ -668,7 +688,7 @@ setBottomPhraseForState();
       const wait = randomWaitMs();
       setNextOfferStart(t + wait);
       clearOfferStart();
-      renderizarBanner();
+      
       renderizarProductos();
       updateOfferUI();
 setBottomPhraseForState();
@@ -791,148 +811,163 @@ function getPrecios(producto){
 
     /* --------- Cargas --------- */
     
-    
-async function cargarExcel() {
-  const url = 'https://raw.githubusercontent.com/scperu/store/main/productos.xlsx';
-  console.log("🔄 Cargando Excel desde:", url);
 
-  try {
-    const res = await fetch(url);
-    const data = await res.arrayBuffer();
-    const workbook = XLSX.read(data, { type: 'array' });
 
-    console.log("📑 Hojas:", workbook.SheetNames);
 
-    // ----------------------------
-    // Productos (hoja Sheet1)
-    // ----------------------------
-    const productos = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"], { defval: "" });
-    console.log("📦 Productos:", productos.length);
 
-    // ----------------------------
-    // Filtro (categorías + mini códigos)
-    // ----------------------------
-    const filtroData = XLSX.utils.sheet_to_json(workbook.Sheets["filtro"], { header: 1 });
-    let filtro = [];
-    for (let col = 0; col < filtroData[0].length; col++) {
-      const categoria = String(filtroData[0][col] || "").trim();
-      if (!categoria) continue;
-      filtro.push(categoria);
-      for (let row = 1; row < filtroData.length; row++) {
-        const val = filtroData[row][col];
-        if (val) filtro.push(String(val).trim());
-      }
+    async function cargarExcel() {
+      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/wankav.xlsx');
+      const data = await res.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      return XLSX.utils.sheet_to_json(sheet);
     }
-    console.log("📂 Filtro cargado:", filtro.length, "items");
 
-    // ----------------------------
-    // Coti (destacados, solo mini códigos, sin encabezados)
-    // ----------------------------
-    const cotiData = XLSX.utils.sheet_to_json(workbook.Sheets["coti"], { header: 1 });
-    const coti = cotiData.slice(1).flat().map(x => String(x).trim()).filter(Boolean);
-    console.log("⭐ Destacados cargados:", coti.length);
+    /* --------- Modal imagen --------- */
+async function mostrarModal(src) {
+  const modal = document.getElementById('mediaModal');
+  const body = document.getElementById('modalBody');
+  modal.style.display = 'block';
+  body.innerHTML = ''; // limpiar contenido anterior
 
-    return { productos, filtro, coti };
-
-  } catch (e) {
-    console.error("❌ Error cargando Excel:", e);
-    return { productos: [], filtro: [], coti: [] };
+  // YouTube Shorts
+  if (src.includes("youtube.com/shorts/")) {
+    const videoId = src.split("/shorts/")[1].split("?")[0];
+    body.innerHTML = `
+      <iframe width="90%" height="80%" 
+              src="https://www.youtube.com/embed/${videoId}" 
+              frameborder="0" allowfullscreen></iframe>`;
+    return;
   }
+
+  // Enlaces que parecen vídeos (mp4 o sin extensión pero de plataformas como Etsy)
+  const videoPatterns = [".mp4", ".webm", "video/upload", "du_"];
+  if (videoPatterns.some(pat => src.includes(pat))) {
+    const vid = document.createElement('video');
+    vid.src = src;
+    vid.controls = true;
+    vid.autoplay = true;
+    vid.style.maxWidth = '90%';
+    vid.style.maxHeight = '80%';
+    body.appendChild(vid);
+    return;
+  }
+
+  // Imagen por defecto
+  const img = document.createElement('img');
+  img.src = src;
+  img.className = 'modal-content';
+  img.style.maxWidth = '90%';
+  img.style.maxHeight = '80%';
+  body.appendChild(img);
+}
+
+
+// cerrar modal
+document.querySelector('#mediaModal .close').onclick = () => { 
+  cerrarModal();
+};
+window.onclick = (event) => { 
+  if (event.target === document.getElementById('mediaModal')) {
+    cerrarModal();
+  }
+};
+
+// función que pausa video y limpia
+function cerrarModal() {
+  const modal = document.getElementById('mediaModal');
+  const body = document.getElementById('modalBody');
+
+  // Pausar cualquier video dentro
+  const vids = body.querySelectorAll('video');
+  vids.forEach(v => {
+    v.pause();
+    v.currentTime = 0; // opcional: volver al inicio
+  });
+
+  // Limpiar contenido (elimina <video>/<iframe>/<img>)
+  body.innerHTML = "";
+
+  // Ocultar modal
+  modal.style.display = 'none';
+}
+
+
+function extraerColor(descripcion) {
+  if (!descripcion) return null;
+  // Busca la última palabra en MAYÚSCULAS (ej: NEGRO, AZUL, ROJO…)
+  const match = descripcion.trim().match(/\b([A-ZÁÉÍÓÚÑ]+)$/);
+  return match ? match[1] : null;
 }
 
 
 
-// 👇 NUEVO: carga de mini-códigos para el carrusel
-    async function cargarBanner() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/banner.txt');
-      const txt = await res.text();
-      return txt.split('\n').map(x => x.trim()).filter(Boolean);
-    }
 
-    /* --------- Modal imagen --------- */
-    function mostrarModal(src) {
-      const modal = document.getElementById('imgModal');
-      const modalImg = document.getElementById('modalImg');
-      modal.style.display = 'block';
-      modalImg.src = src;
-    }
-    document.querySelector('.close').onclick = () => { document.getElementById('imgModal').style.display = 'none'; };
-    window.onclick = (event) => { if (event.target === document.getElementById('imgModal')) document.getElementById('imgModal').style.display = 'none'; };
+function getColorHex(nombre) {
+  const map = {
+    'NEGRO': '#111827',
+    'BLANCO': '#e5e7eb',
+    'ROJO': '#dc2626',
+    'AZUL': '#2563eb',
+    'VERDE': '#16a34a',
+    'AMARILLO': '#facc15',
+    'GRIS': '#6b7280',
+    'MORADO': '#7c3aed',
+    'NARANJA': '#f97316',
+    'ROSA': '#ec4899',
+    'ROSADO': '#ec4899'   // 👈 ahora sí válido
+  };
+  return map[nombre.toUpperCase()] || '#374151'; // fallback gris
+}
+
+
+
 
     /* --------- INIT --------- */
-async function init() {
-  const { productos, filtro, coti } = await cargarExcel();
-  
+    async function init() {
+  const productos = await cargarExcel();
   G_PRODUCTOS = productos;
-  G_FILTRO = filtro;
-  G_DESTACADOS = coti;
-  G_CATEGORIAS = filtro.filter(x => isNaN(x));
 
   poblarMarcas();
-  poblarCategoriasDesdeTxt();
+  
+
+
+
   renderizarProductos();
+  
   initOfferCycle();
 
-      document.getElementById('marcaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
-      document.getElementById('categoriaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
-      document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
-      
-// 👇 función con retardo (espera 300ms después de dejar de tipear)
-const buscarConDelay = debounce(() => {
-  if (primeraBusqueda) {
-    document.getElementById('categoriaFiltro').value = ''; // fuerza "Todas"
-    primeraBusqueda = false; // solo en la primera búsqueda
-  }
-  renderizarProductos();
-}, 300);
+  document.getElementById('marcaFiltro').addEventListener('change', renderizarProductos);
+  document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
 
-document.getElementById('searchInput').addEventListener('input', buscarConDelay);
+  const buscarConDelay = debounce(renderizarProductos, 300);
+  document.getElementById('searchInput').addEventListener('input', buscarConDelay);
 
+  document.getElementById('btnLimpiar').addEventListener('click', () => {
+    document.getElementById('marcaFiltro').value = '';
+    document.getElementById('categoriaFiltro').value = '';
+    document.getElementById('ordenPrecio').value = 'asc';
+    document.getElementById('searchInput').value = '';
+    renderizarProductos();
+  });
 
-        document.getElementById('btnLimpiar').addEventListener('click', () => {
-        document.getElementById('marcaFiltro').value = '';
-        document.getElementById('categoriaFiltro').value = '';
-        document.getElementById('ordenPrecio').value = 'asc';
-        document.getElementById('searchInput').value = '';
-        renderizarProductos();
-        // renderizarBanner(); // si quieres que el carrusel responda a filtros, descomenta
-      });
+  document.getElementById('shippingInput').addEventListener('input', updateCart);
+  document.getElementById('couponInput').addEventListener('input', updateCart);
+}
 
-
-      document.getElementById('shippingInput').addEventListener('input', updateCart);
-      document.getElementById('couponInput').addEventListener('input', updateCart);
-    }
 
     /* --------- Poblar selects --------- */
     function poblarMarcas() {
-      const base = G_PRODUCTOS.filter(p => G_FILTRO.includes(String(p['MINI CODIGO']).trim()));
-      const marcas = Array.from(new Set(base.map(p => (p['MARCA'] || '').toString().trim()).filter(Boolean))).sort((a,b) => a.localeCompare(b));
-      const sel = document.getElementById('marcaFiltro');
-      sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
-      marcas.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m; opt.textContent = m;
-        sel.appendChild(opt);
-      });
-    }
-    function poblarCategoriasDesdeTxt() {
-  const sel = document.getElementById('categoriaFiltro');
+  const base = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
 
-  // Limpiar todas las opciones excepto "Todas"
+  const marcas = Array.from(new Set(base.map(p => (p['MARCA'] || '').toString().trim()).filter(Boolean))).sort((a,b) => a.localeCompare(b));
+  const sel = document.getElementById('marcaFiltro');
   sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
-
-  // Agregar categorías desde el filtro.txt
-  G_CATEGORIAS.forEach(c => { 
-    const opt = document.createElement('option'); 
-    opt.value = c; 
-    opt.textContent = c;   // sin iconos, limpio y pro
-    sel.appendChild(opt); 
+  marcas.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    sel.appendChild(opt);
   });
-
-  // ✅ Seleccionar automáticamente la primera categoría del filtro.txt
-  if (G_CATEGORIAS.length > 0) {
-    sel.value = G_CATEGORIAS[0];
-  }
 }
 
     /* ===================== BUSCADOR BOOLEANO ===================== */
@@ -1053,26 +1088,41 @@ const base = G_PRODUCTOS.filter(p =>
         const precios = getPrecios(p);
         const precioActual = precios.actual;
         const precioTachado = precios.tachado;
-        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
+        const thumbUrl = p['IMAGEN'];
+const largeUrl = p['IMAGEN'];
+
         const marca = (p['MARCA'] || '').toString().trim();
 
         let stockMsg = '';
         if (stock === 0) stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        else if (stock >= 1 && stock <= 3) stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        else if (stock >= 4 && stock <= 10) stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        else if (stock >= 11 && stock <= 19) stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        else if (stock >= 20) stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+        else if (stock > 0 && stock < 2) stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
+        else if (stock >= 2 && stock < 4) stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
+        else if (stock >= 4 && stock < 9) stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
+        else if (stock >10) stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
 
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
           <div style="position:relative;">
-            <div class="badge-recomendado">🔥</div>
-            <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" loading="lazy" onclick="mostrarModal('${largeUrl}')">
-          </div>
+
+${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"></div>` : ""}
+
+
+  ${badgeRecomendado}
+${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"></div>` : ""}
+	
+
+  
+<img src="${thumbUrl}" alt="${desc}" 
+     onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
+
+
+</div>
+
           <div class="card-content">
-            <h3>${p['DESCRIPCION'] || ''}</h3>
+            <h3>${desc}</h3>
+
+
             <div class="meta">
               <span>${marca || '—'}</span>
               <span class="mini-code">${mini || ''}</span>
@@ -1108,127 +1158,128 @@ const base = G_PRODUCTOS.filter(p =>
     }
 
     /* ===================== RENDER: GRID ===================== */
-    function renderizarProductos() {
-      const lista = document.getElementById('product-list');
-      lista.innerHTML = '';
-
-      const marcaSeleccionada = document.getElementById('marcaFiltro').value;
-      const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
-      const ordenPrecio = document.getElementById('ordenPrecio').value;
-      const searchValue = document.getElementById('searchInput').value;
-
-      let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
 
 
-      if (marcaSeleccionada) {
-        productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
-      }
-      if (categoriaSeleccionada) {
-        const codigosCat = [];
-        let found = false;
-        for (let i = 0; i < G_FILTRO.length; i++) {
-          if (G_FILTRO[i] === categoriaSeleccionada) { found = true; continue; }
-          if (isNaN(G_FILTRO[i])) { if (found) break; }
-          else if (found) { codigosCat.push(G_FILTRO[i]); }
-        }
-        productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
-      }
-      if (searchValue && searchValue.trim()) {
-        productos = productos.filter(p =>
-          matchesQuery(
-            searchValue,
-            (String(p['DESCRIPCION'] || '') + ' ' +
-             String(p['DETALLES'] || '') + ' ' +
-             String(p['MARCA'] || '') + ' ' +
-             String(p['MINI CODIGO'] || '')
-            ).toLowerCase()
-          )
-        );
-      }
 
-      productos.sort((a, b) => {
-        const pa = Number(a['PRECIO EN SOLES'] || 0);
-        const pb = Number(b['PRECIO EN SOLES'] || 0);
-        return ordenPrecio === 'asc' ? pa - pb : pb - pa;
-      });
+function renderizarProductos() {
+  const lista = document.getElementById('product-list');
+  lista.innerHTML = '';
 
-      if (!productos.length) {
-        lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
-        return;
-      }
+  const marcaSeleccionada = document.getElementById('marcaFiltro').value;
+  const ordenPrecio = document.getElementById('ordenPrecio').value;
+  const searchValue = document.getElementById('searchInput').value;
 
-      productos.forEach(p => {
-        const mini = String(p['MINI CODIGO'] || '').trim();
-        const stock = Number(p['STOCK'] || 0);
-        const precios = getPrecios(p);
-        const precioActual = precios.actual;
-        const precioTachado = precios.tachado;
-        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
-        const marca = (p['MARCA'] || '').toString().trim();
+  // ✅ Mostrar todo excepto stock = 0
+  let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) !== 0);
 
-        let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
-        let stockMsg = '';
-        if (stock === 0) {
-          stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        } else if (stock >= 1 && stock <= 3) {
-          stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        } else if (stock >= 4 && stock <= 10) {
-          stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        } else if (stock >= 11 && stock <= 19) {
-          stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        } else if (stock >= 20) {
-          stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-        }
+  if (marcaSeleccionada) {
+    productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
+  }
 
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div style="position:relative;">
-            ${badgeRecomendado}
-            <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" onclick="mostrarModal('${largeUrl}')">
-          </div>
-          <div class="card-content">
-            <h3>${p['DESCRIPCION'] || ''}</h3>
-            <div class="meta">
-              <span>${marca || '—'}</span>
-              <span class="mini-code">${mini || ''}</span>
-            </div>
-            ${stockMsg}
+  if (searchValue && searchValue.trim()) {
+    productos = productos.filter(p =>
+      matchesQuery(
+        searchValue,
+        (String(p['DESCRIPCION'] || '') + ' ' +
+         String(p['DETALLES'] || '') + ' ' +
+         String(p['MARCA'] || '') + ' ' +
+         String(p['MINI CODIGO'] || '')
+        ).toLowerCase()
+      )
+    );
+  }
 
-<p style="margin:.35rem 0;color:#374151;font-size:.92em;">
-  ${p['DETALLES'] || ''}
-  <!-- 
-  <a href="https://www.deltron.com.pe/modulos/productos/items/postsql.php?item_number=${p['CODIGO']}"
-     target="_blank"
-     style="margin-left:6px;color:#1d4ed8;font-weight:600;text-decoration:none;">
-     🔎
-  </a>
-  -->
-</p>
+  productos.sort((a, b) => {
+    const pa = Number(a['PRECIO EN SOLES'] || 0);
+    const pb = Number(b['PRECIO EN SOLES'] || 0);
+    return ordenPrecio === 'asc' ? pa - pb : pb - pa;
+  });
 
+  if (!productos.length) {
+    lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
+    return;
+  }
 
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
+  productos.forEach(p => {
+    let desc = (p['DESCRIPCION'] || '').toString().trim();
 
-          </div>
-        `;
-        lista.appendChild(card);
-      });
-  rotarColor();
-
+    // 👉 Extraer color al final de la descripción
+    const color = extraerColor(desc);
+    if (color) {
+      desc = desc.replace(new RegExp("\\s*" + color + "$"), "");
     }
+
+    const mini = String(p['MINI CODIGO'] || '').trim();
+    const stock = Number(p['STOCK'] || 0);
+    const precios = getPrecios(p);
+    const precioActual = precios.actual;
+    const precioTachado = precios.tachado;
+    const thumbUrl = p['IMAGEN'];
+    const marca = (p['MARCA'] || '').toString().trim();
+
+    let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
+
+    // ✅ Mensajes de stock
+    let stockMsg = '';
+    if (stock < 0) {
+      stockMsg = '<div class="promo-msg stock-reposicion">🔄 En reposición</div>';
+    } else if (stock > 0 && stock < 2) {
+      stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
+    } else if (stock >= 2 && stock < 4) {
+      stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
+    } else if (stock >= 4 && stock < 9) {
+      stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
+    } else if (stock > 9) {
+      stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
+    }
+
+    // ✅ Botón según stock
+    let addButton = '';
+    if (stock < 0) {
+      addButton = `<button class="cart-btn" disabled style="background:#9ca3af;cursor:not-allowed;">⏳ Pronto </button>`;
+    } else {
+      addButton = `<button class="cart-btn" 
+        onclick="addToCart(
+          '${mini}',
+          '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
+          '${precioActual}',
+          '${p['CODIGO']}'
+        )">
+        Agregar 🛒
+      </button>`;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="position:relative;">
+        ${badgeRecomendado}
+        ${color ? `<div class="ribbon-color" style="background:${getColorHex(color)};"></div>` : ""}
+        <img src="${thumbUrl}" alt="${desc}" 
+             onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
+      </div>
+      <div class="card-content">
+        <h3>${desc}</h3>
+        <div class="meta">
+          <span>${marca || '—'}</span>
+          <span class="mini-code">${mini || ''}</span>
+        </div>
+        ${stockMsg}
+        <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${p['DETALLES'] || ''}</p>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+          <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+          <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+        </div>
+        ${addButton}
+      </div>
+    `;
+    lista.appendChild(card);
+  });
+
+  rotarColor();
+}
+
+
 
     /* ===================== CARRITO ===================== */
     function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
@@ -1373,7 +1424,7 @@ function updateCart() {
   ).join("\n");
 
   const waText = encodeURIComponent(
-    "Pedido ServiComp:\n\n" + (waLines || "—") +
+    "Pedido:\n\n" + (waLines || "—") +
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
@@ -1538,13 +1589,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const FRASES_HEADER = [
-  "🔥 Mega Ofertas ServiComp 🔥",
-  "⚡ Ofertas Exclusivas ServiComp ⚡",
-  "💥 Descuentos ServiComp 💥",
-  "🏷️ Promos ServiComp 🏷️",
-  "🚀 Super Ofertas ServiComp 🚀",
-  "⭐ Ahorra con ServiComp ⭐",
-  "🔥 Rebajas ServiComp 🔥"
+  "🔥 Mega Ofertas  🔥",
+  "⚡ Ofertas Exclusivas ⚡",
+  "💥 Descuentos 💥",
+  "🏷️ Promos 🏷️",
+  "🚀 Super Ofertas 🚀",
+  "⭐ Ahorra con Nosotros ⭐",
+  "🔥 Rebajas y mas.. 🔥"
 ];
   
 let indiceHeader = -1; // para recordar la última usada
@@ -1593,12 +1644,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
 <script>
   // 🚫 Deshabilitar clic derecho
   document.addEventListener("contextmenu", e => e.preventDefault());
 </script>
-
-
 
 
 </body>
