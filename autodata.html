@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoData - Automatiza tus procesos</title>
+  <meta name="description" content="AutoData: Automatizaciones en Excel, Google Drive y Python para ahorrar tiempo y evitar errores.">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#1e88e5; 
+      --accent:#43a047; 
+      --cta:#25d366; 
+      --ink:#333; 
+      --bg:#f5f7fa; 
+      --card:#fff;
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    body{
+      font-family:'Poppins',system-ui,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.6;
+      scroll-behavior:smooth;
+    }
+
+    /* Animaciones de entrada */
+    .fade-in{opacity:0; transform:translateY(40px); transition:all .8s ease-out;}
+    .fade-in.visible{opacity:1; transform:translateY(0);}
+
+    
+
+
+.hero{
+  position:relative;
+  color:#fff;
+  text-align:center;
+  padding:60px 20px;   /* ↓ antes era 100px, ahora más compacto */
+  border-bottom-left-radius:30px;
+  border-bottom-right-radius:30px;
+  background:linear-gradient(135deg,#1e88e5,#43a047);
+  background-attachment:fixed;
+}
+.hero h1{
+  font-size:2.5rem;   /* un poco más chico que 2.8rem */
+  margin-bottom:10px;
+}
+.hero p{
+  font-size:1.2rem;
+  opacity:.95;
+  min-height:28px;
+}
+
+    @keyframes blink{0%,100%{border-color:transparent;}50%{border-color:#fff;}}
+
+    /* Botones CTA */
+    .cta-buttons a{
+      display:inline-block;
+      margin:8px;
+      padding:14px 28px;
+      border-radius:12px;
+      font-weight:700;
+      text-decoration:none;
+      transition:.3s;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
+    }
+    .btn-whatsapp{background:var(--cta);color:#fff;}
+    .btn-facebook{background:#1877f2;color:#fff;}
+    .cta-buttons a:hover{transform:translateY(-3px);}
+
+    /* Sections */
+    section{max-width:1100px;margin:0 auto;padding:60px 20px;}
+    h2{color:var(--primary);text-align:center;margin-bottom:20px;font-size:2rem;}
+    p.desc{text-align:center;max-width:800px;margin:0 auto 30px;font-size:1.05rem;}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:24px;}
+    .card{
+      background:var(--card);
+      padding:22px;
+      border-radius:16px;
+      box-shadow:0 8px 22px rgba(0,0,0,.07);
+      transition:.3s;
+    }
+    .card:hover{transform:translateY(-5px);}
+    .card h3{color:var(--accent);margin-bottom:10px;font-size:1.2rem;}
+
+    /* Accordion */
+    .accordion{
+      width:100%;background:var(--card);cursor:pointer;
+      padding:18px;margin:10px 0;border:none;border-radius:14px;
+      box-shadow:0 6px 16px rgba(0,0,0,.08);
+      text-align:left;font-size:1.1rem;font-weight:600;transition:.3s;
+    }
+    .accordion:hover{background:#eef7f0;}
+    .panel{
+      max-height:0;overflow:hidden;transition:max-height .4s ease;
+      background:#eef7f0;padding:0 18px;border-radius:0 0 14px 14px;
+    }
+    .panel p{margin:14px 0;line-height:1.7;}
+
+    /* Footer */
+    footer{
+      text-align:center;color:#fff;padding:22px;margin-top:40px;
+      border-top-left-radius:24px;border-top-right-radius:24px;
+      background:linear-gradient(135deg,#1e88e5,#43a047);
+    }
+    small{opacity:.95;}
+
+    /* Botón flotante WhatsApp */
+    .whatsapp-float{
+      position:fixed;bottom:20px;right:20px;width:60px;height:60px;
+      background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:1000;transition:.3s;
+    }
+    .whatsapp-float:hover{transform:scale(1.1);}
+    .whatsapp-float svg{width:34px;height:34px;fill:#fff;}
+
+    /* Tooltip */
+    .whatsapp-tooltip{
+      position:fixed;bottom:90px;right:20px;background:#25d366;color:#fff;
+      padding:10px 16px;border-radius:20px;font-size:0.95rem;font-weight:600;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:999;opacity:0;transform:translateY(10px);
+      transition:all .4s ease;
+    }
+    .whatsapp-tooltip.show{opacity:1;transform:translateY(0);}
+  </style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero fade-in">
+  <h1>AutoData 🚀</h1>
+  <p><span id="typing" class="typing"></span></p>
+</header>
+
+
+<!-- ¿Qué es AutoData? -->
+<section class="fade-in">
+  <h2>¿Qué es AutoData?</h2>
+  <p class="desc">
+    En <strong>AutoData</strong> automatizamos tareas repetitivas para profesionales y empresas con las mejores herramientas.
+  </p>
+  <div class="grid">
+    <div class="card fade-in"><h3>🖥️ Ofimática & PDF</h3><p>Generación automática de contratos, informes y presentaciones.</p></div>
+    <div class="card fade-in"><h3>🔗 RPA & APIs</h3><p>Conecta apps sin esfuerzo: correo → Excel → WhatsApp, todo en piloto automático.</p></div>
+    <div class="card fade-in"><h3>📊 BI & Dashboards</h3><p>Power BI / Looker Studio conectados a tus datos, actualizados sin trabajo manual.</p></div>
+    <div class="card fade-in"><h3>🗄️ Bases de datos</h3><p>ETL, cargas masivas, limpieza de datos y reportes SQL listos para decidir.</p></div>
+    <div class="card fade-in"><h3>💬 Mensajería & Alertas</h3><p>Notificaciones automáticas vía WhatsApp, Telegram o Email para estar siempre al día.</p></div>
+    <div class="card fade-in"><h3>☁️ Cloud & Integraciones</h3><p>Conexiones seguras con Google Drive, APIs externas y almacenamiento en la nube.</p></div>
+  </div>
+</section>
+
+
+<!-- Beneficios -->
+<section class="fade-in">
+  <h2>Beneficios</h2>
+  <div class="grid">
+    <div class="card fade-in"><h3>⏱️ Ahorro de tiempo</h3><p>Procesos que tomaban horas ahora toman minutos.</p></div>
+    <div class="card fade-in"><h3>⚡ Menos errores</h3><p>Flujos consistentes y confiables, sin copy-paste.</p></div>
+    <div class="card fade-in"><h3>📊 Resultados al instante</h3><p>Reportes, PDFs y tableros listos con un clic.</p></div>
+    <div class="card fade-in"><h3>💼 Entrega pro</h3><p>Documentación y soporte para que todo funcione siempre.</p></div>
+    <div class="card fade-in"><h3>🔒 Seguridad de datos</h3><p>Protección de tu información con respaldos automáticos y acceso seguro.</p></div>
+    <div class="card fade-in"><h3>🌐 Escalabilidad</h3><p>Soluciones que crecen contigo, listas para integrar más procesos en el futuro.</p></div>
+  </div>
+</section>
+
+
+<!-- ¿Por qué elegir AutoData? -->
+<section class="fade-in">
+  <h2>¿Por qué elegir AutoData?</h2>
+  <div class="grid">
+    <div class="card fade-in"><h3>👨‍💻 Experiencia</h3><p>Más de 100 proyectos de automatización en distintos sectores.</p></div>
+    <div class="card fade-in"><h3>⚙️ Soluciones integrales</h3><p>Desde Excel hasta APIs avanzadas, todo en un mismo lugar.</p></div>
+    <div class="card fade-in"><h3>💡 Innovación</h3><p>Usamos las mejores herramientas (RPA, BI, IA) para maximizar resultados.</p></div>
+    <div class="card fade-in"><h3>🤝 Acompañamiento</h3><p>No solo instalamos, te acompañamos hasta que domines tu flujo.</p></div>
+    <div class="card fade-in"><h3>📈 Resultados comprobados</h3><p>Casos de éxito y mejoras medibles en eficiencia y productividad.</p></div>
+    <div class="card fade-in"><h3>🤖 Tecnología de punta</h3><p>Integramos IA, RPA y BI para ofrecerte lo último en automatización.</p></div>
+  </div>
+</section>
+
+
+
+<section class="fade-in">
+  <h2>Profesiones y Sectores</h2>
+  <p class="desc">Haz clic en tu profesión para ver cómo te ayudamos.</p>
+
+  <!-- 1 -->
+  <button class="accordion fade-in">👩‍🏫 Profesores</button>
+  <div class="panel"><p>📊 Reportes de notas<br>📝 Boletas PDF<br>✅ Consolidación de asistencia<br>📚 Actas y certificados<br>📈 Estadísticas de rendimiento</p></div>
+
+  <!-- 2 -->
+  <button class="accordion fade-in">🩺 Médicos</button>
+  <div class="panel"><p>📅 Agenda de citas<br>💊 Recetas PDF<br>📂 Historial médico digital<br>📈 Análisis de consultas<br>🔔 Recordatorios de seguimiento</p></div>
+
+  <!-- 3 -->
+  <button class="accordion fade-in">🧠 Psicólogos</button>
+  <div class="panel"><p>📅 Agenda automática<br>📝 Fichas de pacientes PDF<br>📊 Reportes de evolución<br>💬 Recordatorios por WhatsApp<br>🧾 Facturación automática</p></div>
+
+  <!-- 4 -->
+  <button class="accordion fade-in">⚖️ Abogados</button>
+  <div class="panel"><p>📄 Contratos inteligentes<br>🖊️ Escritos automáticos<br>📅 Alertas de plazos<br>📂 Expedientes organizados<br>📊 Reportes de procesos</p></div>
+
+  <!-- 5 -->
+  <button class="accordion fade-in">📊 Contadores</button>
+  <div class="panel"><p>📂 PDT y conciliaciones<br>📑 Reportes SUNAT<br>💵 Flujo de caja automático<br>📊 Tableros financieros<br>🔔 Alertas de vencimientos</p></div>
+
+  <!-- 6 -->
+  <button class="accordion fade-in">🏗️ Ingenieros</button>
+  <div class="panel"><p>📐 Cálculos automáticos<br>📊 KPIs de proyectos<br>📂 Planos digitales<br>📈 Dashboards de avance<br>🔧 Control de calidad</p></div>
+
+  <!-- 7 -->
+  <button class="accordion fade-in">👩‍⚕️ Enfermeras</button>
+  <div class="panel"><p>📅 Turnos automáticos<br>📋 Reportes diarios<br>💊 Alertas de medicación<br>📂 Fichas digitales<br>🔔 Recordatorios</p></div>
+
+  <!-- 8 -->
+  <button class="accordion fade-in">🏦 Bancos & Finanzas</button>
+  <div class="panel"><p>💵 Reportes de caja<br>📊 Estados financieros<br>🔔 Alertas de riesgo<br>📂 Cumplimiento regulatorio<br>📈 Análisis de inversión</p></div>
+
+  <!-- 9 -->
+  <button class="accordion fade-in">🏥 Clínicas & Hospitales</button>
+  <div class="panel"><p>📅 Gestión de citas<br>📂 Historias clínicas<br>📊 Reportes de pacientes<br>💊 Recetas automáticas<br>🔔 Recordatorios de control</p></div>
+
+  <!-- 10 -->
+  <button class="accordion fade-in">🏫 Colegios & Academias</button>
+  <div class="panel"><p>📊 Reportes académicos<br>📚 Actas automáticas<br>📝 Certificados PDF<br>📅 Horarios automáticos<br>💬 Comunicados por WhatsApp</p></div>
+
+  <!-- 11 -->
+  <button class="accordion fade-in">🏛️ Gobierno & Municipalidades</button>
+  <div class="panel"><p>📂 Gestión documental<br>📊 Reportes de gestión<br>📅 Agenda de trámites<br>📝 Licencias digitales<br>🔔 Alertas de vencimientos</p></div>
+
+  <!-- 12 -->
+  <button class="accordion fade-in">🏢 Empresas</button>
+  <div class="panel"><p>📊 Dashboards ejecutivos<br>📈 KPIs en tiempo real<br>📑 Reportes de ventas<br>💼 Automatización de contratos<br>🔔 Notificaciones de metas</p></div>
+
+  <!-- 13 -->
+  <button class="accordion fade-in">🛒 Comercios</button>
+  <div class="panel"><p>📦 Control de inventario<br>💵 Flujo de caja<br>📊 Reportes de ventas<br>🔔 Alertas de stock<br>🧾 Facturación automática</p></div>
+
+  <!-- 14 -->
+  <button class="accordion fade-in">🚛 Logística</button>
+  <div class="panel"><p>📦 Seguimiento de envíos<br>📊 Reportes de entregas<br>🛠️ Control de mantenimiento<br>📅 Rutas automáticas<br>🔔 Alertas de tiempos</p></div>
+
+  <!-- 15 -->
+  <button class="accordion fade-in">🏨 Hoteles</button>
+  <div class="panel"><p>📅 Reservas automáticas<br>📊 Reportes de ocupación<br>💵 Facturación inmediata<br>📂 Gestión de huéspedes<br>🔔 Alertas de check-in/out</p></div>
+
+  <!-- 16 -->
+  <button class="accordion fade-in">🍴 Restaurantes</button>
+  <div class="panel"><p>📦 Control de insumos<br>📊 Reportes de ventas<br>📅 Agenda de reservas<br>🧾 Facturación automática<br>🔔 Alertas de stock</p></div>
+
+  <!-- 17 -->
+  <button class="accordion fade-in">📦 E-commerce</button>
+  <div class="panel"><p>📊 Reportes de pedidos<br>🚚 Seguimiento de envíos<br>🧾 Facturación automática<br>📦 Control de inventario<br>🔔 Notificaciones de clientes</p></div>
+
+  <!-- 18 -->
+  <button class="accordion fade-in">💻 Freelancers</button>
+  <div class="panel"><p>📅 Agenda automática<br>🧾 Facturación digital<br>📊 Reportes de proyectos<br>💬 Comunicaciones por WhatsApp<br>⚡ Automatización de tareas</p></div>
+
+  <!-- 19 -->
+  <button class="accordion fade-in">🎓 Universidades</button>
+  <div class="panel"><p>📊 Estadísticas académicas<br>📅 Programación de cursos<br>📚 Actas y diplomas<br>🧾 Facturación de matrículas<br>🔔 Recordatorios a alumnos</p></div>
+
+  <!-- 20 -->
+  <button class="accordion fade-in">⚙️ Fábricas</button>
+  <div class="panel"><p>🏭 Reportes de producción<br>📦 Control de insumos<br>📊 KPIs de eficiencia<br>🔧 Mantenimiento automático<br>🔔 Alertas de procesos</p></div>
+
+  <!-- 21 -->
+  <button class="accordion fade-in">🧾 Recursos Humanos</button>
+  <div class="panel"><p>📋 Gestión de planillas<br>📊 Reportes de asistencia<br>📝 Contratos automáticos<br>📅 Agenda de entrevistas<br>🔔 Alertas de vacaciones</p></div>
+
+  <!-- 22 -->
+  <button class="accordion fade-in">📣 Marketing & Publicidad</button>
+  <div class="panel"><p>📊 Dashboards de campañas<br>💬 Automatización de redes sociales<br>📈 Reportes de leads<br>🧾 Facturación automática<br>🔔 Alertas de métricas</p></div>
+
+  <!-- 23 -->
+  <button class="accordion fade-in">🏢 Inmobiliarias</button>
+  <div class="panel"><p>📊 Reportes de ventas<br>📄 Contratos de alquiler<br>📅 Agenda de visitas<br>📂 Gestión de propiedades<br>🔔 Alertas de vencimientos</p></div>
+
+  <!-- 24 -->
+  <button class="accordion fade-in">🧪 Laboratorios</button>
+  <div class="panel"><p>📊 Resultados automáticos<br>📂 Gestión de muestras<br>📅 Agenda de pacientes<br>🧾 Facturación digital<br>🔔 Recordatorios de entrega</p></div>
+
+  <!-- 25 -->
+  <button class="accordion fade-in">💇 Belleza & Spa</button>
+  <div class="panel"><p>📅 Agenda de citas<br>📊 Reportes de servicios<br>💵 Control de caja<br>💬 Recordatorios por WhatsApp<br>🧾 Facturación automática</p></div>
+
+  <!-- 26 -->
+  <button class="accordion fade-in">🚗 Talleres mecánicos</button>
+  <div class="panel"><p>📅 Agenda de servicios<br>📊 Reportes de reparaciones<br>🔧 Control de repuestos<br>💬 Alertas de mantenimiento<br>🧾 Facturación automática</p></div>
+
+  <!-- 27 -->
+  <button class="accordion fade-in">🧑‍🍳 Catering & Eventos</button>
+  <div class="panel"><p>📅 Agenda de eventos<br>📦 Control de insumos<br>📊 Reportes de servicios<br>💬 Comunicaciones a clientes<br>🧾 Facturación digital</p></div>
+
+  <!-- 28 -->
+  <button class="accordion fade-in">💳 Fintech & Startups</button>
+  <div class="panel"><p>📊 Dashboards financieros<br>📂 Gestión documental<br>📈 Reportes de usuarios<br>💬 Automatización de emails<br>🔔 Alertas de métricas clave</p></div>
+
+</section>
+
+
+
+
+<!-- Footer -->
+<footer class="fade-in">
+  <small>© 2025 AutoData — Automatización & Datos. Hecho con 💻 y ☕</small>
+</footer>
+
+<!-- Tooltip -->
+<div id="whatsapp-tooltip" class="whatsapp-tooltip">💬 Hablemos de tu proyecto</div>
+
+<!-- Botón flotante WhatsApp -->
+<a href="https://wa.me/51973952322" target="_blank" class="whatsapp-float">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <path d="M16.027 3c-7.18 0-13 5.82-13 13 0 2.293.6 4.527 1.74 6.498L3 29l6.643-1.723A12.94 12.94 0 0 0 16.027 29c7.18 0 13-5.82 13-13s-5.82-13-13-13zm0 2c6.075 0 11 4.925 11 11 0 6.074-4.925 11-11 11a10.9 10.9 0 0 1-5.61-1.53l-.402-.236-3.945 1.023 1.055-3.847-.26-.394A10.9 10.9 0 0 1 5.027 16c0-6.075 4.925-11 11-11zm-2.427 5c-.242 0-.707.101-1.076.502-.368.402-1.414 1.382-1.414 3.36s1.446 3.898 1.647 4.166c.202.269 2.805 4.479 6.923 6.095 3.297 1.293 3.964 1.039 4.686.972.723-.067 2.3-.939 2.626-1.846.327-.907.327-1.682.229-1.846-.099-.168-.362-.269-.76-.471s-2.3-1.135-2.656-1.267c-.356-.134-.615-.202-.876.201-.26.402-1.003 1.267-1.229 1.527-.225.269-.451.302-.844.101-.395-.202-1.667-.615-3.176-1.958-1.174-1.047-1.964-2.336-2.19-2.739-.225-.402-.024-.623.178-.823.183-.182.402-.471.604-.707.201-.236.268-.403.402-.673.134-.269.067-.504-.033-.706-.101-.202-.877-2.129-1.229-2.917-.326-.734-.668-.751-.91-.759z"/>
+  </svg>
+</a>
+
+<script>
+  // Accordion
+  document.querySelectorAll('.accordion').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const panel=btn.nextElementSibling;
+      if(panel.style.maxHeight){panel.style.maxHeight=null;}
+      else{
+        document.querySelectorAll('.panel').forEach(p=>p.style.maxHeight=null);
+        panel.style.maxHeight=panel.scrollHeight+"px";
+      }
+    });
+  });
+
+  // Fade-in scroll
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}
+    });
+  },{threshold:0.15});
+  document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+  // Typing effect
+  const typingElement=document.getElementById("typing");
+  const texts=["Automatiza tus procesos","Ahorra tiempo ⏱️","Evita errores ⚡","Gana productividad 🚀"];
+  let i=0, j=0, deleting=false;
+  function type(){
+    const current=texts[i];
+    if(!deleting){
+      typingElement.textContent=current.slice(0,++j);
+      if(j===current.length){deleting=true;setTimeout(type,1200);return;}
+    } else {
+      typingElement.textContent=current.slice(0,--j);
+      if(j===0){deleting=false;i=(i+1)%texts.length;}
+    }
+    setTimeout(type,deleting?60:100);
+  }
+  type();
+
+  // Tooltip auto show
+  const tooltip=document.getElementById("whatsapp-tooltip");
+  setTimeout(()=>tooltip.classList.add("show"),1500);
+  setTimeout(()=>tooltip.classList.remove("show"),7000);
+</script>
+
+
+
+<script>
+  // 🎨 Gradientes dinámicos
+  const gradients = [
+  "linear-gradient(135deg, #ff7e5f, #feb47b)", // naranja suave + durazno
+  "linear-gradient(135deg, #ff6a00, #ee0979)", // naranja intenso + fucsia
+  "linear-gradient(135deg, #f7971e, #ffd200)", // dorado + amarillo energía
+  "linear-gradient(135deg, #f857a6, #ff5858)", // rosa fuerte + rojo cálido
+  "linear-gradient(135deg, #ff512f, #dd2476)", // rojo anaranjado + púrpura
+  "linear-gradient(135deg, #f12711, #f5af19)", // rojo pasión + amarillo sol
+  "linear-gradient(135deg, #ff9a9e, #fecfef)", // rosado pastel + crema
+  "linear-gradient(135deg, #ff9966, #ff5e62)", // coral + rojo cálido
+  "linear-gradient(135deg, #ffecd2, #fcb69f)", // beige + salmón
+  "linear-gradient(135deg, #fa709a, #fee140)"  // fucsia + amarillo
+];
+
+  let lastIndex = -1;
+
+  function cambiarGradiente() {
+    let index;
+    do {
+      index = Math.floor(Math.random() * gradients.length);
+    } while (index === lastIndex);
+    lastIndex = index;
+    document.querySelector(".hero").style.background = gradients[index];
+    document.querySelector("footer").style.background = gradients[index];
+  }
+
+  // Inicial
+  cambiarGradiente();
+  // Cada minuto
+  setInterval(cambiarGradiente, 60000);
+</script>
+
+
+</body>
+</html>
