@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ServiComp TI – Startup</title>
+  <meta name="description" content="Landing Page moderna con servicios de TI, redes, seguridad, software, IA y más." />
+  
+  <!-- Tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- AOS Animations -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  
+  <style>
+    :root{
+      --primary:#007bff;
+      --accent:#ff7a3d;
+      --bg:#ffffff;
+      --ink:#1a1a1a;
+      --muted:#6c757d;
+      --radius:18px;
+      --shadow-md:0 6px 20px rgba(0,0,0,.08);
+    }
+    body{margin:0;font:16px/1.6 "Nunito",sans-serif;color:var(--ink);background:var(--bg)}
+    
+
+
+
+   
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:#fff;text-align:center;padding:100px 20px}
+    .hero h1{font-size:clamp(32px,5vw,54px);margin:0 0 16px;font-weight:800}
+    .hero p{margin:0 auto 28px;max-width:700px;font-size:18px;color:#f3f3f3}
+    
+    /* BOTONES */
+    .btn{border:0;border-radius:14px;padding:14px 24px;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:var(--shadow-md);font-size:16px;transition:.3s}
+.btn.primary {
+  background:#fff;
+  color:#000; /* fallback negro */
+}
+
+    .btn.accent{background:var(--accent);color:#fff}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.15)}
+    
+    /* SECCIONES */
+    section{padding:80px 20px;max-width:1180px;margin:auto}
+    section.alt{background:#f8f9fa}
+    h2{font-size:28px;font-weight:800;margin-bottom:12px;text-align:center}
+    .lead{text-align:center;margin-bottom:40px;color:var(--muted)}
+    
+    /* GRID */
+    .grid{display:grid;gap:20px}
+    .cols-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .cols-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    
+    /* CARDS */
+    .card{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-md);transition:.3s}
+    .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 12px 28px rgba(0,0,0,.12)}
+    .card h3{margin-top:0;font-size:20px;color:var(--primary)}
+    
+
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 60px 20px;
+  background: #111; /* se mantiene como base, luego lo pisa el degradado */
+  color: #fff;      /* texto en blanco */
+}
+
+footer a {
+  color: #fff;              /* enlaces en blanco */
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #FFD700;           /* dorado al pasar el mouse */
+}
+    
+
+
+
+
+    /* WhatsApp */
+    .whatsapp-float{position:fixed;bottom:20px;right:20px;background:#25d366;color:#fff;font-size:26px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--shadow-md);transition:.3s}
+    .whatsapp-float:hover{transform:scale(1.1)}
+  
+
+/* GRID UNIFICADO */
+[class*="cols-"] {
+  display: grid;
+  gap: 20px;
+}
+
+.cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.cols-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.cols-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+
+
+#marcas img {
+  max-width: 100px;
+  max-height: 60px;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  filter: grayscale(20%);
+  transition: transform 0.3s, filter 0.3s;
+}
+
+#marcas img:hover {
+  filter: none;
+  transform: scale(1.1);
+}
+
+
+
+#cifras {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+#cifras .card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+#cifras .card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.2);
+  transition: .3s;
+}
+
+
+
+
+#cifras .icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: var(--primary);
+}
+
+#cifras h3 {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0;
+}
+
+#cifras p {
+  color: var(--muted);
+  margin: 5px 0 0;
+  font-size: 15px;
+}
+
+.btn.primary {
+  background: #fff;   /* fondo blanco fijo */
+  border: none;
+}
+
+.btn.primary .texto-grad {
+  font-weight: 700;
+  background: var(--primary); /* fallback */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+
+/* === EFECTO COMBO PARA LAS CARDS === */
+.card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+
+/* === EFECTO GRADIENTE FLUIDO === */
+
+/* Bordes de las cards */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 2px;
+
+  /* degradado animado */
+  background: var(--borde-grad, linear-gradient(135deg, #007bff, #ff7a3d));
+  background-size: 300% 300%;
+  animation: moverGrad 6s linear infinite;
+
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Títulos con gradiente animado */
+.card h3,
+section h2,
+#cifras .icon,
+#cifras h3 {
+  background: var(--borde-grad, linear-gradient(135deg, #007bff, #ff7a3d));
+  background-size: 300% 300%;
+  animation: moverGrad 6s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animación de movimiento */
+@keyframes moverGrad {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1 data-aos="fade-up">“Tecnología inteligente, seguridad y automatización para transformar tu mundo con IA”</h1>
+    <p data-aos="fade-up" data-aos-delay="100">En SERVICOMP ofrecemos desde 2009 soluciones integrales en TI, seguridad, automatización e inteligencia artificial, ayudando a hogares, oficinas, instituciones y empresas a crecer con tecnología confiable.</p>
+    <a href="#contacto" class="btn primary" data-aos="zoom-in">
+  <span class="texto-grad">Solicitar propuesta</span>
+</a>
+
+<a href="#servicios" id="btn-vermas" class="btn accent" data-aos="zoom-in" data-aos-delay="100">Ver más</a>
+
+  </header>
+
+
+  <!-- SERVICIOS DE TI -->
+  <section id="servicios" class="alt">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios de TI</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">
+      Soporte remoto, mantenimiento y automatización <strong>con IA integrada</strong> para diagnósticos inteligentes y soluciones preventivas.
+    </p>
+    
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in">
+        <h3><i class="fa-solid fa-headset"></i> Soporte Remoto</h3>
+        <p>Resolución en minutos desde cualquier lugar, asistido con IA para respuestas más rápidas.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="100">
+        <h3><i class="fa-solid fa-screwdriver"></i> Mantenimiento</h3>
+        <p>Lógico, preventivo y correctivo, optimizado con análisis inteligente para anticipar fallas.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="200">
+        <h3><i class="fa-solid fa-server"></i> Servidores & Sistemas</h3>
+        <p>Instalación, administración y estabilidad 24/7 con monitoreo predictivo impulsado por IA.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="300">
+        <h3><i class="fa-solid fa-stethoscope"></i> Diagnóstico con IA</h3>
+        <p>Análisis en tiempo real que detecta anomalías y genera reportes automáticos de salud del sistema.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+    <!-- REDES -->
+  <section id="redes">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-network-wired"></i> Redes y Conectividad</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">LAN, Wi-Fi, VPN y enlaces entre sedes con seguridad y rendimiento.</p>
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in"><h3><i class="fa-solid fa-wifi"></i> LAN / Wi-Fi</h3><p>Diseño, instalación y optimización.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100"><h3><i class="fa-solid fa-print"></i> Recursos Compartidos</h3><p>Impresoras y archivos con permisos.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="200"><h3><i class="fa-solid fa-lock"></i> VPN Seguras</h3><p>Trabajo remoto cifrado y seguro.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300"><h3><i class="fa-solid fa-link"></i> Enlaces P2P</h3><p>Conecta tus oficinas como una sola red.</p></div>
+  </section>
+
+
+
+
+
+
+  <!-- SEGURIDAD -->
+  <section id="seguridad" class="alt">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-shield-halved"></i> Seguridad Digital</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">Protegemos lo más valioso: tu información.</p>
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in"><h3><i class="fa-solid fa-virus-slash"></i> Antivirus & EDR</h3><p>Protección avanzada en tiempo real.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100"><h3><i class="fa-solid fa-fire"></i> Firewalls</h3><p>Control de accesos y segmentación de red.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="200"><h3><i class="fa-solid fa-database"></i> Backups Automáticos</h3><p>En nube o local con políticas claras.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300"><h3><i class="fa-solid fa-recycle"></i> Recuperación de Datos</h3><p>Soporte especializado ante incidentes.</p></div>
+  </section>
+
+
+
+
+  <!-- PRODUCTOS -->
+  <section id="productos">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-desktop"></i> Productos de Hardware</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">Marcas reconocidas y asesoría para elegir lo que necesitas.</p>
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in"><h3><i class="fa-solid fa-laptop"></i> PCs y Laptops</h3><p>Desde oficina hasta alto rendimiento.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100"><h3><i class="fa-solid fa-server"></i> Servidores & NAS</h3><p>Robustos, seguros y escalables.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="200"><h3><i class="fa-solid fa-print"></i> Impresoras</h3><p>Láser, tinta y multifuncionales.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300"><h3><i class="fa-solid fa-network-wired"></i> Red & Conectividad</h3><p>Routers, switches y access points.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="400"><h3><i class="fa-solid fa-headphones"></i> Periféricos</h3><p>Monitores, UPS y almacenamiento externo.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="500"><h3><i class="fa-solid fa-mobile-screen-button"></i> Teléfonos</h3><p>Smartphones de última generación.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="600"><h3><i class="fa-solid fa-tablet-screen-button"></i> Tabletas</h3><p>Versatilidad para trabajo y entretenimiento.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="700"><h3><i class="fa-solid fa-gamepad"></i> Accesorios Gamer</h3><p>Teclados, mouse y audífonos de alto rendimiento.</p></div>
+  </section>
+
+  <!-- SOFTWARE Y LICENCIAS -->
+  <section id="software" class="alt">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-code"></i> Software y Licencias</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">
+      Software 100% legal, seguro y actualizado para tu empresa.
+    </p>
+    
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in">
+        <h3><i class="fa-brands fa-windows"></i> Sistemas Operativos</h3>
+        <p>Windows y macOS con licencias originales y soporte continuo.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="100">
+        <h3><i class="fa-solid fa-file-word"></i> Ofimática</h3>
+        <p>Microsoft 365 y Google Workspace para productividad y colaboración.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="200">
+        <h3><i class="fa-solid fa-shield-halved"></i> Seguridad</h3>
+        <p>Antivirus corporativos como ESET, Kaspersky y Bitdefender.</p>
+      </div>
+      
+      <div class="card" data-aos="zoom-in" data-aos-delay="300">
+        <h3><i class="fa-solid fa-people-group"></i> Colaboración</h3>
+        <p>Teams, Zoom y Slack para mejorar la comunicación empresarial.</p>
+      </div>
+  </section>
+
+    
+
+
+
+<!-- AUTOMATIZACIÓN PARA CUALQUIER TRABAJO -->
+<section id="automatizacion" class="alt">
+  <h2 data-aos="fade-up"><i class="fa-solid fa-gears"></i> Automatización con IA</h2>
+  <p class="lead" data-aos="fade-up" data-aos-delay="100">
+    Con <strong>IA y Autodata</strong> ayudamos a automatizar <u>cualquier trabajo o proceso</u>, desde áreas administrativas hasta soporte técnico.
+  </p>
+  
+  <div class="grid cols-4">
+    <div class="card" data-aos="zoom-in">
+      <h3><i class="fa-solid fa-file-invoice-dollar"></i> Procesos Administrativos</h3>
+      <p>Facturación, reportes y gestión documental automáticos.</p>
+    </div>
+    
+    <div class="card" data-aos="zoom-in" data-aos-delay="100">
+      <h3><i class="fa-solid fa-diagram-project"></i> Flujos de Trabajo</h3>
+      <p>Integraciones entre CRM, ERP, correo y herramientas digitales.</p>
+    </div>
+    
+    <div class="card" data-aos="zoom-in" data-aos-delay="200">
+      <h3><i class="fa-solid fa-tasks"></i> Gestión de Proyectos</h3>
+      <p>Asignación de tareas, recordatorios y seguimiento automático del progreso.</p>
+    </div>
+    
+    <div class="card" data-aos="zoom-in" data-aos-delay="300">
+      <h3><i class="fa-solid fa-chart-line"></i> Reportes Financieros</h3>
+      <p>De 3 días a 15 minutos con IA.</p>
+    </div>
+    
+    <div class="card" data-aos="zoom-in" data-aos-delay="400">
+      <h3><i class="fa-solid fa-file"></i> Documentos con IA</h3>
+      <p>Oficios y memorandos listos en segundos.</p>
+    </div>
+    
+  </div>
+</section>
+
+
+
+
+
+
+  <!-- CAPACITACIÓN -->
+  <section id="capacitacion" class="alt">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-chalkboard-teacher"></i> Capacitación</h2>
+    <p class="lead" data-aos="fade-up" data-aos-delay="100">
+      Entrenamos a tu equipo en buenas prácticas para reducir riesgos, mejorar la seguridad y optimizar el uso de la tecnología.
+    </p>
+    
+    <div class="grid cols-3">
+      <div class="card" data-aos="zoom-in">
+        <h3><i class="fa-solid fa-user-shield"></i> Seguridad Digital</h3>
+        <p>Prevención contra fraudes, phishing y malware.</p>
+      </div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100">
+        <h3><i class="fa-solid fa-network-wired"></i> Redes Seguras</h3>
+        <p>Protocolos y configuraciones para minimizar vulnerabilidades.</p>
+      </div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300">
+        <h3><i class="fa-solid fa-file-word"></i> Ofimática Productiva</h3>
+        <p>Uso avanzado de Microsoft 365 y Google Workspace.</p>
+      </div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="400">
+        <h3><i class="fa-solid fa-robot"></i> Inteligencia Artificial</h3>
+        <p>Cómo aplicar IA en tareas diarias y procesos empresariales.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- DIFERENCIALES -->
+  <section id="diferenciales" class="alt">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-star"></i> Diferenciales</h2>
+    <div class="grid cols-2">
+      <div class="card" data-aos="zoom-in"><h3>⚡ Soporte inmediato</h3><p>Tiempo de respuesta en minutos.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100"><h3>🤝 Atención cercana</h3><p>Técnico asignado a tu institución.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="200"><h3>🔄 Flexibilidad</h3><p>Planes por evento, mensual o anual.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300"><h3>🔒 Confidencialidad</h3><p>Protocolos de acceso remoto seguro.</p></div>
+    </div>
+  </section>
+
+
+  <!-- MARCAS -->
+<section id="marcas">
+  <h2 data-aos="fade-up"><i class="fa-solid fa-copyright"></i> Marcas Principales</h2>
+  <div class="grid cols-3" data-aos="fade-up" data-aos-delay="100">
+
+    <!-- Hardware -->
+    <div class="card"><img src="https://cdn.simpleicons.org/hp/007bff" alt="HP"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/dell/007db8" alt="Dell"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/lenovo/e2231a" alt="Lenovo"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/asus/000000" alt="Asus"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/acer/83b81a" alt="Acer"></div>
+
+    <!-- Software / Cloud -->
+    <div class="card"><img src="https://cdn.simpleicons.org/google/ea4335" alt="Google"></div>
+
+    <!-- Seguridad -->
+    <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/ESET_logo.svg/1200px-ESET_logo.svg.png" alt="ESET"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/kaspersky/d81a28" alt="Kaspersky"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/bitdefender/e3001b" alt="Bitdefender"></div>
+
+    <!-- Redes -->
+    <div class="card"><img src="https://cdn.simpleicons.org/cisco/1ba0d7" alt="Cisco"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/tplink/4acbd6" alt="TP-Link"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/ubiquiti/0559c9" alt="Ubiquiti"></div>
+    <div class="card"><img src="https://cdn.simpleicons.org/mikrotik/000000" alt="Mikrotik"></div>
+
+    <!-- Extras que me pasaste -->
+    <div class="card"><img src="https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062015/advance.jpg" alt="Advance"></div>
+    <div class="card"><img src="https://www.teroslatinamerica.com/wp-content/uploads/2022/07/Anadir-un-titulo-1024x1024.webp" alt="Teros Latin America"></div>
+
+  </div>
+</section>
+
+
+<section id="cifras" class="alt">
+  <div class="grid cols-4">
+
+
+    <!-- Cobertura -->
+    <div class="card">
+      <div class="icon"><i class="fa-solid fa-globe"></i></div>
+      <h3><span class="counter" data-target="10">0</span>+</h3>
+      <p>Países con cobertura</p>
+    </div>
+
+    <!-- Socios estratégicos -->
+    <div class="card">
+      <div class="icon"><i class="fa-solid fa-handshake"></i></div>
+      <h3><span class="counter" data-target="19">0</span>+</h3>
+      <p>Socios estratégicos</p>
+    </div>
+
+    <!-- Sistemas protegidos -->
+    <div class="card">
+      <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h3><span class="counter" data-target="10000">0</span>+</h3>
+      <p>Sistemas protegidos</p>
+    </div>
+
+
+    <!-- Horas de capacitación -->
+    <div class="card">
+      <div class="icon"><i class="fa-solid fa-book-open"></i></div>
+      <h3><span class="counter" data-target="5000">0</span>+</h3>
+      <p>Horas de capacitación</p>
+    </div>
+
+    <!-- Cursos dictados -->
+    <div class="card">
+      <div class="icon"><i class="fa-solid fa-chalkboard-teacher"></i></div>
+      <h3><span class="counter" data-target="100">0</span>+</h3>
+      <p>Talleres de ciberseguridad</p>
+    </div>
+
+  </div>
+</section>
+
+
+  
+  <!-- FOOTER -->
+  <footer id="contacto">
+    <h2>Hablemos</h2>
+    <p>Cuéntanos tus necesidades y preparamos una propuesta a la medida.</p>
+    <p><strong>WhatsApp:</strong> <a href="https://wa.me/51973952322" target="_blank">+51 973 952 322</a></p>
+    <p><strong>Correo:</strong> <a href="mailto:servicombu@gmail.com">servicombu@gmail.com</a></p>
+    <p>© 2009–2025 ServiComp - RUC: 10423201661. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/51973952322" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+
+
+<script>
+  function animateCounter(counter) {
+    const target = +counter.getAttribute('data-target');
+    const speed = 200; 
+    const increment = target / speed;
+    let count = 0;
+
+    const update = () => {
+      count += increment;
+      if (count < target) {
+        counter.innerText = Math.ceil(count);
+        requestAnimationFrame(update);
+      } else {
+        counter.innerText = target;
+      }
+    };
+
+    update();
+  }
+
+  const counters = document.querySelectorAll('.counter');
+  const options = { threshold: 0.5 };
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, options);
+
+  counters.forEach(counter => observer.observe(counter));
+</script>
+
+
+<script>
+  const degradados = [
+    "linear-gradient(135deg, #FF5733, #FFC300)", 
+    "linear-gradient(135deg, #28B463, #1ABC9C)", 
+    "linear-gradient(135deg, #3498DB, #8E44AD)", 
+    "linear-gradient(135deg, #E91E63, #F39C12)", 
+    "linear-gradient(135deg, #00C9FF, #92FE9D)", 
+    "linear-gradient(135deg, #FF512F, #DD2476)", 
+    "linear-gradient(135deg, #36D1DC, #5B86E5)", 
+    "linear-gradient(135deg, #FF9A8B, #FF6A88, #FF99AC)", 
+    "linear-gradient(135deg, #00F260, #0575E6)", 
+    "linear-gradient(135deg, #fc6076, #ff9a44, #ef9d43, #e75516)"
+  ];
+
+
+
+function cambiarDegradado() {
+  const grad = degradados[Math.floor(Math.random() * degradados.length)];
+
+  // Hero y footer
+  document.querySelector(".hero").style.background = grad;
+  document.querySelector("footer").style.background = grad;
+
+  // Botón Ver más
+  const btnVerMas = document.querySelector("#btn-vermas");
+  if (btnVerMas) {
+    btnVerMas.style.background = grad;
+    btnVerMas.style.color = "#fff"; 
+    btnVerMas.style.border = "none";
+    btnVerMas.style.transition = "background 2s ease";
+  }
+
+  // Botón Solicitar propuesta
+  const btnPropuesta = document.querySelector(".btn.primary .texto-grad");
+  if (btnPropuesta) {
+    btnPropuesta.style.backgroundImage = grad;   
+    btnPropuesta.style.webkitBackgroundClip = "text";
+    btnPropuesta.style.webkitTextFillColor = "transparent";
+  }
+
+  // Títulos de las tarjetas
+  document.querySelectorAll(".card h3").forEach(el => {
+    el.style.background = grad;
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+    el.style.transition = "background 2s ease";
+  });
+
+  // Cifras con ícono
+  document.querySelectorAll("#cifras .icon, #cifras h3").forEach(el => {
+    el.style.background = grad;
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+    el.style.transition = "background 2s ease";
+  });
+
+  // Títulos de secciones (h2 con icono)
+  document.querySelectorAll("section h2").forEach(el => {
+    el.style.background = grad;
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+    el.style.transition = "background 2s ease";
+  });
+
+  // 🔥 Borde dinámico para las tarjetas
+  document.querySelectorAll(".card").forEach(el => {
+    el.style.setProperty("--borde-grad", grad);
+  });
+
+  // transiciones suaves
+  document.querySelector(".hero").style.transition = "background 2s ease";
+  document.querySelector("footer").style.transition = "background 2s ease";
+}
+
+
+
+
+
+  // 👇 LLAMADAS QUE FALTABAN
+  cambiarDegradado();                // Ejecuta al inicio
+  setInterval(cambiarDegradado, 300000); // Cada 5 min
+</script>
+
+
+</body>
+</html>
