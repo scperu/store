@@ -1143,7 +1143,6 @@ const largeUrl = p['IMAGEN'];
     /* ===================== RENDER: GRID ===================== */
 
 // 👉 Variable global que actualiza rotarColor()
-let COLOR_ACTUAL = "#e63946"; 
 
 function renderizarProductos() {
   const lista = document.getElementById('product-list');
@@ -1197,13 +1196,11 @@ function renderizarProductos() {
 
     // 👉 cinta dinámica si el código termina en 3 dígitos < 100
     let ribbon = "";
-const match = String(p['CODIGO']).match(/(\d{3})$/);
-if (match && parseInt(match[1], 10) < 100) {
-  // 👉 cinta solo con color, sin texto
-  ribbon = `<div class="ribbon-color" style="background:${COLOR_ACTUAL};"></div>`;
-}
-
-
+    const match = String(p['CODIGO']).match(/(\d{3})$/);
+    if (match && parseInt(match[1], 10) < 100) {
+      // 👉 cinta usa el COLOR_ACTUAL que se actualiza en rotarColor()
+      ribbon = `<div class="ribbon-color" style="background:${COLOR_ACTUAL};"></div>`;
+    }
 
     let stockMsg = '';
     if (stock === 0) {
@@ -1253,9 +1250,9 @@ if (match && parseInt(match[1], 10) < 100) {
     lista.appendChild(card);
   });
 
-  rotarColor(); // mantiene tu rotación de colores
+  // 👇 mantiene la rotación de colores sincronizada
+  rotarColor(); 
 }
-
 
 
     /* ===================== CARRITO ===================== */
@@ -1457,34 +1454,50 @@ const COLORES_ROTATIVOS = [
 
 let indiceColor = Math.floor(Math.random() * COLORES_ROTATIVOS.length); // aleatorio al inicio
 
+
+
 function rotarColor() {
   const colorActual = COLORES_ROTATIVOS[indiceColor];
   let nuevoIndice;
 
+  // Elegir un nuevo color diferente al actual
   do {
     nuevoIndice = Math.floor(Math.random() * COLORES_ROTATIVOS.length);
   } while (nuevoIndice === indiceColor);
 
   const siguiente = COLORES_ROTATIVOS[nuevoIndice];
 
+  // 🎨 Gradiente dinámico para barra superior y header
   const gradiente = `linear-gradient(90deg, ${colorActual}, ${siguiente})`;
   document.querySelector(".top-bar").style.background = gradiente;
   document.querySelector("header").style.background = gradiente;
 
-  // 🎨 Fondo para los botones (incluye los que se agregan dinámicamente)
+  // 🎨 Fondo para botones
   document.querySelectorAll(".cart-btn, .filters button").forEach(btn => {
     btn.style.setProperty("background", colorActual, "important");
     btn.style.setProperty("color", "#fff", "important");
   });
 
-  // 🎨 Color dinámico para los mini-códigos
+  // 🎨 Fondo para minicódigos
   document.querySelectorAll(".mini-code").forEach(span => {
     span.style.setProperty("background", colorActual, "important");
     span.style.setProperty("color", "#fff", "important");
   });
 
+  // ✅ Actualizar el color global usado en las cintas
+  COLOR_ACTUAL = colorActual;
+
+  // 🎨 Actualizar cintas ya dibujadas
+  document.querySelectorAll(".ribbon-color").forEach(ribbon => {
+    ribbon.style.setProperty("background", COLOR_ACTUAL, "important");
+  });
+
+  // Guardar el nuevo índice para la próxima rotación
   indiceColor = nuevoIndice;
 }
+
+
+
 // 👉 Ejecutar al cargar
 rotarColor();
 
