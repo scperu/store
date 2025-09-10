@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Pequeño Gigante - Mega Ofertas</title>
+<title>ServiComp - Mega Ofertas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
@@ -474,9 +474,24 @@ body {
   </div>
 
   <header>
-    <h1>🔥 Mega Ofertas Pequeño Gigante 🔥</h1>
+    <h1>🔥 Mega Ofertas ServiComp 🔥</h1>
     <p>"Equipos confiables, soluciones inteligentes"</p>
   </header>
+
+
+<!-- Aviso elegante de entregas presenciales -->
+<div style="max-width:920px;margin:20px auto;padding:14px 22px;
+            background:#f8fafc;border:1px solid #e5e7eb;
+            border-radius:12px;text-align:center;
+            font-size:0.97em;color:#374151;
+            box-shadow:0 6px 16px rgba(0,0,0,0.06);
+            line-height:1.6;">
+  <span style="font-weight:700;color:#111827;">📦 Entregas presenciales disponibles</span><br>
+  Lima · Huancayo · Chiclayo · Trujillo · Arequipa · Cusco · Huancavelica · Juliaca · Tarapoto · Tacna
+</div>
+
+
+
 
   <!-- Barra de filtros -->
   <div class="filters" id="filtersBar">
@@ -1373,11 +1388,11 @@ function updateCart() {
   ).join("\n");
 
   const waText = encodeURIComponent(
-    "Pedido:\n\n" + (waLines || "—") +
+    "Pedido ServiComp:\n\n" + (waLines || "—") +
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
-    `https://wa.me/51920876963?text=${waText}`;
+    `https://wa.me/51973952322?text=${waText}`;
 
   
   saveCart(); // guardar en localStorage
@@ -1538,13 +1553,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const FRASES_HEADER = [
-  "🔥 Mega Ofertas Pequeño Gigante 🔥",
-  "⚡ Ofertas Exclusivas Pequeño Gigante ⚡",
-  "💥 Descuentos Pequeño Gigante 💥",
-  "🏷️ Promos Pequeño Gigante 🏷️",
-  "🚀 Super Ofertas Pequeño Gigante 🚀",
-  "⭐ Ahorra con Pequeño Gigante ⭐",
-  "🔥 Rebajas Pequeño Gigante 🔥"
+  "🔥 Mega Ofertas ServiComp 🔥",
+  "⚡ Ofertas Exclusivas ServiComp ⚡",
+  "💥 Descuentos ServiComp 💥",
+  "🏷️ Promos ServiComp 🏷️",
+  "🚀 Super Ofertas ServiComp 🚀",
+  "⭐ Ahorra con ServiComp ⭐",
+  "🔥 Rebajas ServiComp 🔥"
 ];
   
 let indiceHeader = -1; // para recordar la última usada
@@ -1587,16 +1602,11 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 
-<a id="btnWhatsappFixed" href="https://wa.me/51920876963" target="_blank">
+<a id="btnWhatsappFixed" href="https://wa.me/51973952322" target="_blank">
   <img src="https://us3-cdn.inside-graph.com/custom/4-50-icons8-whatsapp-48.png" alt="WhatsApp">
 </a>
 
 
-
-<script>
-  // 🚫 Deshabilitar clic derecho
-  document.addEventListener("contextmenu", e => e.preventDefault());
-</script>
 
 
 
