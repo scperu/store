@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Pequeño Gigante - Mega Ofertas</title>
+<title>Pequeño Gigante- Mega Ofertas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
@@ -189,18 +189,19 @@
   .stock-blue { animation: blueToGreen 2.5s infinite alternate; border-radius: 6px; }
 
   .badge-recomendado {
-    position: absolute;
-    top: 10px;
-    right: -35px;
-    background: #fbbf24;
-    color: #0f172a;
-    padding: 5px 40px;
-    font-size: 0.8em;
-    font-weight: bold;
-    transform: rotate(45deg);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-    text-align: center;
-  }
+  position: absolute;
+  top: 4px;
+  right: -25px;
+  background: var(--badge-color, #e63946); /* 🎨 color dinámico */
+  color: #fff;
+  padding: 3px 35px;
+  font-size: 0.9em;
+  font-weight: bold;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  text-align: center;
+  border: none; /* 👈 sin bordes */
+}
 
 
 #btnWhatsappFixed {
@@ -462,6 +463,32 @@ body {
   display: none !important;
 }
 
+
+@keyframes parpadeoSuave {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
+  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
+}
+
+.badge-recomendado span {
+  display: inline-block;
+  animation: girar 3s linear infinite,
+             parpadeoSuave 1.8s ease-in-out infinite;
+}
+
+/* Rotación */
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Parpadeo suave */
+@keyframes parpadeoSuave {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
+  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
+}
+
+
+
 </style>
 
 
@@ -474,7 +501,7 @@ body {
   </div>
 
   <header>
-    <h1>🔥 Mega Ofertas Pequeño Gigante 🔥</h1>
+    <h1>🔥 Mega Ofertas Pequeño Gigante🔥</h1>
     <p>"Equipos confiables, soluciones inteligentes"</p>
   </header>
 
@@ -489,6 +516,8 @@ body {
   <span style="font-weight:700;color:#111827;">📦 Entregas presenciales disponibles</span><br>
   Lima · Huancayo · Chiclayo · Trujillo · Arequipa · Cusco · Huancavelica · Juliaca · Tarapoto · Tacna
 </div>
+
+
 
 
   <!-- Barra de filtros -->
@@ -1081,7 +1110,10 @@ const base = G_PRODUCTOS.filter(p =>
         card.className = 'card';
         card.innerHTML = `
           <div style="position:relative;">
-            <div class="badge-recomendado">🔥</div>
+<div class="badge-recomendado">
+  <span style="color:#FFD700; font-size:1.2em;">★</span>
+</div>
+
             <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" loading="lazy" onclick="mostrarModal('${largeUrl}')">
           </div>
           <div class="card-content">
@@ -1180,7 +1212,11 @@ const base = G_PRODUCTOS.filter(p =>
         const largeUrl = generateSafeLargeUrl(p['CODIGO']);
         const marca = (p['MARCA'] || '').toString().trim();
 
-        let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
+        let badgeRecomendado = G_DESTACADOS.includes(mini) 
+  ? '<div class="badge-recomendado"><span style="color:#FFD700; font-size:1.2em;">★</span></div>' 
+  : '';
+
+
         let stockMsg = '';
         if (stock === 0) {
           stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
@@ -1386,7 +1422,7 @@ function updateCart() {
   ).join("\n");
 
   const waText = encodeURIComponent(
-    "Pedido:\n\n" + (waLines || "—") +
+    "Pedido PEQUEÑO GIGANTE:\n\n" + (waLines || "—") +
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
@@ -1469,6 +1505,13 @@ function rotarColor() {
   });
 
   indiceColor = nuevoIndice;
+// 🎖️ Color dinámico para la cinta
+document.querySelectorAll(".badge-recomendado").forEach(badge => {
+  badge.style.setProperty("background", colorActual, "important");
+});
+
+
+
 }
 // 👉 Ejecutar al cargar
 rotarColor();
@@ -1551,13 +1594,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const FRASES_HEADER = [
-  "🔥 Mega Ofertas Pequeño Gigante 🔥",
-  "⚡ Ofertas Exclusivas Pequeño Gigante ⚡",
-  "💥 Descuentos Pequeño Gigante 💥",
-  "🏷️ Promos Pequeño Gigante 🏷️",
-  "🚀 Super Ofertas Pequeño Gigante 🚀",
-  "⭐ Ahorra con Pequeño Gigante ⭐",
-  "🔥 Rebajas Pequeño Gigante 🔥"
+  "🔥 Mega Ofertas Pequeño Gigante🔥",
+  "⚡ Ofertas Exclusivas Pequeño Gigante⚡",
+  "💥 Descuentos Pequeño Gigante💥",
+  "🏷️ Promos Pequeño Gigante🏷️",
+  "🚀 Super Ofertas Pequeño Gigante🚀",
+  "⭐ Ahorra con Pequeño Gigante⭐",
+  "🔥 Rebajas Pequeño Gigante🔥"
 ];
   
 let indiceHeader = -1; // para recordar la última usada
@@ -1605,11 +1648,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </a>
 
 
-
-<script>
-  // 🚫 Deshabilitar clic derecho
-  document.addEventListener("contextmenu", e => e.preventDefault());
-</script>
 
 
 

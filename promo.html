@@ -463,6 +463,32 @@ body {
   display: none !important;
 }
 
+
+@keyframes parpadeoSuave {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
+  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
+}
+
+.badge-recomendado span {
+  display: inline-block;
+  animation: girar 3s linear infinite,
+             parpadeoSuave 1.8s ease-in-out infinite;
+}
+
+/* Rotación */
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Parpadeo suave */
+@keyframes parpadeoSuave {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
+  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
+}
+
+
+
 </style>
 
 
