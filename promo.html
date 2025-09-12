@@ -189,18 +189,19 @@
   .stock-blue { animation: blueToGreen 2.5s infinite alternate; border-radius: 6px; }
 
   .badge-recomendado {
-    position: absolute;
-    top: 10px;
-    right: -35px;
-    background: #fbbf24;
-    color: #0f172a;
-    padding: 5px 40px;
-    font-size: 0.8em;
-    font-weight: bold;
-    transform: rotate(45deg);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-    text-align: center;
-  }
+  position: absolute;
+  top: 4px;
+  right: -25px;
+  background: var(--badge-color, #e63946); /* 🎨 color dinámico */
+  color: #fff;
+  padding: 3px 35px;
+  font-size: 0.9em;
+  font-weight: bold;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  text-align: center;
+  border: none; /* 👈 sin bordes */
+}
 
 
 #btnWhatsappFixed {
@@ -1083,7 +1084,10 @@ const base = G_PRODUCTOS.filter(p =>
         card.className = 'card';
         card.innerHTML = `
           <div style="position:relative;">
-            <div class="badge-recomendado">🔥</div>
+<div class="badge-recomendado">
+  <span style="color:#FFD700; font-size:1.2em;">★</span>
+</div>
+
             <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" loading="lazy" onclick="mostrarModal('${largeUrl}')">
           </div>
           <div class="card-content">
@@ -1182,7 +1186,11 @@ const base = G_PRODUCTOS.filter(p =>
         const largeUrl = generateSafeLargeUrl(p['CODIGO']);
         const marca = (p['MARCA'] || '').toString().trim();
 
-        let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
+        let badgeRecomendado = G_DESTACADOS.includes(mini) 
+  ? '<div class="badge-recomendado"><span style="color:#FFD700; font-size:1.2em;">★</span></div>' 
+  : '';
+
+
         let stockMsg = '';
         if (stock === 0) {
           stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
@@ -1471,6 +1479,13 @@ function rotarColor() {
   });
 
   indiceColor = nuevoIndice;
+// 🎖️ Color dinámico para la cinta
+document.querySelectorAll(".badge-recomendado").forEach(badge => {
+  badge.style.setProperty("background", colorActual, "important");
+});
+
+
+
 }
 // 👉 Ejecutar al cargar
 rotarColor();
