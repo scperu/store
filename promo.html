@@ -1159,27 +1159,35 @@ if (G_DESTACADOS.includes(mini)) {
     card.innerHTML = `
   ${G_PROMO.includes(mini) ? `<span class="badge-offer">OFERTA</span>` : ""}
   ${G_DESTACADOS.includes(mini) ? `
-
     <span class="badge-star">
       <svg viewBox="0 0 20 20">
         <path d="M10 1.5l2.8 5.7 6.3.9-4.5 4.4 1.1 6.3L10 15.9 4.3 18.8l1.1-6.3-4.5-4.4 6.3-.9L10 1.5z"/>
       </svg>
       <b>Destacado</b>
     </span>` : ""}
-
+    
   <img src="${thumbUrl}" alt="${desc}" onclick="mostrarModal('${largeUrl}')">
   <div class="card-content">
     <h3>${desc}</h3>
 
-${stockMsg ? `<div class="${stockMsg.cls}" style="margin-bottom:6px;font-size:0.82em;font-weight:700;">
-  ${stockMsg.text}
-</div>` : ""}
+    <!-- 👇 Mini + marca -->
+    <div class="meta">
+  <span>${marca}</span>
+  <span class="mini-code">${mini}</span>
+</div>
+
+    <!-- 👇 Stock -->
+    ${stockMsg ? `<div class="${stockMsg.cls}" style="margin-bottom:6px;font-size:0.82em;font-weight:700;">
+      ${stockMsg.text}
+    </div>` : ""}
 
     <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${detalles}</p>
+
     <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
       <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
       <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
     </div>
+
     <button class="cart-btn" 
       onclick="addToCart('${mini}','${desc.replace(/'/g,'')}','${precioActual}','${p['CODIGO']}')">
       Agregar 🛒
