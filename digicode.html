@@ -460,29 +460,26 @@ body {
 
 
 
-.ribbon-color {
+
+.estrella {
   position: absolute;
   top: 10px;
-  right: -60px;        /* mueve un poquito más a la derecha */
-  padding: 15px 70px;   /* 👈 más alto (8px) y más ancho (60px) */
-  transform: rotate(45deg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  border-radius: 2px;  /* opcional, para bordes un poco suaves */
+  right: 10px;
+  font-size: 1.8em;
+  color: gold;
+  animation: girar 6s linear infinite, resplandor 3s ease-in-out infinite alternate;
 }
 
-
-
-
-.ribbon-color::after {
-  content: "★";              /* estrella sólida (no la de emoji) */
-  position: absolute;
-  top: 50%;
-  left: 42%;
-  transform: translate(-50%, -50%) rotate(-85deg);
-  font-size: 1.2em;
-  color: gold;               /* color que quieras */
-  text-shadow: none;         /* aseguras que no tenga sombra */
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
+
+@keyframes resplandor {
+  0%   { text-shadow: 0 0 4px #FFD700; }
+  100% { text-shadow: 0 0 10px #FFA500; }
+}
+
 
 </style>
 
@@ -1102,44 +1099,43 @@ const largeUrl = p['IMAGEN'];
 
         const card = document.createElement('div');
         card.className = 'card';
-        card.innerHTML = `
+        
 
-<div style="position:relative;">
+
+card.innerHTML = `
+  <div style="position:relative;">
   ${badgeRecomendado}
-	
-
-  
-<img src="${thumbUrl}" alt="${desc}" 
-     onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
-
-
+  ${estrella}   <!-- ⭐ solo aparece si cumple la condición -->
+  <img src="${thumbUrl}" alt="${desc}" 
+       onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
 </div>
 
-          <div class="card-content">
-            <h3>${desc}</h3>
+
+  <div class="card-content">
+    <h3>${desc}</h3>
+    <div class="meta">
+      <span>${marca || '—'}</span>
+      <span class="mini-code">${mini || ''}</span>
+    </div>
+    ${stockMsg}
+    <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${p['DETALLES'] || ''}</p>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+      <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+      <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+    </div>
+    <button class="cart-btn" 
+      onclick="addToCart(
+        '${mini}',
+        '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
+        '${precioActual}',
+        '${p['CODIGO']}'
+      )">
+      Agregar 🛒
+    </button>
+  </div>
+`;
 
 
-            <div class="meta">
-              <span>${marca || '—'}</span>
-              <span class="mini-code">${mini || ''}</span>
-            </div>
-            ${stockMsg}
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
-
-          </div>
-        `;
         carr.appendChild(card);
       });
 
@@ -1207,13 +1203,13 @@ function renderizarProductos() {
 
     let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
 
-    // 👉 cinta dinámica si el código termina en 3 dígitos < 100
-    let ribbon = "";
-    const match = String(p['CODIGO']).match(/(\d{3})$/);
-    if (match && parseInt(match[1], 10) < 100) {
-      // 👉 cinta usa el COLOR_ACTUAL que se actualiza en rotarColor()
-      ribbon = `<div class="ribbon-color" style="background:${COLOR_ACTUAL};"></div>`;
-    }
+    // 👉 estrella solo si el código termina en 3 dígitos < 100
+let estrella = "";
+const match = String(p['CODIGO']).match(/(\d{3})$/);
+if (match && parseInt(match[1], 10) < 100) {
+  estrella = `<div class="estrella">★</div>`;
+}
+
 
     let stockMsg = '';
     if (stock === 0) {
@@ -1233,8 +1229,9 @@ function renderizarProductos() {
     card.innerHTML = `
       <div style="position:relative;">
         ${badgeRecomendado}
-        ${ribbon}
-        <img src="${thumbUrl}" alt="${desc}" 
+${estrella}   <!-- ⭐ solo aparece si cumple la condición -->
+<img src="${thumbUrl}" alt="${desc}" 
+
              onclick="mostrarModal('${p['MODAL'] || thumbUrl}')">
       </div>
       <div class="card-content">

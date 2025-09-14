@@ -152,39 +152,51 @@
   }
   .stock-orange { animation: limitedPulse 3s infinite ease-in-out; border-radius: 6px; }
 
-  /* ⚡ Alta disponibilidad con ícono animado */
-  @keyframes flashIcon { 0%, 100% { text-shadow: 0 0 6px #FFD700; } 50% { text-shadow: 0 0 12px #FFC107; } }
-  .stock-green { background: #e8f5e9; color: #166534; font-weight: bold; border-radius: 6px; padding: 6px 10px; }
-  .stock-green::before { content: "⚡ "; animation: flashIcon 2s infinite; }
-
-  /* 🟡↔🔴 Amarillo a rojo */
-  @keyframes yellowToRed { 0% { background: #fff4e5; color: #a16207; } 100% { background: #fdecec; color: #b91c1c; } }
-  .stock-yellow { animation: yellowToRed 2s infinite alternate; border-radius: 6px; }
-
-  /* 🟢↔🟡 Verde a amarillo */
-  @keyframes greenToYellow { 0% { background: #e8f5e9; color: #166534; } 100% { background: #fffde7; color: #ca8a04; } }
-  .stock-limited { animation: greenToYellow 2s infinite alternate; border-radius: 6px; }
-
-  /* 🔵↔🟢 Azul a verde */
-  @keyframes blueToGreen { 0% { background: #e0f2fe; color: #075985; } 100% { background: #e8f5e9; color: #166534; } }
-  .stock-blue { animation: blueToGreen 2.5s infinite alternate; border-radius: 6px; }
-
-  .badge-recomendado {
-  position: absolute;
-  top: 4px;
-  right: -25px;
-  background: var(--badge-color, #e63946); /* 🎨 color dinámico */
-  color: #fff;
-  padding: 3px 35px;
-  font-size: 0.9em;
+ 
+/* Stock verde (fijo, sin animación) */
+.stock-green {
+  color: #166534;
   font-weight: bold;
-  transform: rotate(45deg);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-  text-align: center;
-  border: none; /* 👈 sin bordes */
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* Amarillo → Rojo (suave) */
+@keyframes yellowToRed {
+  0%   { color: #a16207; }   /* marrón dorado */
+  50%  { color: #d97706; }   /* ámbar cálido */
+  100% { color: #b91c1c; }   /* rojo suave */
+}
+.stock-yellow {
+  animation: yellowToRed 4s infinite ease-in-out;
+  border-radius: 6px;
+}
+
+/* Verde → Amarillo (suave) */
+@keyframes greenToYellow {
+  0%   { color: #166534; }   /* verde oscuro */
+  50%  { color: #22c55e; }   /* verde brillante */
+  100% { color: #ca8a04; }   /* amarillo dorado */
+}
+.stock-limited {
+  animation: greenToYellow 4s infinite ease-in-out;
+  border-radius: 6px;
+}
+
+/* Azul → Verde (suave) */
+@keyframes blueToGreen {
+  0%   { color: #075985; }   /* azul marino */
+  50%  { color: #0ea5e9; }   /* celeste */
+  100% { color: #166534; }   /* verde */
+}
+.stock-blue {
+  animation: blueToGreen 4s infinite ease-in-out;
+  border-radius: 6px;
 }
 
 
+
+  
 #btnWhatsappFixed {
   position: fixed;
   bottom: 20px;
@@ -447,67 +459,6 @@ body {
 
 
 
-.badge-recomendado {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: transparent; /* 🔥 sin cinta */
-  padding: 0;
-  transform: none;         /* 🔥 sin rotación diagonal */
-  box-shadow: none;
-}
-
-.badge-recomendado span {
-  display: inline-block;
-  font-size: 1.6em;
-  color: #FFD700;
-  animation: girar 3s linear infinite,
-             parpadeoSuave 1.8s ease-in-out infinite;
-}
-
-
-
-/* Rotación */
-@keyframes girar {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* Parpadeo suave */
-@keyframes parpadeoSuave {
-  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
-  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
-}
-
-
-
-/* === Badge fuego con rebote y glow sutil === */
-.badge-fuego {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  width: 15px;
-  height: 15px;
-  background: url("https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f525.svg") no-repeat center;
-  background-size: contain;
-  animation: rebote 1.6s infinite ease-in-out, glowSuave 2.5s infinite alternate;
-  z-index: 10;
-}
-
-/* Rebote suave */
-@keyframes rebote {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-3px); }
-}
-
-/* Glow sutil estilo neón */
-@keyframes glowSuave {
-  0%   { filter: drop-shadow(0 0 2px rgba(255,120,0,0.4)); }
-  100% { filter: drop-shadow(0 0 5px rgba(255,120,0,0.6)); }
-}
-
-
-
 
 
 /* 🌈 Título Gamer RGB */
@@ -528,29 +479,56 @@ body {
 
 
 
-
-/* 🌈⚡ Rayito Gamer RGB Giratorio */
-@keyframes moveGradient {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+/* 🎯 Banner base */
+.promo-banner {
+  font-size: 0.9em;
+  font-weight: 600;
+  margin: 6px 0;
+  transition: opacity 0.8s ease; /* fade suave */
 }
 
-@keyframes spinRayito {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+/* 🟥 Pocos disponibles o agotado */
+.stock-red {
+  color: #dc2626;   /* rojo elegante */
 }
 
-.rayo-gamer {
-  display: inline-block;
-  font-size: 1.2em;
-  font-weight: bold;
-  background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, purple, red);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 300% 100%;
-  animation: moveGradient 4s linear infinite, spinRayito 3s linear infinite;
-  margin-right: 6px;
+/* 🟠 Disponibilidad limitada */
+.stock-orange {
+  color: #d97706;   /* naranja suave */
 }
+
+/* 🟢 Alta disponibilidad */
+.stock-green {
+  color: #16a34a;   /* verde moderno */
+}
+
+/* 🟡 Stock medio */
+.stock-yellow {
+  color: #eab308;   /* dorado cálido */
+}
+
+/* 🔵 Stock abundante */
+.stock-blue {
+  color: #0284c7;   /* azul elegante */
+}
+
+/* 💥 Producto en oferta */
+.banner-offer {
+  color: #dc2626;   /* rojo fuerte */
+  font-weight: 700;
+}
+
+/* ⭐ Producto recomendado */
+.banner-star {
+  color: #eab308;   /* dorado elegante */
+  font-weight: 700;
+}
+
+
+
+
+
+
 
 
 </style>
@@ -1117,151 +1095,161 @@ document.getElementById('searchInput').addEventListener('input', buscarConDelay)
 
 
     /* ===================== RENDER: GRID ===================== */
-    function renderizarProductos() {
-      const lista = document.getElementById('product-list');
-      lista.innerHTML = '';
+    
+function renderizarProductos() {
+  const lista = document.getElementById('product-list');
+  lista.innerHTML = '';
 
-      const marcaSeleccionada = document.getElementById('marcaFiltro').value;
-      const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
-      const ordenPrecio = document.getElementById('ordenPrecio').value;
-      const searchValue = document.getElementById('searchInput').value;
+  const marcaSeleccionada = document.getElementById('marcaFiltro').value;
+  const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
+  const ordenPrecio = document.getElementById('ordenPrecio').value;
+  const searchValue = document.getElementById('searchInput').value;
 
-      let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
+  let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
 
-
-      if (marcaSeleccionada) {
-        productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
-      }
-      if (categoriaSeleccionada) {
-        const codigosCat = [];
-        let found = false;
-        for (let i = 0; i < G_FILTRO.length; i++) {
-          if (G_FILTRO[i] === categoriaSeleccionada) { found = true; continue; }
-          if (isNaN(G_FILTRO[i])) { if (found) break; }
-          else if (found) { codigosCat.push(G_FILTRO[i]); }
-        }
-        productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
-      }
-      if (searchValue && searchValue.trim()) {
-        productos = productos.filter(p =>
-          matchesQuery(
-            searchValue,
-            (String(p['DESCRIPCION'] || '') + ' ' +
-             String(p['DETALLES'] || '') + ' ' +
-             String(p['MARCA'] || '') + ' ' +
-             String(p['MINI CODIGO'] || '')
-            ).toLowerCase()
-          )
-        );
-      }
-
-      productos.sort((a, b) => {
-        const pa = Number(a['PRECIO EN SOLES'] || 0);
-        const pb = Number(b['PRECIO EN SOLES'] || 0);
-        return ordenPrecio === 'asc' ? pa - pb : pb - pa;
-      });
-
-      if (!productos.length) {
-        lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
-        return;
-      }
-
-      productos.forEach(p => {
-        const mini = String(p['MINI CODIGO'] || '').trim();
-        const stock = Number(p['STOCK'] || 0);
-        const precios = getPrecios(p);
-        const precioActual = precios.actual;
-        const precioTachado = precios.tachado;
-        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
-        const marca = (p['MARCA'] || '').toString().trim();
-
-        let badgeRecomendado = G_DESTACADOS.includes(mini) 
-  ? '<div class="badge-recomendado"><span style="color:#FFD700; font-size:1.2em;">★</span></div>' 
-  : '';
-
-let badgeFuego = G_PROMO.includes(mini)
-  ? '<div class="badge-fuego"></div>'
-  : '';
-
-
-  const desc = (p['DESCRIPCION'] || '').toString();
-  const detalles = (p['DETALLES'] || '').toString();
-
-  // ⚡ Mostrar rayito si hay "gamer" o "gaming"
-  let rayitoHTML = '';
-  if (desc.toLowerCase().includes("gamer") || desc.toLowerCase().includes("gaming") ||
-      detalles.toLowerCase().includes("gamer") || detalles.toLowerCase().includes("gaming")) {
-    rayitoHTML = `<div class="rayito-gamer">⚡</div>`;
+  if (marcaSeleccionada) {
+    productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
   }
 
-
-
-        let stockMsg = '';
-        if (stock === 0) {
-          stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        } else if (stock >= 1 && stock <= 3) {
-          stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        } else if (stock >= 4 && stock <= 10) {
-          stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        } else if (stock >= 11 && stock <= 19) {
-          stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        } else if (stock >= 20) {
-          stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-        }
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div style="position:relative;">
-  ${badgeRecomendado}
-  ${badgeFuego}
-  <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" onclick="mostrarModal('${largeUrl}')">
-</div>
-
-          <div class="card-content">
-            <h3 class="${(/rgb/i.test((p['DESCRIPCION'] || '') + ' ' + (p['DETALLES'] || '')))
-  ? 'titulo-rgb'
-  : ''}">
-  ${p['DESCRIPCION'] || ''}
-</h3>
-
-            <div class="meta">
-              <span>${marca || '—'}</span>
-              <span class="mini-code">${mini || ''}</span>
-            </div>
-            ${stockMsg}
-
-<p style="margin:.35rem 0;color:#374151;font-size:.92em;">
-  ${(/gamer|gaming/i.test((p['DESCRIPCION'] || '') + ' ' + (p['DETALLES'] || '')))
-    ? '<span class="rayo-gamer">⚡</span>' + (p['DETALLES'] || '')
-    : (p['DETALLES'] || '')}
-</p>
-
-
-
-
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
-
-          </div>
-        `;
-        lista.appendChild(card);
-      });
-  rotarColor();
-
+  if (categoriaSeleccionada) {
+    const codigosCat = [];
+    let found = false;
+    for (let i = 0; i < G_FILTRO.length; i++) {
+      if (G_FILTRO[i] === categoriaSeleccionada) { found = true; continue; }
+      if (isNaN(G_FILTRO[i])) { if (found) break; }
+      else if (found) { codigosCat.push(G_FILTRO[i]); }
     }
+    productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
+  }
+
+  if (searchValue && searchValue.trim()) {
+    productos = productos.filter(p =>
+      matchesQuery(
+        searchValue,
+        (String(p['DESCRIPCION'] || '') + ' ' +
+         String(p['DETALLES'] || '') + ' ' +
+         String(p['MARCA'] || '') + ' ' +
+         String(p['MINI CODIGO'] || '')
+        ).toLowerCase()
+      )
+    );
+  }
+
+  productos.sort((a, b) => {
+    const pa = Number(a['PRECIO EN SOLES'] || 0);
+    const pb = Number(b['PRECIO EN SOLES'] || 0);
+    return ordenPrecio === 'asc' ? pa - pb : pb - pa;
+  });
+
+  if (!productos.length) {
+    lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
+    return;
+  }
+
+  productos.forEach(p => {
+    const mini = String(p['MINI CODIGO'] || '').trim();
+    const stock = Number(p['STOCK'] || 0);
+    const precios = getPrecios(p);
+    const precioActual = precios.actual;
+    const precioTachado = precios.tachado;
+    const thumbUrl = generarLinkImagen(p['CODIGO'], false);
+    const largeUrl = generateSafeLargeUrl(p['CODIGO']);
+    const marca = (p['MARCA'] || '').toString().trim();
+    const desc = (p['DESCRIPCION'] || '').toString();
+    const detalles = (p['DETALLES'] || '').toString();
+
+    // 📌 Construir mensajes
+    let mensajes = [];
+    let stockClass = "";
+
+    if (stock === 0) {
+      mensajes.push({ text: "😢 AGOTADO", cls: "stock-red" });
+      stockClass = "stock-red";
+    } else if (stock >= 1 && stock <= 3) {
+      mensajes.push({ text: "🛑 Stock al límite: " + stock + " disponible(s)", cls: "stock-red" });
+      stockClass = "stock-red";
+    } else if (stock >= 4 && stock <= 10) {
+      mensajes.push({ text: "🔥 ¡Últimas unidades!", cls: "stock-orange" });
+      stockClass = "stock-orange";
+    } else if (stock >= 11 && stock <= 19) {
+      mensajes.push({ text: "⚠️ Disponibilidad limitada", cls: "stock-yellow" });
+      stockClass = "stock-yellow";
+    } else if (stock >= 20) {
+      mensajes.push({ text: "🟢 Stock disponible", cls: "stock-green" });
+      stockClass = "stock-green";
+    }
+
+    // Extras con clases propias
+    if (G_PROMO.includes(mini)) {
+      mensajes.push({ text: "🏷️ Producto en oferta", cls: "banner-offer" });
+    }
+    if (G_DESTACADOS.includes(mini)) {
+      mensajes.push({ text: "⭐ Producto recomendado", cls: "banner-star" });
+    }
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-img-wrapper">
+        <img src="${thumbUrl}" alt="${desc}" onclick="mostrarModal('${largeUrl}')">
+
+        <div class="card-content">
+          <h3 class="${(/rgb/i.test(desc + ' ' + detalles)) ? 'titulo-rgb' : ''}">
+            ${desc}
+          </h3>
+
+          <div class="meta">
+            <span>${marca || '—'}</span>
+            <span class="mini-code">${mini || ''}</span>
+          </div>
+
+          <!-- Banner rotativo -->
+          <div class="promo-banner ${mensajes[0].cls}" id="banner-${mini}">
+            ${mensajes[0].text}
+          </div>
+
+          <p style="margin:.35rem 0;color:#374151;font-size:.92em;">
+            ${detalles}
+          </p>
+
+          <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+            <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+            <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+          </div>
+          <button class="cart-btn" 
+            onclick="addToCart(
+              '${mini}',
+              '${desc.replace(/'/g,'')}',
+              '${precioActual}',
+              '${p['CODIGO']}'
+            )">
+            Agregar 🛒
+          </button>
+        </div>
+      </div>
+    `;
+    lista.appendChild(card);
+
+    // 🔄 Rotación de mensajes
+    if (mensajes.length > 1) {
+      let idx = 0;
+      setInterval(() => {
+        idx = (idx + 1) % mensajes.length;
+        const el = document.getElementById(`banner-${mini}`);
+        if (el) {
+          el.style.opacity = "0";
+          setTimeout(() => {
+            el.textContent = mensajes[idx].text;
+            el.className = "promo-banner " + (mensajes[idx].cls || stockClass);
+            el.style.opacity = "1";
+          }, 400);
+        }
+      }, 7000); // 👈 cada 6 segundos
+    }
+  });
+
+  rotarColor();
+}
 
     /* ===================== CARRITO ===================== */
     function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
