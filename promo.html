@@ -131,70 +131,28 @@
   .old-price { color: #9ca3af; text-decoration: line-through; font-size: 0.9em; }
   .promo-msg { font-size: 0.83em; padding: 5px 8px; border-radius: 6px; margin-top: 6px; font-weight: 700; display:inline-block; }
 
-  /* 🔥 Últimos disponibles (parpadeo suave) */
-  @keyframes softBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .stock-red {
-    background: #fdecec;
-    color: #b91c1c;
-    animation: softBlink 1.5s infinite;
-    border-radius: 6px;
-  }
-
-  /* ⚠️ Disponibilidad limitada (oscila colores) */
-  @keyframes limitedPulse {
-    0%   { background: #fdecec; color: #b91c1c; }
-    33%  { background: #fff4e5; color: #a16207; }
-    66%  { background: #fffde7; color: #ca8a04; }
-    100% { background: #fdecec; color: #b91c1c; }
-  }
-  .stock-orange { animation: limitedPulse 3s infinite ease-in-out; border-radius: 6px; }
 
  
-/* Stock verde (fijo, sin animación) */
-.stock-green {
-  color: #166534;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 6px 10px;
+/* === STOCK (Pastel Candy – Vibrante) === */
+.stock-red { 
+  color: #fb7185;   /* rojo coral pastel */
+  font-weight: 600; 
 }
 
-/* Amarillo → Rojo (suave) */
-@keyframes yellowToRed {
-  0%   { color: #a16207; }   /* marrón dorado */
-  50%  { color: #d97706; }   /* ámbar cálido */
-  100% { color: #b91c1c; }   /* rojo suave */
-}
-.stock-yellow {
-  animation: yellowToRed 4s infinite ease-in-out;
-  border-radius: 6px;
+.stock-yellow { 
+  color: #fcd34d;   /* amarillo pastel cálido */
+  font-weight: 600; 
 }
 
-/* Verde → Amarillo (suave) */
-@keyframes greenToYellow {
-  0%   { color: #166534; }   /* verde oscuro */
-  50%  { color: #22c55e; }   /* verde brillante */
-  100% { color: #ca8a04; }   /* amarillo dorado */
-}
-.stock-limited {
-  animation: greenToYellow 4s infinite ease-in-out;
-  border-radius: 6px;
+.stock-green { 
+  color: #4ade80;   /* verde menta brillante */
+  font-weight: 600; 
 }
 
-/* Azul → Verde (suave) */
-@keyframes blueToGreen {
-  0%   { color: #075985; }   /* azul marino */
-  50%  { color: #0ea5e9; }   /* celeste */
-  100% { color: #166534; }   /* verde */
+.stock-blue { 
+  color: #60a5fa;   /* celeste pastel vibrante */
+  font-weight: 600; 
 }
-.stock-blue {
-  animation: blueToGreen 4s infinite ease-in-out;
-  border-radius: 6px;
-}
-
-
 
   
 #btnWhatsappFixed {
@@ -479,39 +437,6 @@ body {
 
 
 
-/* 🎯 Banner base */
-.promo-banner {
-  font-size: 0.9em;
-  font-weight: 600;
-  margin: 6px 0;
-  transition: opacity 0.8s ease; /* fade suave */
-}
-
-/* 🟥 Pocos disponibles o agotado */
-.stock-red {
-  color: #dc2626;   /* rojo elegante */
-}
-
-/* 🟠 Disponibilidad limitada */
-.stock-orange {
-  color: #d97706;   /* naranja suave */
-}
-
-/* 🟢 Alta disponibilidad */
-.stock-green {
-  color: #16a34a;   /* verde moderno */
-}
-
-/* 🟡 Stock medio */
-.stock-yellow {
-  color: #eab308;   /* dorado cálido */
-}
-
-/* 🔵 Stock abundante */
-.stock-blue {
-  color: #0284c7;   /* azul elegante */
-}
-
 /* 💥 Producto en oferta */
 .banner-offer {
   color: #dc2626;   /* rojo fuerte */
@@ -525,7 +450,60 @@ body {
 }
 
 
+/* Contenedor de mensajes */
+.promo-banners {
+  display: flex;
+  flex-direction: column; /* stock en su línea, fade debajo */
+  gap: 4px;
+  min-height: 32px;
+}
 
+/* Stock siempre fijo */
+.promo-banner.stock-red,
+.promo-banner.stock-orange,
+.promo-banner.stock-yellow,
+.promo-banner.stock-green,
+.promo-banner.stock-blue {
+  opacity: 1 !important;
+  position: relative;
+}
+
+/* 🟥 Ribbon diagonal (OFERTA) */
+.badge-offer {
+  position: absolute;
+  top: 16px;
+  left: -40px;
+  transform: rotate(-45deg);
+  background: #dc2626;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.55em;
+  padding: 3px 40px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ⭐ Badge rectangular (DESTACADO) */
+.badge-star {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #facc15;
+  font-weight: 900;
+  font-size: 0.55em;
+  padding: 3px 7px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #fff;   /* 👈 texto blanco */
+}
+.badge-star svg {
+  width: 12px;
+  height: 12px;
+  fill: #fff;   /* 👈 estrella blanca */
+}
 
 
 
@@ -860,15 +838,7 @@ function getPrecios(producto){
         ? `${base}/large/${sub1}/${sub2}/${cod}.jpg`
         : `${base}/${sub1}/${sub2}/${cod}.jpg`;
     }
-    function generateSafeLargeUrl(codigo) {
-      const cod = String(codigo || '').toLowerCase();
-      const sub1 = cod.substring(0, 2);
-      let sub2 = cod.substring(2, 4);
-      if (cod.includes('wd')) sub2 = 'dw';
-      return `https://imagenes.deltron.com.pe/images/productos//items/large/${sub1}/${sub2}/${cod}.jpg`;
-    }
-
-    /* --------- Cargas --------- */
+        /* --------- Cargas --------- */
     
     
 async function cargarExcel() {
@@ -1153,99 +1123,75 @@ function renderizarProductos() {
     const precioActual = precios.actual;
     const precioTachado = precios.tachado;
     const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-    const largeUrl = generateSafeLargeUrl(p['CODIGO']);
+    const largeUrl = generarLinkImagen(p['CODIGO'], true);
+
     const marca = (p['MARCA'] || '').toString().trim();
     const desc = (p['DESCRIPCION'] || '').toString();
     const detalles = (p['DETALLES'] || '').toString();
 
-    // 📌 Construir mensajes
-    let mensajes = [];
-    let stockClass = "";
+// separa stock de promo/recomendado
+let mensajes = [];   // aquí irán solo promo y recomendado
+let stockMsg = null; // stock fijo
 
-    if (stock === 0) {
-      mensajes.push({ text: "😢 AGOTADO", cls: "stock-red" });
-      stockClass = "stock-red";
-    } else if (stock >= 1 && stock <= 3) {
-      mensajes.push({ text: "🛑 Stock al límite: " + stock + " disponible(s)", cls: "stock-red" });
-      stockClass = "stock-red";
-    } else if (stock >= 4 && stock <= 10) {
-      mensajes.push({ text: "🔥 ¡Últimas unidades!", cls: "stock-orange" });
-      stockClass = "stock-orange";
-    } else if (stock >= 11 && stock <= 19) {
-      mensajes.push({ text: "⚠️ Disponibilidad limitada", cls: "stock-yellow" });
-      stockClass = "stock-yellow";
-    } else if (stock >= 20) {
-      mensajes.push({ text: "🟢 Stock disponible", cls: "stock-green" });
-      stockClass = "stock-green";
-    }
+// Stock → siempre fijo
+if (stock >= 1 && stock <= 3) {
+  stockMsg = { text: "🛑 Stock crítico: " + stock + " disponible(s)", cls: "stock-red" };
+} else if (stock >= 4 && stock <= 10) {
+  stockMsg = { text: "🔥 ¡Últimas unidades!", cls: "stock-yellow" };
+} else if (stock >= 11 && stock <= 19) {
+  stockMsg = { text: "⚠️ Disponibilidad limitada", cls: "stock-green" };
+} else if (stock >= 20) {
+  stockMsg = { text: "🔵 Stock disponible", cls: "stock-blue" };
+}
 
-    // Extras con clases propias
-    if (G_PROMO.includes(mini)) {
-      mensajes.push({ text: "🏷️ Producto en oferta", cls: "banner-offer" });
-    }
-    if (G_DESTACADOS.includes(mini)) {
-      mensajes.push({ text: "⭐ Producto recomendado", cls: "banner-star" });
-    }
+// Promo y recomendado → van al array de fade
+if (G_PROMO.includes(mini)) {
+  mensajes.push({ text: "🏷️ Producto en oferta", cls: "banner-offer" });
+}
+if (G_DESTACADOS.includes(mini)) {
+  mensajes.push({ text: "⭐ Producto recomendado", cls: "banner-star" });
+}
 
     const card = document.createElement('div');
     card.className = 'card';
+
+
     card.innerHTML = `
-      <div class="card-img-wrapper">
-        <img src="${thumbUrl}" alt="${desc}" onclick="mostrarModal('${largeUrl}')">
+  ${G_PROMO.includes(mini) ? `<span class="badge-offer">OFERTA</span>` : ""}
+  ${G_DESTACADOS.includes(mini) ? `
 
-        <div class="card-content">
-          <h3 class="${(/rgb/i.test(desc + ' ' + detalles)) ? 'titulo-rgb' : ''}">
-            ${desc}
-          </h3>
+    <span class="badge-star">
+      <svg viewBox="0 0 20 20">
+        <path d="M10 1.5l2.8 5.7 6.3.9-4.5 4.4 1.1 6.3L10 15.9 4.3 18.8l1.1-6.3-4.5-4.4 6.3-.9L10 1.5z"/>
+      </svg>
+      <b>Destacado</b>
+    </span>` : ""}
 
-          <div class="meta">
-            <span>${marca || '—'}</span>
-            <span class="mini-code">${mini || ''}</span>
-          </div>
+  <img src="${thumbUrl}" alt="${desc}" onclick="mostrarModal('${largeUrl}')">
+  <div class="card-content">
+    <h3>${desc}</h3>
 
-          <!-- Banner rotativo -->
-          <div class="promo-banner ${mensajes[0].cls}" id="banner-${mini}">
-            ${mensajes[0].text}
-          </div>
+${stockMsg ? `<div class="${stockMsg.cls}" style="margin-bottom:6px;font-size:0.82em;font-weight:700;">
+  ${stockMsg.text}
+</div>` : ""}
 
-          <p style="margin:.35rem 0;color:#374151;font-size:.92em;">
-            ${detalles}
-          </p>
+    <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${detalles}</p>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+      <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+      <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+    </div>
+    <button class="cart-btn" 
+      onclick="addToCart('${mini}','${desc.replace(/'/g,'')}','${precioActual}','${p['CODIGO']}')">
+      Agregar 🛒
+    </button>
+  </div>
+`;
 
-          <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-            <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-            <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-          </div>
-          <button class="cart-btn" 
-            onclick="addToCart(
-              '${mini}',
-              '${desc.replace(/'/g,'')}',
-              '${precioActual}',
-              '${p['CODIGO']}'
-            )">
-            Agregar 🛒
-          </button>
-        </div>
-      </div>
-    `;
+
     lista.appendChild(card);
 
-    // 🔄 Rotación de mensajes
-    if (mensajes.length > 1) {
-      let idx = 0;
-      setInterval(() => {
-        idx = (idx + 1) % mensajes.length;
-        const el = document.getElementById(`banner-${mini}`);
-        if (el) {
-          el.style.opacity = "0";
-          setTimeout(() => {
-            el.textContent = mensajes[idx].text;
-            el.className = "promo-banner " + (mensajes[idx].cls || stockClass);
-            el.style.opacity = "1";
-          }, 400);
-        }
-      }, 7000); // 👈 cada 6 segundos
-    }
+// Rotación elegante SOLO para promo/recomendado
+
   });
 
   rotarColor();
