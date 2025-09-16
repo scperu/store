@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>ServiComp - Mega Ofertas</title>
+<title>en El Pequeño Gigante - Mega Ofertas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
@@ -95,25 +95,6 @@
   }
   .filters button:active { transform: scale(.98); }
 
-  /* ===== Carrusel de destacados ===== */
-  #bannerWrap{ position:relative; display:none; }
-  .banner-title { padding:10px 16px; color:#374151; font-weight:800; }
-  .banner-carousel{
-    display:flex; gap:16px; padding: 8px 16px 16px;
-    overflow-x:auto; scroll-snap-type: x mandatory;
-    scrollbar-width:none;
-  }
-  .banner-carousel::-webkit-scrollbar{ display:none; }
-  .banner-carousel .card{
-    min-width: 260px; flex:0 0 auto; scroll-snap-align:start;
-    border:2px solid var(--pri2);
-  }
-  #bannerWrap::after{
-    content:""; position:absolute; right:0; top:0; bottom:0; width:40px;
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,.9));
-    pointer-events:none;
-  }
-
   .products {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -150,59 +131,30 @@
   .old-price { color: #9ca3af; text-decoration: line-through; font-size: 0.9em; }
   .promo-msg { font-size: 0.83em; padding: 5px 8px; border-radius: 6px; margin-top: 6px; font-weight: 700; display:inline-block; }
 
-  /* 🔥 Últimos disponibles (parpadeo suave) */
-  @keyframes softBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .stock-red {
-    background: #fdecec;
-    color: #b91c1c;
-    animation: softBlink 1.5s infinite;
-    border-radius: 6px;
-  }
 
-  /* ⚠️ Disponibilidad limitada (oscila colores) */
-  @keyframes limitedPulse {
-    0%   { background: #fdecec; color: #b91c1c; }
-    33%  { background: #fff4e5; color: #a16207; }
-    66%  { background: #fffde7; color: #ca8a04; }
-    100% { background: #fdecec; color: #b91c1c; }
-  }
-  .stock-orange { animation: limitedPulse 3s infinite ease-in-out; border-radius: 6px; }
+ 
+/* === STOCK (Pastel Candy – Vibrante) === */
+.stock-red { 
+  color: #fb7185;   /* rojo coral pastel */
+  font-weight: 600; 
+}
 
-  /* ⚡ Alta disponibilidad con ícono animado */
-  @keyframes flashIcon { 0%, 100% { text-shadow: 0 0 6px #FFD700; } 50% { text-shadow: 0 0 12px #FFC107; } }
-  .stock-green { background: #e8f5e9; color: #166534; font-weight: bold; border-radius: 6px; padding: 6px 10px; }
-  .stock-green::before { content: "⚡ "; animation: flashIcon 2s infinite; }
+.stock-yellow { 
+  color: #fcd34d;   /* amarillo pastel cálido */
+  font-weight: 600; 
+}
 
-  /* 🟡↔🔴 Amarillo a rojo */
-  @keyframes yellowToRed { 0% { background: #fff4e5; color: #a16207; } 100% { background: #fdecec; color: #b91c1c; } }
-  .stock-yellow { animation: yellowToRed 2s infinite alternate; border-radius: 6px; }
+.stock-green { 
+  color: #4ade80;   /* verde menta brillante */
+  font-weight: 600; 
+}
 
-  /* 🟢↔🟡 Verde a amarillo */
-  @keyframes greenToYellow { 0% { background: #e8f5e9; color: #166534; } 100% { background: #fffde7; color: #ca8a04; } }
-  .stock-limited { animation: greenToYellow 2s infinite alternate; border-radius: 6px; }
+.stock-blue { 
+  color: #60a5fa;   /* celeste pastel vibrante */
+  font-weight: 600; 
+}
 
-  /* 🔵↔🟢 Azul a verde */
-  @keyframes blueToGreen { 0% { background: #e0f2fe; color: #075985; } 100% { background: #e8f5e9; color: #166534; } }
-  .stock-blue { animation: blueToGreen 2.5s infinite alternate; border-radius: 6px; }
-
-  .badge-recomendado {
-    position: absolute;
-    top: 10px;
-    right: -35px;
-    background: #fbbf24;
-    color: #0f172a;
-    padding: 5px 40px;
-    font-size: 0.8em;
-    font-weight: bold;
-    transform: rotate(45deg);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-    text-align: center;
-  }
-
-
+  
 #btnWhatsappFixed {
   position: fixed;
   bottom: 20px;
@@ -458,9 +410,104 @@ body {
 }
 
 
-#bannerWrap {
-  display: none !important;
+@keyframes parpadeoSuave {
+  0%, 100% { opacity: 1; text-shadow: 0 0 6px #FFD700; }
+  50%      { opacity: 0.6; text-shadow: 0 0 14px #FFC107; }
 }
+
+
+
+
+
+/* 🌈 Título Gamer RGB */
+@keyframes tituloGradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.titulo-rgb {
+  background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, purple, red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 400% 100%;
+  animation: tituloGradient 6s linear infinite;
+  font-weight: 800;
+}
+
+
+
+
+
+/* 💥 Producto en oferta */
+.banner-offer {
+  color: #dc2626;   /* rojo fuerte */
+  font-weight: 700;
+}
+
+/* ⭐ Producto recomendado */
+.banner-star {
+  color: #eab308;   /* dorado elegante */
+  font-weight: 700;
+}
+
+
+/* Contenedor de mensajes */
+.promo-banners {
+  display: flex;
+  flex-direction: column; /* stock en su línea, fade debajo */
+  gap: 4px;
+  min-height: 32px;
+}
+
+/* Stock siempre fijo */
+.promo-banner.stock-red,
+.promo-banner.stock-orange,
+.promo-banner.stock-yellow,
+.promo-banner.stock-green,
+.promo-banner.stock-blue {
+  opacity: 1 !important;
+  position: relative;
+}
+
+/* 🟥 Ribbon diagonal (OFERTA) */
+.badge-offer {
+  position: absolute;
+  top: 16px;
+  left: -40px;
+  transform: rotate(-45deg);
+  background: #dc2626;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.55em;
+  padding: 3px 40px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ⭐ Badge rectangular (DESTACADO) */
+.badge-star {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #facc15;
+  font-weight: 900;
+  font-size: 0.55em;
+  padding: 3px 7px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #fff;   /* 👈 texto blanco */
+}
+.badge-star svg {
+  width: 12px;
+  height: 12px;
+  fill: #fff;   /* 👈 estrella blanca */
+}
+
+
+
+
 
 </style>
 
@@ -474,15 +521,30 @@ body {
   </div>
 
   <header>
-    <h1>🔥 Mega Ofertas ServiComp 🔥</h1>
+    <h1>🔥 Mega Ofertas en El Pequeño Gigante 🔥</h1>
     <p>"Equipos confiables, soluciones inteligentes"</p>
   </header>
+
+
+<!-- Aviso elegante de entregas presenciales -->
+<div style="max-width:920px;margin:20px auto;padding:14px 22px;
+            background:#f8fafc;border:1px solid #e5e7eb;
+            border-radius:12px;text-align:center;
+            font-size:0.97em;color:#374151;
+            box-shadow:0 6px 16px rgba(0,0,0,0.06);
+            line-height:1.6;">
+  <span style="font-weight:700;color:#111827;">📦 Entregas presenciales disponibles</span><br>
+  Lima · Huancayo · Chiclayo · Trujillo · Arequipa · Cusco · Huancavelica · Juliaca · Tarapoto · Tacna
+</div>
+
+
+
 
   <!-- Barra de filtros -->
   <div class="filters" id="filtersBar">
     <div class="group">
       <label for="searchInput">Buscar</label>
-      <input type="search" id="searchInput" placeholder='Ej: laptop AND "HP Victus" NOT impresora (también búsqueda normal)' />
+      <input type="search" id="searchInput" placeholder=' ' />
     </div>
     <div class="group">
       <label for="categoriaFiltro">Categoría</label>
@@ -509,13 +571,7 @@ body {
 </div>
 
 
-  <!-- Carrusel de destacados -->
-  <section id="bannerWrap">
-    <div class="banner-title">⭐ Destacados</div>
-    <div class="banner-carousel" id="bannerCarousel"></div>
-  </section>
-
-  <div class="products" id="product-list">Cargando productos...</div>
+    <div class="products" id="product-list">Cargando productos...</div>
 
   <!-- Carrito (mejorado con validación y responsive) -->
 <div id="cartPanel">
@@ -583,7 +639,9 @@ body {
     let G_FILTRO = [];
     let G_DESTACADOS = [];
     let G_CATEGORIAS = [];
-    let G_BANNER = [];             // 👈 NUEVO
+let G_PROMO = []; // 👈 aquí guardaremos los códigos de la hoja promo
+
+
 let primeraBusqueda = true; // 👈 controlamos si es la primera búsqueda
 
 // 👇 Utilidad debounce: retrasa ejecución hasta que el usuario deja de tipear
@@ -612,7 +670,7 @@ function saveCart(){
 let CART = loadCart();
 
     // ===================== CICLO DE OFERTAS (1h activa / espera aleatoria 1-10h) =====================
-    const OFFER_DURATION_MS = 60 * 60 * 1000;   // 1 hora
+    const OFFER_DURATION_MS = 19 * 60 * 1000;   // 1 hora
     const WAIT_MIN_HOURS = 1;                   // espera mínima (horas)
     const WAIT_MAX_HOURS = 10;                  // espera máxima (horas)
     const DISCOUNT_FACTOR = 0.90;               // 10% de descuento (ajustable)
@@ -656,7 +714,7 @@ let CART = loadCart();
       const t = ts ?? nowMs();
       setOfferStart(t);
       clearNextOfferStart();
-      renderizarBanner();
+
       renderizarProductos();
       updateOfferUI();
 setBottomPhraseForState();
@@ -668,7 +726,7 @@ setBottomPhraseForState();
       const wait = randomWaitMs();
       setNextOfferStart(t + wait);
       clearOfferStart();
-      renderizarBanner();
+
       renderizarProductos();
       updateOfferUI();
 setBottomPhraseForState();
@@ -768,7 +826,6 @@ function getPrecios(producto){
   }
 }
 
-    let _bannerInterval = null;    // 👈 NUEVO
 
     /* --------- UTIL: imágenes --------- */
     function generarLinkImagen(codigo, conLarge = false) {
@@ -781,15 +838,7 @@ function getPrecios(producto){
         ? `${base}/large/${sub1}/${sub2}/${cod}.jpg`
         : `${base}/${sub1}/${sub2}/${cod}.jpg`;
     }
-    function generateSafeLargeUrl(codigo) {
-      const cod = String(codigo || '').toLowerCase();
-      const sub1 = cod.substring(0, 2);
-      let sub2 = cod.substring(2, 4);
-      if (cod.includes('wd')) sub2 = 'dw';
-      return `https://imagenes.deltron.com.pe/images/productos//items/large/${sub1}/${sub2}/${cod}.jpg`;
-    }
-
-    /* --------- Cargas --------- */
+        /* --------- Cargas --------- */
     
     
 async function cargarExcel() {
@@ -828,11 +877,18 @@ async function cargarExcel() {
     // ----------------------------
     // Coti (destacados, solo mini códigos, sin encabezados)
     // ----------------------------
-    const cotiData = XLSX.utils.sheet_to_json(workbook.Sheets["coti"], { header: 1 });
+    const cotiData = XLSX.utils.sheet_to_json(workbook.Sheets["recom"], { header: 1 });
     const coti = cotiData.slice(1).flat().map(x => String(x).trim()).filter(Boolean);
     console.log("⭐ Destacados cargados:", coti.length);
 
-    return { productos, filtro, coti };
+// ----------------------------
+// Promo (productos en oferta especial)
+// ----------------------------
+const promoData = XLSX.utils.sheet_to_json(workbook.Sheets["promo"], { header: 1 });
+const promo = promoData.slice(1).flat().map(x => String(x).trim()).filter(Boolean);
+
+return { productos, filtro, coti, promo };
+
 
   } catch (e) {
     console.error("❌ Error cargando Excel:", e);
@@ -841,13 +897,6 @@ async function cargarExcel() {
 }
 
 
-
-// 👇 NUEVO: carga de mini-códigos para el carrusel
-    async function cargarBanner() {
-      const res = await fetch('https://raw.githubusercontent.com/scperu/store/main/banner.txt');
-      const txt = await res.text();
-      return txt.split('\n').map(x => x.trim()).filter(Boolean);
-    }
 
     /* --------- Modal imagen --------- */
     function mostrarModal(src) {
@@ -861,13 +910,13 @@ async function cargarExcel() {
 
     /* --------- INIT --------- */
 async function init() {
-  const { productos, filtro, coti } = await cargarExcel();
-  
-  G_PRODUCTOS = productos;
-  G_FILTRO = filtro;
-  G_DESTACADOS = coti;
-  G_CATEGORIAS = filtro.filter(x => isNaN(x));
+  const { productos, filtro, coti, promo } = await cargarExcel();
 
+G_PRODUCTOS = productos;
+G_FILTRO = filtro;
+G_DESTACADOS = coti;
+G_CATEGORIAS = filtro.filter(x => isNaN(x));
+G_PROMO = promo; // 👈 guardamos los códigos de la hoja promo
   poblarMarcas();
   poblarCategoriasDesdeTxt();
   renderizarProductos();
@@ -895,7 +944,6 @@ document.getElementById('searchInput').addEventListener('input', buscarConDelay)
         document.getElementById('ordenPrecio').value = 'asc';
         document.getElementById('searchInput').value = '';
         renderizarProductos();
-        // renderizarBanner(); // si quieres que el carrusel responda a filtros, descomenta
       });
 
 
@@ -1006,198 +1054,142 @@ document.getElementById('searchInput').addEventListener('input', buscarConDelay)
       });
       return !!stack.pop();
     }
-    function matchesQuery(query, text) {
-      if (!query) return true;
-      query = query.trim(); text = text.toLowerCase();
-      if (!hasBooleanOps(query)) return text.includes(query.toLowerCase());
-      const tokens = tokenizeQuery(query);
-      const postfix = toPostfix(tokens);
-      return evalPostfix(postfix, text);
-    }
+function matchesQuery(query, text) {
+  if (!query) return true;
+  query = query.trim();
+  text = text.toLowerCase();
 
-    /* ===================== RENDER: CARRUSEL ===================== */
-    function startBannerAutoplay(){
-      stopBannerAutoplay();
-      _bannerInterval = setInterval(()=> {
-        const carr = document.getElementById('bannerCarousel');
-        if (!carr || !carr.firstElementChild) return;
-        const card = carr.querySelector('.card');
-        const step = (card?.offsetWidth || 260) + 16; // ancho + gap
-        const atEnd = Math.ceil(carr.scrollLeft + carr.clientWidth) >= carr.scrollWidth;
-        if (atEnd) {
-          carr.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          carr.scrollBy({ left: step, behavior: 'smooth' });
-        }
-      }, 5000);
-    }
-    function stopBannerAutoplay(){ if (_bannerInterval){ clearInterval(_bannerInterval); _bannerInterval = null; } }
+  // ✅ Si el usuario usa AND/OR/NOT → modo avanzado
+  if (hasBooleanOps(query)) {
+    const tokens = tokenizeQuery(query);
+    const postfix = toPostfix(tokens);
+    return evalPostfix(postfix, text);
+  }
 
-    function renderizarBanner(){
-      const wrap = document.getElementById('bannerWrap');
-      const carr = document.getElementById('bannerCarousel');
-      carr.innerHTML = '';
-
-const base = G_PRODUCTOS.filter(p =>
-  G_FILTRO.includes(String(p['MINI CODIGO']).trim()) &&
-  G_BANNER.includes(String(p['MINI CODIGO']).trim()) &&
-  Number(p['STOCK'] || 0) > 0 // 👈 oculta los sin stock
-);
-
-      if (!base.length){ wrap.style.display = 'none'; stopBannerAutoplay(); return; }
-      wrap.style.display = '';
-
-      base.forEach(p=>{
-        const mini = String(p['MINI CODIGO'] || '').trim();
-        const stock = Number(p['STOCK'] || 0);
-        const precios = getPrecios(p);
-        const precioActual = precios.actual;
-        const precioTachado = precios.tachado;
-        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
-        const marca = (p['MARCA'] || '').toString().trim();
-
-        let stockMsg = '';
-        if (stock === 0) stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        else if (stock >= 1 && stock <= 3) stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        else if (stock >= 4 && stock <= 10) stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        else if (stock >= 11 && stock <= 19) stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        else if (stock >= 20) stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div style="position:relative;">
-            <div class="badge-recomendado">🔥</div>
-            <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" loading="lazy" onclick="mostrarModal('${largeUrl}')">
-          </div>
-          <div class="card-content">
-            <h3>${p['DESCRIPCION'] || ''}</h3>
-            <div class="meta">
-              <span>${marca || '—'}</span>
-              <span class="mini-code">${mini || ''}</span>
-            </div>
-            ${stockMsg}
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
-
-          </div>
-        `;
-        carr.appendChild(card);
-      });
-
-      startBannerAutoplay();
-      carr.addEventListener('mouseenter', stopBannerAutoplay);
-      carr.addEventListener('mouseleave', startBannerAutoplay);
-      document.addEventListener('visibilitychange', ()=> {
-        if (document.hidden) stopBannerAutoplay(); else startBannerAutoplay();
-      });
- rotarColor();
-
-    }
+  // ✅ Si es texto normal → modo simple (palabra por palabra)
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return terms.every(t => text.includes(t));
+}
 
     /* ===================== RENDER: GRID ===================== */
-    function renderizarProductos() {
-      const lista = document.getElementById('product-list');
-      lista.innerHTML = '';
+    
+function renderizarProductos() {
+  const lista = document.getElementById('product-list');
+  lista.innerHTML = '';
 
-      const marcaSeleccionada = document.getElementById('marcaFiltro').value;
-      const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
-      const ordenPrecio = document.getElementById('ordenPrecio').value;
-      const searchValue = document.getElementById('searchInput').value;
+  const marcaSeleccionada = document.getElementById('marcaFiltro').value;
+  const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
+  const ordenPrecio = document.getElementById('ordenPrecio').value;
+  const searchValue = document.getElementById('searchInput').value;
 
-      let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
+  let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
+
+  if (marcaSeleccionada) {
+    productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
+  }
+
+  if (categoriaSeleccionada) {
+    const codigosCat = [];
+    let found = false;
+    for (let i = 0; i < G_FILTRO.length; i++) {
+      if (G_FILTRO[i] === categoriaSeleccionada) { found = true; continue; }
+      if (isNaN(G_FILTRO[i])) { if (found) break; }
+      else if (found) { codigosCat.push(G_FILTRO[i]); }
+    }
+    productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
+  }
+
+  if (searchValue && searchValue.trim()) {
+    productos = productos.filter(p =>
+      matchesQuery(
+        searchValue,
+        (String(p['DESCRIPCION'] || '') + ' ' +
+         String(p['DETALLES'] || '') + ' ' +
+         String(p['MARCA'] || '') + ' ' +
+         String(p['MINI CODIGO'] || '')
+        ).toLowerCase()
+      )
+    );
+  }
+
+  productos.sort((a, b) => {
+    const pa = Number(a['PRECIO EN SOLES'] || 0);
+    const pb = Number(b['PRECIO EN SOLES'] || 0);
+    return ordenPrecio === 'asc' ? pa - pb : pb - pa;
+  });
+
+  if (!productos.length) {
+    lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
+    return;
+  }
+
+  productos.forEach(p => {
+    const mini = String(p['MINI CODIGO'] || '').trim();
+    const stock = Number(p['STOCK'] || 0);
+    const precios = getPrecios(p);
+    const precioActual = precios.actual;
+    const precioTachado = precios.tachado;
+    const thumbUrl = generarLinkImagen(p['CODIGO'], false);
+    const largeUrl = generarLinkImagen(p['CODIGO'], true);
+
+    const marca = (p['MARCA'] || '').toString().trim();
+    const desc = (p['DESCRIPCION'] || '').toString();
+    const detalles = (p['DETALLES'] || '').toString();
+
+// separa stock de promo/recomendado
+let mensajes = [];   // aquí irán solo promo y recomendado
+let stockMsg = null; // stock fijo
+
+// Stock → siempre fijo
+if (stock >= 1 && stock <= 3) {
+  stockMsg = { text: "🛑 Stock crítico: " + stock + " disponible(s)", cls: "stock-red" };
+} else if (stock >= 4 && stock <= 10) {
+  stockMsg = { text: "🔥 ¡Últimas unidades!", cls: "stock-yellow" };
+} else if (stock >= 11 && stock <= 19) {
+  stockMsg = { text: "⚠️ Disponibilidad limitada", cls: "stock-green" };
+} else if (stock >= 20) {
+  stockMsg = { text: "🔵 Stock disponible", cls: "stock-blue" };
+}
+
+// Promo y recomendado → van al array de fade
+if (G_PROMO.includes(mini)) {
+  mensajes.push({ text: "🏷️ Producto en oferta", cls: "banner-offer" });
+}
+if (G_DESTACADOS.includes(mini)) {
+  mensajes.push({ text: "⭐ Producto recomendado", cls: "banner-star" });
+}
+
+    const card = document.createElement('div');
+    card.className = 'card';
 
 
-      if (marcaSeleccionada) {
-        productos = productos.filter(p => String(p['MARCA'] || '').trim() === marcaSeleccionada);
-      }
-      if (categoriaSeleccionada) {
-        const codigosCat = [];
-        let found = false;
-        for (let i = 0; i < G_FILTRO.length; i++) {
-          if (G_FILTRO[i] === categoriaSeleccionada) { found = true; continue; }
-          if (isNaN(G_FILTRO[i])) { if (found) break; }
-          else if (found) { codigosCat.push(G_FILTRO[i]); }
-        }
-        productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
-      }
-      if (searchValue && searchValue.trim()) {
-        productos = productos.filter(p =>
-          matchesQuery(
-            searchValue,
-            (String(p['DESCRIPCION'] || '') + ' ' +
-             String(p['DETALLES'] || '') + ' ' +
-             String(p['MARCA'] || '') + ' ' +
-             String(p['MINI CODIGO'] || '')
-            ).toLowerCase()
-          )
-        );
-      }
+    card.innerHTML = `
+  ${G_PROMO.includes(mini) ? `<span class="badge-offer">OFERTA</span>` : ""}
+  ${G_DESTACADOS.includes(mini) ? `
+    <span class="badge-star">
+      <svg viewBox="0 0 20 20">
+        <path d="M10 1.5l2.8 5.7 6.3.9-4.5 4.4 1.1 6.3L10 15.9 4.3 18.8l1.1-6.3-4.5-4.4 6.3-.9L10 1.5z"/>
+      </svg>
+      <b>Destacado</b>
+    </span>` : ""}
+    
+  <img src="${thumbUrl}" alt="${desc}" onclick="mostrarModal('${largeUrl}')">
+  <div class="card-content">
+    <h3>${desc}</h3>
 
-      productos.sort((a, b) => {
-        const pa = Number(a['PRECIO EN SOLES'] || 0);
-        const pb = Number(b['PRECIO EN SOLES'] || 0);
-        return ordenPrecio === 'asc' ? pa - pb : pb - pa;
-      });
+    <!-- 👇 Mini + marca -->
+    <div class="meta">
+  <span>${marca}</span>
+  <span class="mini-code">${mini}</span>
+</div>
 
-      if (!productos.length) {
-        lista.innerHTML = '<div class="empty">No hay productos para los filtros seleccionados.</div>';
-        return;
-      }
+    <!-- 👇 Stock -->
+    ${stockMsg ? `<div class="${stockMsg.cls}" style="margin-bottom:6px;font-size:0.82em;font-weight:700;">
+      ${stockMsg.text}
+    </div>` : ""}
 
-      productos.forEach(p => {
-        const mini = String(p['MINI CODIGO'] || '').trim();
-        const stock = Number(p['STOCK'] || 0);
-        const precios = getPrecios(p);
-        const precioActual = precios.actual;
-        const precioTachado = precios.tachado;
-        const thumbUrl = generarLinkImagen(p['CODIGO'], false);
-        const largeUrl = generateSafeLargeUrl(p['CODIGO']);
-        const marca = (p['MARCA'] || '').toString().trim();
-
-        let badgeRecomendado = G_DESTACADOS.includes(mini) ? '<div class="badge-recomendado">⭐</div>' : '';
-        let stockMsg = '';
-        if (stock === 0) {
-          stockMsg = '<div class="promo-msg stock-black">😢 AGOTADO</div>';
-        } else if (stock >= 1 && stock <= 3) {
-          stockMsg = '<div class="promo-msg stock-red">🛑 Stock al límite: ' + stock + ' disponible(s)</div>';
-        } else if (stock >= 4 && stock <= 10) {
-          stockMsg = '<div class="promo-msg stock-yellow">🔥 ¡Últimas unidades!</div>';
-        } else if (stock >= 11 && stock <= 19) {
-          stockMsg = '<div class="promo-msg stock-limited">⚠️ Disponibilidad limitada</div>';
-        } else if (stock >= 20) {
-          stockMsg = '<div class="promo-msg stock-blue">🌊 Alta disponibilidad</div>';
-        }
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div style="position:relative;">
-            ${badgeRecomendado}
-            <img src="${thumbUrl}" alt="${(p['DESCRIPCION'] || '').toString()}" onclick="mostrarModal('${largeUrl}')">
-          </div>
-          <div class="card-content">
-            <h3>${p['DESCRIPCION'] || ''}</h3>
-            <div class="meta">
-              <span>${marca || '—'}</span>
-              <span class="mini-code">${mini || ''}</span>
-            </div>
-            ${stockMsg}
-
-<p style="margin:.35rem 0;color:#374151;font-size:.92em;">
-  ${p['DETALLES'] || ''}
+    <p style="margin:.35rem 0;color:#374151;font-size:.92em;">
+  ${detalles || ''}
   <a href="https://www.deltron.com.pe/modulos/productos/items/postsql.php?item_number=${p['CODIGO']}"
      target="_blank"
      style="margin-left:6px;color:#1d4ed8;font-weight:600;text-decoration:none;">
@@ -1205,27 +1197,29 @@ const base = G_PRODUCTOS.filter(p =>
   </a>
 </p>
 
-            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
-              <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
-              <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
-            </div>
-            <button class="cart-btn" 
-  onclick="addToCart(
-    '${mini}',
-    '${(p['DESCRIPCION'] || '').toString().replace(/'/g,'')}',
-    '${precioActual}',
-    '${p['CODIGO']}'
-  )">
-  Agregar 🛒
-</button>
 
-          </div>
-        `;
-        lista.appendChild(card);
-      });
+
+    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+      <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
+      <div class="price">S/ ${precioActual.toLocaleString('es-PE')}</div>
+    </div>
+
+    <button class="cart-btn" 
+      onclick="addToCart('${mini}','${desc.replace(/'/g,'')}','${precioActual}','${p['CODIGO']}')">
+      Agregar 🛒
+    </button>
+  </div>
+`;
+
+
+    lista.appendChild(card);
+
+// Rotación elegante SOLO para promo/recomendado
+
+  });
+
   rotarColor();
-
-    }
+}
 
     /* ===================== CARRITO ===================== */
     function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
@@ -1370,11 +1364,11 @@ function updateCart() {
   ).join("\n");
 
   const waText = encodeURIComponent(
-    "Pedido ServiComp:\n\n" + (waLines || "—") +
+    "Pedido en El Pequeño Gigante:\n\n" + (waLines || "—") +
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
-    `https://wa.me/51973952322?text=${waText}`;
+    `https://wa.me/51920876963?text=${waText}`;
 
   
   saveCart(); // guardar en localStorage
@@ -1453,6 +1447,10 @@ function rotarColor() {
   });
 
   indiceColor = nuevoIndice;
+
+
+
+
 }
 // 👉 Ejecutar al cargar
 rotarColor();
@@ -1535,13 +1533,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const FRASES_HEADER = [
-  "🔥 Mega Ofertas ServiComp 🔥",
-  "⚡ Ofertas Exclusivas ServiComp ⚡",
-  "💥 Descuentos ServiComp 💥",
-  "🏷️ Promos ServiComp 🏷️",
-  "🚀 Super Ofertas ServiComp 🚀",
-  "⭐ Ahorra con ServiComp ⭐",
-  "🔥 Rebajas ServiComp 🔥"
+  "🔥 Mega Ofertas en El Pequeño Gigante 🔥",
+  "⚡ Ofertas Exclusivas en El Pequeño Gigante ⚡",
+  "💥 Descuentos en El Pequeño Gigante 💥",
+  "🏷️ Promos en El Pequeño Gigante 🏷️",
+  "🚀 Super Ofertas en El Pequeño Gigante 🚀",
+  "⭐ Ahorra con en El Pequeño Gigante ⭐",
+  "🔥 Rebajas en El Pequeño Gigante 🔥"
 ];
   
 let indiceHeader = -1; // para recordar la última usada
@@ -1584,7 +1582,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 
-<a id="btnWhatsappFixed" href="https://wa.me/51973952322" target="_blank">
+<a id="btnWhatsappFixed" href="https://wa.me/51920876963" target="_blank">
   <img src="https://us3-cdn.inside-graph.com/custom/4-50-icons8-whatsapp-48.png" alt="WhatsApp">
 </a>
 
