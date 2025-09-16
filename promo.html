@@ -542,31 +542,32 @@ body {
 
   <!-- Barra de filtros -->
   <div class="filters" id="filtersBar">
-    <div class="group">
-      <label for="searchInput">Buscar</label>
-      <input type="search" id="searchInput" placeholder=' ' />
-    </div>
-    <div class="group">
-      <label for="categoriaFiltro">Categoría</label>
-      <select id="categoriaFiltro"><option value="">Todas</option></select>
-    </div>
-    <div class="group">
-      <label for="marcaFiltro">Marca</label>
-      <select id="marcaFiltro"><option value="">Todas</option></select>
-    </div>
 
-    <div class="group">
-      <label for="ordenPrecio">Ordenar</label>
-      <select id="ordenPrecio">
-        <option value="asc">Precio más bajo</option>
-        <option value="desc">Precio más alto</option>
-      </select>
-    </div>
+  <!-- 👇 Marca primero -->
+  <div class="group">
+    <label for="marcaFiltro">Marca</label>
+    <select id="marcaFiltro">
+      <option value="">Todas</option>
+    </select>
+  </div>
 
-<div class="group">
-  <button id="btnLimpiar">Limpiar</button>
-</div>
+  <!-- 👇 Luego categoría -->
+  <div class="group">
+    <label for="categoriaFiltro">Categoría</label>
+    <select id="categoriaFiltro"></select>
+  </div>
 
+  <div class="group">
+    <label for="ordenPrecio">Ordenar</label>
+    <select id="ordenPrecio">
+      <option value="asc">Precio más bajo</option>
+      <option value="desc">Precio más alto</option>
+    </select>
+  </div>
+
+  <div class="group">
+    <button id="btnLimpiar">Limpiar</button>
+  </div>
 
 </div>
 
@@ -912,57 +913,54 @@ return { productos, filtro, coti, promo };
 async function init() {
   const { productos, filtro, coti, promo } = await cargarExcel();
 
-G_PRODUCTOS = productos;
-G_FILTRO = filtro;
-G_DESTACADOS = coti;
-G_CATEGORIAS = filtro.filter(x => isNaN(x));
-G_PROMO = promo; // 👈 guardamos los códigos de la hoja promo
+  G_PRODUCTOS = productos;
+  G_FILTRO = filtro;
+  G_DESTACADOS = coti;
+  G_CATEGORIAS = filtro.filter(x => isNaN(x));
+  G_PROMO = promo; 
+
   poblarMarcas();
   poblarCategoriasDesdeTxt();
   renderizarProductos();
   initOfferCycle();
 
-      document.getElementById('marcaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
-      document.getElementById('categoriaFiltro').addEventListener('change', () => { renderizarProductos(); /* opcional: renderizarBanner(); */});
-      document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
-      
-// 👇 función con retardo (espera 300ms después de dejar de tipear)
-const buscarConDelay = debounce(() => {
-  if (primeraBusqueda) {
-    document.getElementById('categoriaFiltro').value = ''; // fuerza "Todas"
-    primeraBusqueda = false; // solo en la primera búsqueda
-  }
-  renderizarProductos();
-}, 300);
+  document.getElementById('marcaFiltro').addEventListener('change', renderizarProductos);
+  document.getElementById('categoriaFiltro').addEventListener('change', renderizarProductos);
+  document.getElementById('ordenPrecio').addEventListener('change', renderizarProductos);
 
-document.getElementById('searchInput').addEventListener('input', buscarConDelay);
+  document.getElementById('btnLimpiar').addEventListener('click', () => {
+    document.getElementById('marcaFiltro').value = '';
+    document.getElementById('categoriaFiltro').value = '';
+    document.getElementById('ordenPrecio').value = 'asc';
+    renderizarProductos();
+  });
 
-
-        document.getElementById('btnLimpiar').addEventListener('click', () => {
-        document.getElementById('marcaFiltro').value = '';
-        document.getElementById('categoriaFiltro').value = '';
-        document.getElementById('ordenPrecio').value = 'asc';
-        document.getElementById('searchInput').value = '';
-        renderizarProductos();
-      });
-
-
-      document.getElementById('shippingInput').addEventListener('input', updateCart);
-      document.getElementById('couponInput').addEventListener('input', updateCart);
-    }
+  document.getElementById('shippingInput').addEventListener('input', updateCart);
+  document.getElementById('couponInput').addEventListener('input', updateCart);
+}
 
     /* --------- Poblar selects --------- */
     function poblarMarcas() {
-      const base = G_PRODUCTOS.filter(p => G_FILTRO.includes(String(p['MINI CODIGO']).trim()));
-      const marcas = Array.from(new Set(base.map(p => (p['MARCA'] || '').toString().trim()).filter(Boolean))).sort((a,b) => a.localeCompare(b));
-      const sel = document.getElementById('marcaFiltro');
-      sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
-      marcas.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m; opt.textContent = m;
-        sel.appendChild(opt);
-      });
-    }
+  const base = G_PRODUCTOS.filter(p => G_FILTRO.includes(String(p['MINI CODIGO']).trim()));
+  const marcas = Array.from(new Set(
+    base.map(p => (p['MARCA'] || '').toString().trim()).filter(Boolean)
+  )).sort((a, b) => a.localeCompare(b));
+
+  const sel = document.getElementById('marcaFiltro');
+  
+  // 👇 Elimina solo lo que no sea "Todas"
+  sel.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
+
+  // 👇 Agrega las marcas
+  marcas.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    sel.appendChild(opt);
+  });
+}
+
+
     function poblarCategoriasDesdeTxt() {
   const sel = document.getElementById('categoriaFiltro');
 
@@ -1054,14 +1052,26 @@ document.getElementById('searchInput').addEventListener('input', buscarConDelay)
       });
       return !!stack.pop();
     }
-    function matchesQuery(query, text) {
-      if (!query) return true;
-      query = query.trim(); text = text.toLowerCase();
-      if (!hasBooleanOps(query)) return text.includes(query.toLowerCase());
-      const tokens = tokenizeQuery(query);
-      const postfix = toPostfix(tokens);
-      return evalPostfix(postfix, text);
-    }
+
+
+
+
+function matchesQuery(query, text) {
+  if (!query) return true;
+  query = query.trim();
+  text = text.toLowerCase();
+
+  // ✅ Si el usuario usa AND/OR/NOT → modo avanzado (booleano)
+  if (hasBooleanOps(query)) {
+    const tokens = tokenizeQuery(query);
+    const postfix = toPostfix(tokens);
+    return evalPostfix(postfix, text);
+  }
+
+  // ✅ Si es texto normal → modo Google (palabra por palabra)
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return terms.every(t => text.includes(t));
+}
 
 
     /* ===================== RENDER: GRID ===================== */
@@ -1073,7 +1083,7 @@ function renderizarProductos() {
   const marcaSeleccionada = document.getElementById('marcaFiltro').value;
   const categoriaSeleccionada = document.getElementById('categoriaFiltro').value;
   const ordenPrecio = document.getElementById('ordenPrecio').value;
-  const searchValue = document.getElementById('searchInput').value;
+  
 
   let productos = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
 
@@ -1092,18 +1102,8 @@ function renderizarProductos() {
     productos = productos.filter(p => codigosCat.includes(String(p['MINI CODIGO']).trim()));
   }
 
-  if (searchValue && searchValue.trim()) {
-    productos = productos.filter(p =>
-      matchesQuery(
-        searchValue,
-        (String(p['DESCRIPCION'] || '') + ' ' +
-         String(p['DETALLES'] || '') + ' ' +
-         String(p['MARCA'] || '') + ' ' +
-         String(p['MINI CODIGO'] || '')
-        ).toLowerCase()
-      )
-    );
-  }
+  
+
 
   productos.sort((a, b) => {
     const pa = Number(a['PRECIO EN SOLES'] || 0);
