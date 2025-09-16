@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>en El Pequeño Gigante - Mega Ofertas</title>
+<title>ADMINISTRADOR - Mega Ofertas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
@@ -521,7 +521,7 @@ body {
   </div>
 
   <header>
-    <h1>🔥 Mega Ofertas en El Pequeño Gigante 🔥</h1>
+    <h1>🔥 Mega Ofertas ADMINISTRADOR 🔥</h1>
     <p>"Equipos confiables, soluciones inteligentes"</p>
   </header>
 
@@ -670,7 +670,8 @@ function saveCart(){
 let CART = loadCart();
 
     // ===================== CICLO DE OFERTAS (1h activa / espera aleatoria 1-10h) =====================
-    const OFFER_DURATION_MS = 19 * 60 * 1000;   // 1 hora
+    const OFFER_DURATION_MS = 365 * 24 * 60 * 60 * 1000; // 1 año
+
     const WAIT_MIN_HOURS = 1;                   // espera mínima (horas)
     const WAIT_MAX_HOURS = 10;                  // espera máxima (horas)
     const DISCOUNT_FACTOR = 0.90;               // 10% de descuento (ajustable)
@@ -693,10 +694,10 @@ let CART = loadCart();
     }
 
     function isOfferActiveAt(t){
-      const s = getOfferStart();
-      if (!s) return false;
-      return t >= s && t < (s + OFFER_DURATION_MS);
-    }
+  const s = getOfferStart();
+  if (!s) return false;
+  return t >= s && t < (s + OFFER_DURATION_MS);
+}
 
     function msToOfferEnd(t){
       const s = getOfferStart();
@@ -1364,11 +1365,11 @@ function updateCart() {
   ).join("\n");
 
   const waText = encodeURIComponent(
-    "Pedido en El Pequeño Gigante:\n\n" + (waLines || "—") +
+    "Pedido ADMINISTRADOR:\n\n" + (waLines || "—") +
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
-    `https://wa.me/51920876963?text=${waText}`;
+    `https://wa.me/51973952322?text=${waText}`;
 
   
   saveCart(); // guardar en localStorage
@@ -1533,13 +1534,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const FRASES_HEADER = [
-  "🔥 Mega Ofertas en El Pequeño Gigante 🔥",
-  "⚡ Ofertas Exclusivas en El Pequeño Gigante ⚡",
-  "💥 Descuentos en El Pequeño Gigante 💥",
-  "🏷️ Promos en El Pequeño Gigante 🏷️",
-  "🚀 Super Ofertas en El Pequeño Gigante 🚀",
-  "⭐ Ahorra con en El Pequeño Gigante ⭐",
-  "🔥 Rebajas en El Pequeño Gigante 🔥"
+  "🔥 Mega Ofertas ADMINISTRADOR 🔥",
+  "⚡ Ofertas Exclusivas ADMINISTRADOR ⚡",
+  "💥 Descuentos ADMINISTRADOR 💥",
+  "🏷️ Promos ADMINISTRADOR 🏷️",
+  "🚀 Super Ofertas ADMINISTRADOR 🚀",
+  "⭐ Ahorra con ADMINISTRADOR ⭐",
+  "🔥 Rebajas ADMINISTRADOR 🔥"
 ];
   
 let indiceHeader = -1; // para recordar la última usada
@@ -1582,7 +1583,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 
-<a id="btnWhatsappFixed" href="https://wa.me/51920876963" target="_blank">
+<a id="btnWhatsappFixed" href="https://wa.me/51973952322" target="_blank">
   <img src="https://us3-cdn.inside-graph.com/custom/4-50-icons8-whatsapp-48.png" alt="WhatsApp">
 </a>
 
