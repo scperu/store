@@ -670,7 +670,7 @@ function saveCart(){
 let CART = loadCart();
 
     // ===================== CICLO DE OFERTAS (1h activa / espera aleatoria 1-10h) =====================
-    const OFFER_DURATION_MS = 60 * 60 * 1000;   // 1 hora
+    const OFFER_DURATION_MS = 19 * 60 * 1000;   // 1 hora
     const WAIT_MIN_HOURS = 1;                   // espera mínima (horas)
     const WAIT_MAX_HOURS = 10;                  // espera máxima (horas)
     const DISCOUNT_FACTOR = 0.90;               // 10% de descuento (ajustable)
@@ -1054,15 +1054,22 @@ document.getElementById('searchInput').addEventListener('input', buscarConDelay)
       });
       return !!stack.pop();
     }
-    function matchesQuery(query, text) {
-      if (!query) return true;
-      query = query.trim(); text = text.toLowerCase();
-      if (!hasBooleanOps(query)) return text.includes(query.toLowerCase());
-      const tokens = tokenizeQuery(query);
-      const postfix = toPostfix(tokens);
-      return evalPostfix(postfix, text);
-    }
+function matchesQuery(query, text) {
+  if (!query) return true;
+  query = query.trim();
+  text = text.toLowerCase();
 
+  // ✅ Si el usuario usa AND/OR/NOT → modo avanzado
+  if (hasBooleanOps(query)) {
+    const tokens = tokenizeQuery(query);
+    const postfix = toPostfix(tokens);
+    return evalPostfix(postfix, text);
+  }
+
+  // ✅ Si es texto normal → modo simple (palabra por palabra)
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return terms.every(t => text.includes(t));
+}
 
     /* ===================== RENDER: GRID ===================== */
     
@@ -1182,6 +1189,7 @@ if (G_DESTACADOS.includes(mini)) {
     </div>` : ""}
 
     <p style="margin:.35rem 0;color:#374151;font-size:.92em;">${detalles}</p>
+
 
     <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
       <div class="old-price">S/ ${precioTachado.toLocaleString('es-PE')}</div>
