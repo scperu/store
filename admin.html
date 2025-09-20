@@ -689,11 +689,9 @@ let CART = loadCart();
     function clearNextOfferStart(){ localStorage.removeItem(LS_NEXT_OFFER_START); }
 
     function randomWaitMs(){
-  // const hours = Math.floor(Math.random() * (WAIT_MAX_HOURS - WAIT_MIN_HOURS + 1)) + WAIT_MIN_HOURS;
-  // return hours * 60 * 60 * 1000;
-
-  return 0; // 🔒 siempre 0 horas de espera (pausado)
-}
+      const hours = Math.floor(Math.random() * (WAIT_MAX_HOURS - WAIT_MIN_HOURS + 1)) + WAIT_MIN_HOURS;
+      return hours * 60 * 60 * 1000;
+    }
 
     function isOfferActiveAt(t){
   const s = getOfferStart();
