@@ -1,28 +1,25 @@
-1. SERVICIO
-1.1 THREE MONTH
-nombre: ABCD
+I. SERVICIO
+1.THREE MONTH
+1.1 ABCD
 clave: "1234"
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
-
-nombre: ABCDE
+1.2  ABCDE
 clave: 
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
-
-
-1.2 SIX MONTH
+2. SIX MONTH
 nombre: ABCD
 clave: "1234"
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 
-2. DEMOS
-2.1 demo1
-nombre: ABCD
+II. DEMOS
+2 demo1
+2.1 ABCD
 clave: "1234"
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
@@ -34,18 +31,16 @@ nota1: c444@365c.pro
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 
-3. MAS OPCIONES
-3.1 opcion1
-nombre: ABCDE
+III. MAS OPCIONES
+3 opcion1
+3.1 ABCDE
 clave: 
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
-
-nombre: ABCDE
+3.2 ABCDE
 clave: 
 nota1: c444@365c.pro 
 nota2: 4(q29phMS~2
 image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
-
-3.2 opcion2
+3.3 opcion3
