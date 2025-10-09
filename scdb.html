@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explorador de Notas 🔐</title>
+<style>
+  /* ====== ESTILO GENERAL ====== */
+  :root {
+    --primary: #0078d7;
+    --primary-dark: #005a9e;
+    --bg: #f3f5f9;
+    --card-bg: #ffffff;
+    --text: #1f1f1f;
+    --shadow: 0 5px 20px rgba(0,0,0,0.1);
+    --radius: 12px;
+  }
+
+  body {
+    font-family: "Segoe UI Variable", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    overflow: hidden;
+  }
+
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 14px 22px;
+    font-size: 1.5em;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    box-shadow: var(--shadow);
+  }
+
+  #explorer {
+    display: flex;
+    height: calc(100vh - 55px);
+    overflow: hidden;
+  }
+
+  /* ====== SIDEBAR ====== */
+  #sidebar {
+    width: 300px;
+    background: #ffffff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: inset -2px 0 8px rgba(0,0,0,0.05);
+  }
+
+  #sidebar h2 {
+    font-size: 1em;
+    margin-top: 0;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 10px;
+  }
+
+  li {
+    margin: 6px 0;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95em;
+  }
+
+  li:hover {
+    background: #eaf2fc;
+  }
+
+  .icon {
+    width: 20px;
+    text-align: center;
+  }
+
+  /* ====== CONTENIDO PRINCIPAL ====== */
+  #content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background: linear-gradient(145deg, #f7f9fc, #edf1f7);
+  }
+
+  .note-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeIn 0.4s ease-in;
+  }
+
+  .note-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+
+  .note-card h3 {
+    color: var(--primary);
+    margin-top: 0;
+  }
+
+  .note-item {
+    margin: 10px 0;
+    font-size: 1.05em;
+  }
+
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9em;
+  }
+
+  button:hover {
+    background: var(--primary-dark);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ====== SCROLL ELEGANTE ====== */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+</style>
+</head>
+<body>
+<header>🗂️ Digicode Perú</header>
+<div id="explorer">
+  <div id="sidebar"></div>
+  <div id="content">
+    <h2>Selecciona una carpeta o nota</h2>
+    <p>Haz clic en el panel izquierdo para explorar tus datos.</p>
+  </div>
+</div>
+
+<script>
+// ====================== BASE DE DATOS ======================
+const data = {
+  "carpetas": [
+    {
+      "nombre": "SERVICIO",
+      "subcarpetas": [
+        {
+          "nombre": "THREE MONTH",
+          "protegida": true,
+          "clave": "1234",
+          "notas": [
+            {
+              "nombre": "ABCD",
+              "nota1": "c444@365c.pro",
+              "nota2": "4(q29phMS~2"
+            }
+          ]
+        },
+        {
+          "nombre": "SIX MONTH",
+          "protegida": true,
+          "clave": "1234",
+          "notas": [
+            {
+              "nombre": "ABCD",
+              "nota1": "c444@365c.pro",
+              "nota2": "4(q29phMS~2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "DEMOS",
+      "subcarpetas": [
+        {
+          "nombre": "2.1",
+          "protegida": true,
+          "clave": "1234",
+          "notas": [
+            {
+              "nombre": "ABCD",
+              "nota1": "c444@365c.pro",
+              "nota2": "4(q29phMS~2"
+            }
+          ]
+        },
+        {
+          "nombre": "2.2",
+          "protegida": true,
+          "clave": "1234",
+          "notas": [
+            {
+              "nombre": "ABCD",
+              "nota1": "c444@365c.pro",
+              "nota2": "4(q29phMS~2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// ====================== RENDERIZADO DEL SIDEBAR ======================
+function renderSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.innerHTML = "";
+
+  data.carpetas.forEach(carpeta => {
+    const title = document.createElement("h2");
+    title.textContent = carpeta.nombre;
+    sidebar.appendChild(title);
+
+    const ul = document.createElement("ul");
+    carpeta.subcarpetas.forEach(sub => {
+      const li = document.createElement("li");
+      const icon = document.createElement("span");
+      icon.classList.add("icon");
+      icon.textContent = sub.protegida ? "🔒" : "📁";
+      li.appendChild(icon);
+      const text = document.createTextNode(sub.nombre);
+      li.appendChild(text);
+
+      li.onclick = e => {
+        e.stopPropagation();
+        abrirCarpeta(carpeta.nombre, sub.nombre);
+      };
+      ul.appendChild(li);
+    });
+    sidebar.appendChild(ul);
+  });
+}
+
+// ====================== ABRIR CARPETA ======================
+function abrirCarpeta(nombrePrincipal, nombreSub) {
+  const carpeta = data.carpetas.find(c => c.nombre === nombrePrincipal);
+  const sub = carpeta.subcarpetas.find(s => s.nombre === nombreSub);
+
+  if (sub.protegida) {
+    const clave = prompt(`🔐 "${sub.nombre}" está protegida.\nIntroduce la clave:`);
+    if (clave !== sub.clave) {
+      alert("❌ Clave incorrecta");
+      return;
+    }
+  }
+
+  renderNotas(sub);
+}
+
+// ====================== MOSTRAR NOTAS ======================
+function renderNotas(sub) {
+  const content = document.getElementById("content");
+  content.innerHTML = `<h2>${sub.nombre}</h2>`;
+
+  sub.notas.forEach(n => {
+    const card = document.createElement("div");
+    card.className = "note-card";
+
+    card.innerHTML = `
+      <h3>${n.nombre}</h3>
+      <div class="note-item">
+        <strong>Nota 1:</strong> ${n.nota1}
+        <button onclick="copiar('${n.nota1}')">Copiar</button>
+      </div>
+      <div class="note-item">
+        <strong>Nota 2:</strong> ${n.nota2}
+        <button onclick="copiar('${n.nota2}')">Copiar</button>
+      </div>
+    `;
+    content.appendChild(card);
+  });
+}
+
+// ====================== COPIAR ======================
+function copiar(texto) {
+  navigator.clipboard.writeText(texto);
+  const msg = document.createElement("div");
+  msg.textContent = "📋 Copiado al portapapeles";
+  msg.style.position = "fixed";
+  msg.style.bottom = "30px";
+  msg.style.right = "30px";
+  msg.style.background = "var(--primary)";
+  msg.style.color = "white";
+  msg.style.padding = "10px 20px";
+  msg.style.borderRadius = "8px";
+  msg.style.boxShadow = "0 3px 10px rgba(0,0,0,0.3)";
+  msg.style.opacity = "0";
+  msg.style.transition = "opacity 0.3s ease";
+  document.body.appendChild(msg);
+  setTimeout(() => msg.style.opacity = "1", 50);
+  setTimeout(() => {
+    msg.style.opacity = "0";
+    setTimeout(() => msg.remove(), 500);
+  }, 1500);
+}
+
+// Inicializa
+renderSidebar();
+</script>
+</body>
+</html>
