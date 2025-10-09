@@ -2,27 +2,30 @@
 1.1 THREE MONTH
 nombre: ABCD
 clave: "1234"
-nota1: c444@365c.pro  (AGREGAR BOTON PARA COPIAR)
-nota2: 4(q29phMS~2 (AGREGAR BOTON PARA COPIAR)
-
+nota1: c444@365c.pro 
+nota2: 4(q29phMS~2
+image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 1.2 SIX MONTH
 nombre: ABCD
 clave: "1234"
-nota1: c444@365c.pro  (AGREGAR BOTON PARA COPIAR)
-nota2: 4(q29phMS~2 (AGREGAR BOTON PARA COPIAR)
+nota1: c444@365c.pro 
+nota2: 4(q29phMS~2
+image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 
 2. DEMOS
-
 2.1 demo1
 nombre: ABCD
 clave: "1234"
-nota1: c444@365c.pro  (AGREGAR BOTON PARA COPIAR)
-nota2: 4(q29phMS~2 (AGREGAR BOTON PARA COPIAR)
-
+nota1: c444@365c.pro 
+nota2: 4(q29phMS~2
+image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 2.2 demo 2 
 nombre: ABCD
 clave: "1234"
-nota1: c444@365c.pro  (AGREGAR BOTON PARA COPIAR)
-nota2: 4(q29phMS~2 (AGREGAR BOTON PARA COPIAR)
+nota1: c444@365c.pro 
+nota2: 4(q29phMS~2
+image: https://www.shutterstock.com/image-vector/cheerful-funny-cartoon-childrens-robot-600nw-2407552137.jpg
 
 3. MAS OPCIONES
+3.1 opcion1
+3.2 opcion2
