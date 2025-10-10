@@ -40,7 +40,7 @@ clave:
   nota1
   nota2
 
-"PERMANENTE"
+""
 https://cdnx.jumpseller.com/valeny-store/image/58558086/resize/640/640?1734985110
 clave: 20252026
  ADOBE ACROBAT PRO DC 2019
@@ -51,6 +51,7 @@ https://cdnx.jumpseller.com/valeny-store/image/58558086/resize/640/640?173498511
 clave: 20252026
  ADOBE ACROBAT PRO DC 2019
   123384152874152685
+
 
 
 
