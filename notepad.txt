@@ -1,6 +1,6 @@
 ML - 3 MESES
 https://i.imgur.com/NQ7WpvV.jpeg
-clave:1234
+clave:20252026
  grupo1
   nota1
   nota2
@@ -10,14 +10,14 @@ clave:1234
 
 ML - 6 MESES
 https://i.imgur.com/GMYqs0J.jpeg
-clave:12345
+clave:20252026
  grupo1 
   nota1
   nota2
 
 ML - 12 MESES
 https://i.imgur.com/rGibhzn.jpeg
-clave:123456
+clave:20252026
  grupo 1
   nota1
   nota2
@@ -32,6 +32,13 @@ clave:123456
   nota2
   nota3
   nota4
+
+ML - 24 MESES
+https://i.imgur.com/rGibhzn.jpeg
+clave:20252026
+ grupo 1
+  nota1
+  nota2
 
 
 
