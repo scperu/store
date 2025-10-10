@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opciones ante el fin de soporte de Windows 10</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-fondo: #f4f8ff;
+      --color-primario: #0078d7;
+      --color-secundario: #003366;
+      --color-texto: #1e1e1e;
+      --color-blanco: #ffffff;
+      --sombra-suave: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f7faff 0%, #f2f5fa 100%);
+      color: var(--color-texto);
+      line-height: 1.7;
+      margin: 0 auto;
+      max-width: 1000px;
+      padding: 40px 25px;
+    }
+
+    .imagen-encabezado {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .imagen-encabezado img {
+      width: 100%;
+      max-width: 900px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transition: transform 0.4s ease;
+    }
+
+    .imagen-encabezado img:hover { transform: scale(1.02); }
+
+    h1, h2, h3 {
+      color: var(--color-secundario);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+    }
+
+    p { margin-bottom: 15px; font-size: 1rem; }
+
+    a {
+      color: var(--color-primario);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    a:hover { color: var(--color-secundario); }
+
+    .section {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      border-radius: 15px;
+      box-shadow: var(--sombra-suave);
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeInUp 0.7s ease-in-out;
+    }
+
+    .section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    ul {
+      margin-left: 25px;
+      margin-top: 10px;
+      list-style: "⚙️ ";
+    }
+
+    strong { color: var(--color-secundario); }
+
+    /* 🔹 Contacto Glass Light Premium */
+    .contacto {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(0, 102, 204, 0.15);
+      box-shadow: 0 12px 35px rgba(0, 102, 204, 0.15);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-radius: 20px;
+      padding: 70px 25px;
+      color: var(--color-texto);
+      text-align: center;
+      transition: all 0.4s ease;
+      overflow: hidden;
+      position: relative;
+      margin-top: 60px;
+    }
+
+    .contacto::after {
+      content: "";
+      position: absolute;
+      top: -30%;
+      left: 0;
+      width: 100%;
+      height: 200%;
+      background: linear-gradient(115deg, rgba(0, 102, 204, 0.06), transparent 70%);
+      transform: rotate(2deg);
+      pointer-events: none;
+    }
+
+    .contacto:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 60px rgba(0, 102, 204, 0.25);
+    }
+
+    .contacto h3 {
+      font-size: 1.9rem;
+      margin-bottom: 12px;
+      color: var(--color-secundario);
+    }
+
+    .contacto h3 span {
+      background: linear-gradient(90deg, #0078d7, #00a8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .contacto p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .botones-contacto {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn-whatsapp, .btn-email {
+      background: rgba(0, 102, 204, 0.08);
+      color: var(--color-secundario);
+      padding: 12px 28px;
+      border-radius: 35px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 102, 204, 0.15);
+    }
+
+    .btn-whatsapp:hover,
+    .btn-email:hover {
+      text-decoration: none !important;
+    }
+
+    .btn-whatsapp:hover {
+      background: #25D366;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-email:hover {
+      background: #0078d7;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 120, 215, 0.4);
+    }
+
+    .footer-contacto {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #4d6ea8;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 50px;
+      padding-top: 10px;
+    }
+
+    .volver {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--color-primario);
+      color: #fff;
+      padding: 12px 15px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .volver:hover {
+      background: var(--color-secundario);
+      transform: scale(1.1);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @media (max-width: 768px) {
+      body { padding: 20px; }
+      .section { padding: 20px; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="imagen-encabezado">
+    <img src="https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/media/image/2021/06/fin-soporte-windows-10-2369043.jpg" alt="Fin del soporte de Windows 10">
+  </div>
+
+  <h1>🧭 Opciones ante el fin de soporte del Sistema Operativo Microsoft Windows 10 (2025)</h1>
+  <p>
+    Microsoft ha anunciado oficialmente que el soporte para Windows 10 finalizará el 
+    <strong>14 de octubre de 2025</strong>, marcando el fin de las actualizaciones de seguridad y del soporte técnico estándar. 
+    (<a href="https://support.microsoft.com/en-us/windows/windows-10-support-ends-on-october-14-2025-2ca8b313-1946-43d3-b55c-2b95b107f281" target="_blank">Microsoft, 2024</a>)
+  </p>
+
+  <div class="section">
+    <h2>1️⃣ Actualizar a Windows 11</h2>
+    <p>
+      La primera opción es <strong>actualizar gratuitamente a Windows 11</strong>, siempre que el equipo cumpla los requisitos de hardware 
+      (TPM 2.0, CPU moderna, arranque seguro). Ofrece soporte hasta aproximadamente 2031 
+      (<a href="https://learn.microsoft.com/en-us/windows/whats-new/windows-11-version-24h2" target="_blank">Microsoft, 2024</a>).
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> soporte prolongado, mejoras continuas.</li>
+      <li><strong>Desventajas:</strong> requiere hardware reciente.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2️⃣ Pagar el programa ESU (Extended Security Updates)</h2>
+    <p>
+      El programa <strong>ESU</strong> permite extender los parches de seguridad hasta 2028 
+      (<a href="https://learn.microsoft.com/en-us/windows/whats-new/extended-security-updates" target="_blank">Microsoft, 2024</a>).
+      Cuesta unos <strong>US$30/año</strong> para usuarios domésticos y entre <strong>US$61–122</strong> para empresas.
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> mantiene la seguridad sin migrar de sistema.</li>
+      <li><strong>Desventajas:</strong> pago anual, sin nuevas funciones.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4️⃣ Migrar a Linux (Ubuntu, Mint, etc.)</h2>
+    <p>
+      Instalar una distribución <strong>Linux</strong> como Ubuntu o Mint ofrece estabilidad y soporte gratuito. 
+      Las versiones LTS brindan actualizaciones por 5 años 
+      (<a href="https://ubuntu.com/lts" target="_blank">Canonical, 2024</a>).
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> gratuito, seguro y eficiente.</li>
+      <li><strong>Desventajas:</strong> requiere aprendizaje y adaptación.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5️⃣ Usar Windows 10 LTSC 2021</h2>
+    <p>
+      La edición <strong>LTSC 2021</strong> está enfocada en estabilidad a largo plazo. 
+      Ofrece soporte hasta enero de 2027 (o hasta 2032 en su versión IoT) 
+      (<a href="https://learn.microsoft.com/en-us/windows/whats-new/ltsc/overview" target="_blank">Microsoft, 2024</a>).
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> sin actualizaciones disruptivas, estable.</li>
+      <li><strong>Desventajas:</strong> sin Microsoft Store, licencia empresarial.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6️⃣ Usar Windows 10 LTSC 2019</h2>
+    <p>
+      Basado en la versión 1809, <strong>LTSC 2019</strong> extiende soporte hasta 2029 
+      (<a href="https://learn.microsoft.com/en-us/lifecycle/products/windows-10-enterprise-ltsc-2019" target="_blank">Microsoft Lifecycle, 2024</a>).
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> soporte prolongado, estabilidad máxima.</li>
+      <li><strong>Desventajas:</strong> menor compatibilidad con software nuevo.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>7️⃣ Canjear Microsoft Rewards por ESU</h2>
+    <p>
+      Microsoft permitirá usar <strong>1,000 puntos de Rewards</strong> para inscribirse en ESU 
+      (<a href="https://www.europapress.es/portaltic/software/noticia-microsoft-ofrece-actualizaciones-seguridad-windows-10-cambio-1000-puntos-microsoft-rewards-20250625124221.html" target="_blank">Europa Press, 2025</a>).
+      Sin embargo, aún no está disponible en todas las regiones, incluyendo Perú.
+    </p>
+    <ul>
+      <li><strong>Ventajas:</strong> pagar ESU con puntos, sin dinero.</li>
+      <li><strong>Desventajas:</strong> requiere muchos puntos y disponibilidad regional.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Conclusión</h2>
+    <p>
+      El fin del soporte de Windows 10 exige evaluar prioridades: seguridad, costo y estabilidad.  
+      Para la mayoría, <strong>migrar a Windows 11</strong> es la mejor opción.  
+      No obstante, <strong>LTSC, ESU o Linux</strong> ofrecen caminos alternativos según las necesidades.  
+      Finalmente, el uso de <strong>Microsoft Rewards</strong> representa una alternativa innovadora, aunque aún limitada por región.
+    </p>
+    <p><em>“Mantener el software actualizado es tan esencial como el propio hardware.”</em></p>
+  </div>
+
+  <div class="contacto">
+    <h3>💼 Contacta a <span>ServiComp</span></h3>
+    <p>Soluciones en tecnología y soporte IT profesional.</p>
+
+    <div class="botones-contacto">
+      <a href="https://wa.me/51973952322" target="_blank" class="btn-whatsapp">💬 WhatsApp</a>
+      <a href="mailto:servicomp2021@gmail.com" class="btn-email">✉️ Correo</a>
+    </div>
+
+    <p class="footer-contacto">© 2009 Servicios Generales ServiComp • Perú</p>
+  </div>
+
+  <div class="volver" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</div>
+
+
+</body>
+</html>
