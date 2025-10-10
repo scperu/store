@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notas Dinámicas con GitHub</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      background: linear-gradient(135deg, #dfe9f3, #ffffff);
+      padding: 40px;
+      user-select: none; /* evita selección de texto */
+    }
+    h2 {
+      color: #222;
+    }
+    .img-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .imagen {
+      width: 260px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+      -webkit-user-drag: none;
+    }
+    .imagen:hover {
+      transform: scale(1.05);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .modal-content {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 14px;
+      width: 340px;
+      padding: 25px;
+      text-align: left;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .nota {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nota:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .copy-icon {
+      cursor: pointer;
+      color: #00c3ff;
+      transition: 0.2s;
+    }
+    .copy-icon:hover {
+      color: #fff;
+      transform: scale(1.2);
+    }
+    .copiado {
+      color: #b3ffb3;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+      margin-top: 10px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      margin-top: 10px;
+      background: rgba(255,255,255,0.8);
+      color: #333;
+    }
+    .btn {
+      margin-top: 12px;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #00c3ff, #0078ff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #0099ff, #005fcc);
+    }
+    .error {
+      color: #ff9090;
+      font-size: 13px;
+      display: none;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📘 Notas Dinámicas con Clave</h2>
+  <div id="contenedor" class="img-container"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content" id="modal-content">
+      <span class="close">&times;</span>
+      <div id="contenidoModal"></div>
+    </div>
+  </div>
+
+  <script>
+    // 🔒 Desactivar clic derecho en toda la página
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    // 🔒 Desactivar combinaciones comunes (Ctrl+U, Ctrl+Shift+I, etc.)
+    document.addEventListener("keydown", function(e) {
+      if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S" || e.key === "p" || e.key === "P")) {
+        e.preventDefault();
+      }
+      if ((e.ctrlKey && e.shiftKey && e.key === "I") || (e.ctrlKey && e.key === "j")) {
+        e.preventDefault();
+      }
+      if (e.key === "F12") {
+        e.preventDefault();
+      }
+    });
+
+    const contenedor = document.getElementById('contenedor');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('contenidoModal');
+    const closeBtn = document.querySelector('.close');
+    const data = {};
+
+    const txtUrl = "https://scperu.github.io/store/notepad.txt";
+
+    // Leer archivo TXT remoto desde GitHub
+    fetch(txtUrl)
+      .then(res => {
+        if (!res.ok) throw new Error("No se pudo cargar el TXT");
+        return res.text();
+      })
+      .then(text => parseTXT(text))
+      .catch(err => {
+        console.error("Error cargando notepad.txt:", err);
+        modal.style.display = "flex";
+        modalContent.innerHTML = `<h3>Error</h3><p>No se pudo cargar las notas.</p>`;
+      });
+
+    function parseTXT(text) {
+      const bloques = text.trim().split(/\n\s*\n/);
+
+      bloques.forEach((b, i) => {
+        const lineas = b.trim().split("\n").map(l => l.trim()).filter(Boolean);
+        const nombre = lineas[0] || `IMAGEN${i+1}`;
+        const url = lineas[1];
+        const claveLine = lineas.find(l => l.toLowerCase().startsWith("clave:"));
+        const clave = claveLine ? claveLine.split(":")[1].trim() : "";
+        const grupos = [];
+
+        let grupoActual = null;
+        lineas.forEach(l => {
+          const lower = l.toLowerCase();
+          if (lower.startsWith("grupo")) {
+            grupoActual = { nombre: l, notas: [] };
+            grupos.push(grupoActual);
+          } else if (lower.startsWith("nota")) {
+            if (grupoActual) grupoActual.notas.push(l);
+          }
+        });
+
+        // Clave única por bloque (nombre + índice)
+        const id = `${nombre}_${i}`;
+        data[id] = { nombre, url, clave, grupos };
+
+        // Crear tarjeta visual
+        const container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
+        container.style.alignItems = "center";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "imagen";
+        img.title = nombre;
+        img.onclick = () => pedirClave(id);
+
+        const label = document.createElement("p");
+        label.textContent = nombre;
+        label.style.marginTop = "8px";
+        label.style.fontWeight = "bold";
+        label.style.color = "#333";
+
+        container.appendChild(img);
+        container.appendChild(label);
+        contenedor.appendChild(container);
+      });
+    }
+
+    function pedirClave(id) {
+      const item = data[id];
+      modal.style.display = "flex";
+      modalContent.innerHTML = `
+        <h3>🔐 ${item.nombre}</h3>
+        <p>Introduce la clave para acceder:</p>
+        <input type="password" id="claveInput" placeholder="Escribe la clave...">
+        <button class="btn" onclick="verificarClave('${id}')">Acceder</button>
+        <p id="errorClave" class="error">❌ Clave incorrecta</p>
+      `;
+    }
+
+    function verificarClave(id) {
+      const item = data[id];
+      const claveInput = document.getElementById('claveInput').value.trim();
+      const error = document.getElementById('errorClave');
+      if (claveInput === item.clave) {
+        mostrarNotas(id);
+      } else {
+        error.style.display = 'block';
+      }
+    }
+
+    function mostrarNotas(id) {
+      const item = data[id];
+      modalContent.innerHTML = `<h3>📄 ${item.nombre}</h3>`;
+      item.grupos.forEach(g => {
+        const grupoDiv = document.createElement("div");
+        grupoDiv.innerHTML = `<h4>${g.nombre}</h4>`;
+        g.notas.forEach(nota => {
+          const notaEl = document.createElement("div");
+          notaEl.className = "nota";
+          notaEl.innerHTML = `<span>${nota}</span><span class="copy-icon" onclick="copiar('${nota}', this)">📋</span>`;
+          grupoDiv.appendChild(notaEl);
+        });
+        modalContent.appendChild(grupoDiv);
+      });
+
+      const mensaje = document.createElement("p");
+      mensaje.className = "copiado";
+      mensaje.id = "mensajeCopiado";
+      mensaje.textContent = "✅ Copiado";
+      modalContent.appendChild(mensaje);
+    }
+
+    function copiar(txt, icono) {
+      navigator.clipboard.writeText(txt);
+      const msg = document.getElementById("mensajeCopiado");
+      msg.style.display = "block";
+      icono.textContent = "✅";
+      setTimeout(() => {
+        msg.style.display = "none";
+        icono.textContent = "📋";
+      }, 1500);
+    }
+
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+  </script>
+</body>
+</html>
