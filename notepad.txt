@@ -8,15 +8,15 @@ clave:1234
   nota1
   nota2
 
-IMAGEN2
-https://t3.ftcdn.net/jpg/05/88/95/30/360_F_588953042_01Hrsog5OuZobKdMXf9GVpB6e6XiIhBa.jpg
+ML - 6 MESES
+https://i.imgur.com/GMYqs0J.jpeg
 clave:12345
  grupo1 
   nota1
   nota2
 
-IMAGEN3
-https://t3.ftcdn.net/jpg/05/88/95/30/360_F_588953042_01Hrsog5OuZobKdMXf9GVpB6e6XiIhBa.jpg
+ML - 12 MESES
+https://i.imgur.com/rGibhzn.jpeg
 clave:123456
  grupo 1
   nota1
@@ -32,5 +32,6 @@ clave:123456
   nota2
   nota3
   nota4
+
 
 
