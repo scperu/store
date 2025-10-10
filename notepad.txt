@@ -35,10 +35,11 @@ clave:20252026
 
 ML - 24 MESES
 https://i.imgur.com/rGibhzn.jpeg
-clave:20252026
+clave:
  grupo 1
   nota1
   nota2
+
 
 
 
