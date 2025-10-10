@@ -1,0 +1,35 @@
+IMAGEN1
+https://t3.ftcdn.net/jpg/05/88/95/30/360_F_588953042_01Hrsog5OuZobKdMXf9GVpB6e6XiIhBa.jpg
+clave:1234
+ grupo1
+  nota1
+  nota2
+ grupo2
+  nota1
+  nota2
+
+IMAGEN2
+https://t3.ftcdn.net/jpg/05/88/95/30/360_F_588953042_01Hrsog5OuZobKdMXf9GVpB6e6XiIhBa.jpg
+clave:12345
+ grupo1 
+  nota1
+  nota2
+
+IMAGEN3
+https://t3.ftcdn.net/jpg/05/88/95/30/360_F_588953042_01Hrsog5OuZobKdMXf9GVpB6e6XiIhBa.jpg
+clave:123456
+ grupo 1
+  nota1
+  nota2
+ grupo 2
+  nota1
+  nota2
+  nota3
+ grupo 3
+  nota1
+ grupo 4
+  nota1
+  nota2
+  nota3
+  nota4
+
