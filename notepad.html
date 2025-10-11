@@ -11,7 +11,7 @@
       margin: 0;
       background: linear-gradient(135deg, #dfe9f3, #ffffff);
       padding: 40px;
-      user-select: none; /* evita selección de texto */
+      user-select: none;
     }
     h2 { color: #222; }
     .img-container {
@@ -89,15 +89,14 @@
     }
     .btn:hover { background: linear-gradient(135deg, #0099ff, #005fcc); }
     .error { color: #ff9090; font-size: 13px; display: none; text-align: center; margin-top: 8px; }
-    .locked-msg { color: #fff; margin-bottom: 6px; text-align:center; }
   </style>
 </head>
 <body>
 
-  <h2> ServiComp - Soluciones IT </h2>
+  <h2>ServiComp - Soluciones IT</h2>
   <div id="contenedor" class="img-container"></div>
 
-  <!-- Modal para cada item -->
+  <!-- Modal principal -->
   <div id="modal" class="modal">
     <div class="modal-content" id="modal-content">
       <span class="close">&times;</span>
@@ -105,13 +104,11 @@
     </div>
   </div>
 
-  <!-- Modal de autenticación global al abrir/refresh -->
+  <!-- Modal de autenticación -->
   <div id="authModal" class="auth-modal">
     <div class="auth-content">
-
-      <h3> ServiComp IT</h3>
+      <h3>ServiComp IT</h3>
       <p>🔐 Escribe la clave por favor</p>
-
       <input type="password" id="authInput" placeholder="Escribe la clave...">
       <button class="btn" id="authBtn">Acceder</button>
       <p id="authError" class="error">❌ Clave incorrecta</p>
@@ -119,12 +116,11 @@
   </div>
 
   <script>
-    // 🔒 Desactivar clic derecho en toda la página
+    // 🔒 Bloqueo de inspección y atajos
     document.addEventListener("contextmenu", e => e.preventDefault());
-    // 🔒 Desactivar combinaciones comunes (Ctrl+U, Ctrl+Shift+I, etc.)
     document.addEventListener("keydown", function(e) {
-      if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S" || e.key === "p" || e.key === "P")) e.preventDefault();
-      if ((e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) || (e.ctrlKey && e.key === "j")) e.preventDefault();
+      if (e.ctrlKey && (["u","U","s","S","p","P"].includes(e.key))) e.preventDefault();
+      if ((e.ctrlKey && e.shiftKey && (["I","i"].includes(e.key))) || (e.ctrlKey && e.key === "j")) e.preventDefault();
       if (e.key === "F12") e.preventDefault();
     });
 
@@ -136,16 +132,13 @@
     const authBtn = document.getElementById('authBtn');
     const authError = document.getElementById('authError');
 
-    let data = {}; // se llenará con los bloques
-    let clavesDisponibles = []; // lista de claves válidas (de bloques y automáticas)
+    let data = {};
+    let clavesDisponibles = [];
 
     const txtUrl = "https://scperu.github.io/store/notepad.txt";
-
-    // Auto-reload cada 5 minutos (300000 ms)
     const AUTO_REFRESH_MS = 5 * 60 * 1000;
     setTimeout(() => { location.reload(); }, AUTO_REFRESH_MS);
 
-    // Calcula clave actual en formato HHMM (dos dígitos)
     function ahoraClave() {
       const d = new Date();
       const hh = ("0" + d.getHours()).slice(-2);
@@ -153,36 +146,29 @@
       return hh + mm;
     }
 
-    // Mostrar modal de autenticación global
     function showAuthModal() {
       authModal.style.display = "flex";
       document.getElementById('authInput').value = "";
       authError.style.display = 'none';
-      // focus
       setTimeout(() => document.getElementById('authInput').focus(), 200);
     }
 
-    authBtn.addEventListener('click', () => {
-      verificarAuth();
-    });
-    document.getElementById('authInput').addEventListener('keydown', (e) => {
+    authBtn.addEventListener('click', verificarAuth);
+    document.getElementById('authInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') verificarAuth();
     });
 
     function verificarAuth() {
       const v = document.getElementById('authInput').value.trim();
       const current = ahoraClave();
-      // aceptamos si coincide con cualquier clave disponible (incluyendo claves automáticas calculadas)
       if (clavesDisponibles.includes(v) || v === current) {
         authModal.style.display = "none";
-        // mostrar contenido (las tarjetas) ya se generaron en parseTXT
         contenedor.style.display = "flex";
       } else {
         authError.style.display = 'block';
       }
     }
 
-    // Cargar y parsear archivo TXT remoto
     fetch(txtUrl)
       .then(res => {
         if (!res.ok) throw new Error("No se pudo cargar el TXT");
@@ -196,7 +182,6 @@
       });
 
     function parseTXT(text) {
-      // al inicio ocultamos contenedor hasta autenticación
       contenedor.style.display = "none";
       data = {};
       clavesDisponibles = [];
@@ -206,72 +191,64 @@
 
       bloques.forEach((b, i) => {
         const lineas = b.trim().split("\n").map(l => l.trim()).filter(Boolean);
-        const nombre = lineas[0] || `IMAGEN${i+1}`;
-        const url = lineas[1] || "";
+        const titulo = lineas[0] || `Bloque${i + 1}`;
+        const imagen = lineas[1] || "";
         const claveLine = lineas.find(l => l.toLowerCase().startsWith("clave:"));
-        let clave = claveLine ? claveLine.split(":")[1].trim() : "";
+        const clave = claveLine ? claveLine.split(":")[1].trim() : defaultClave;
 
-        // Si no hay clave, asignar la clave basada en la hora/minuto al abrir la página
-        if (!clave) {
-          clave = defaultClave; // patrón HHMM calculado al abrir
-        }
+        const programas = [];
+        let programaActual = null;
 
-        // recolectar grupos y notas
-        const grupos = [];
-        let grupoActual = null;
-        lineas.forEach(l => {
+        lineas.forEach((l) => {
           const lower = l.toLowerCase();
-         if (lower.startsWith("group") || (!l.startsWith(" ") && !l.startsWith("note") && !lower.startsWith("clave"))) {
-  grupoActual = { nombre: l.replace(/^group/i, "").trim(), notas: [] };
-  grupos.push(grupoActual);
-} else if (lower.startsWith("note") || l.startsWith(" ")) {
-  if (!grupoActual) {
-    grupoActual = { nombre: "General", notas: [] };
-    grupos.push(grupoActual);
-  }
-  grupoActual.notas.push(l.replace(/^note/i, "").trim());
-}
+          if (lower.startsWith("programa")) {
+            if (programaActual) programas.push(programaActual);
+            programaActual = { nombre: l.split(":")[1]?.trim() || "Sin nombre" };
+          } else if (lower.startsWith("user:")) {
+            if (!programaActual) programaActual = { nombre: "Sin programa" };
+            programaActual.user = l.split(":")[1]?.trim() || "";
+          } else if (lower.startsWith("pin:")) {
+            if (!programaActual) programaActual = { nombre: "Sin programa" };
+            programaActual.pin = l.split(":")[1]?.trim() || "";
+          }
+        });
+        if (programaActual) programas.push(programaActual);
 
-        // Clave única por bloque (nombre + índice)
-        const id = `${nombre}_${i}`;
-        data[id] = { nombre, url, clave, grupos };
+        const id = `${titulo}_${i}`;
+        data[id] = { titulo, imagen, clave, programas };
 
-        // Añadir clave a la lista de claves válidas
         if (clave) clavesDisponibles.push(clave);
 
-        // Crear tarjeta visual (se mostrará después de pasar auth)
-        const container = document.createElement("div");
-        container.style.display = "flex";
-        container.style.flexDirection = "column";
-        container.style.alignItems = "center";
+        const card = document.createElement("div");
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.alignItems = "center";
 
         const img = document.createElement("img");
-        img.src = url;
+        img.src = imagen;
         img.className = "imagen";
-        img.title = nombre;
-        img.onclick = () => pedirClave(id); // pedir clave por item al hacer clic (además de auth global)
+        img.title = titulo;
+        img.onclick = () => pedirClave(id);
 
         const label = document.createElement("p");
-        label.textContent = nombre;
+        label.textContent = titulo;
         label.style.marginTop = "8px";
         label.style.fontWeight = "bold";
         label.style.color = "#333";
 
-        container.appendChild(img);
-        container.appendChild(label);
-        contenedor.appendChild(container);
+        card.appendChild(img);
+        card.appendChild(label);
+        contenedor.appendChild(card);
       });
 
-      // después de parsear, mostrar modal auth global para desbloquear
       showAuthModal();
     }
 
-    // Modal por item (pide clave individual al hacer clic)
     function pedirClave(id) {
       const item = data[id];
       modal.style.display = "flex";
       modalContent.innerHTML = `
-        <h3>🔐 ${item.nombre}</h3>
+        <h3>🔐 ${item.titulo}</h3>
         <p>Introduce la clave para acceder:</p>
         <input type="password" id="claveInput" placeholder="Escribe la clave...">
         <button class="btn" onclick="verificarClave('${id}')">Acceder</button>
@@ -284,30 +261,36 @@
       const item = data[id];
       const claveInput = document.getElementById('claveInput').value.trim();
       const error = document.getElementById('errorClave');
-      // Si la clave del item coincide o si la clave ingresada coincide con la clave automática actual -> OK
-      if (claveInput === item.clave) {
-
-        mostrarNotas(id);
+      if (claveInput === item.clave || claveInput === ahoraClave()) {
+        mostrarProgramas(id);
       } else {
         error.style.display = 'block';
       }
     }
 
-    function mostrarNotas(id) {
+    function mostrarProgramas(id) {
       const item = data[id];
-      modalContent.innerHTML = `<h3>📄 ${item.nombre}</h3>`;
-      item.grupos.forEach(g => {
-        const grupoDiv = document.createElement("div");
-        grupoDiv.innerHTML = `<h4>${g.nombre}</h4>`;
-        g.notas.forEach(nota => {
-          const notaEl = document.createElement("div");
-          notaEl.className = "nota";
-          // sanitizar texto mínimo (evitar inyección)
-          const safe = nota.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-          notaEl.innerHTML = `<span>${safe}</span><span class="copy-icon" onclick="copiar('${safe}', this)">📋</span>`;
-          grupoDiv.appendChild(notaEl);
-        });
-        modalContent.appendChild(grupoDiv);
+      modalContent.innerHTML = `<h3>📄 ${item.titulo}</h3>`;
+
+      item.programas.forEach(p => {
+        const div = document.createElement("div");
+        div.innerHTML = `<h4>${p.nombre}</h4>`;
+
+        if (p.user) {
+          const userEl = document.createElement("div");
+          userEl.className = "nota";
+          userEl.innerHTML = `<span>User: ${p.user}</span><span class="copy-icon" onclick="copiar('${p.user}', this)">📋</span>`;
+          div.appendChild(userEl);
+        }
+
+        if (p.pin) {
+          const pinEl = document.createElement("div");
+          pinEl.className = "nota";
+          pinEl.innerHTML = `<span>Pin: ${p.pin}</span><span class="copy-icon" onclick="copiar('${p.pin}', this)">📋</span>`;
+          div.appendChild(pinEl);
+        }
+
+        modalContent.appendChild(div);
       });
 
       const mensaje = document.createElement("p");
@@ -318,9 +301,7 @@
     }
 
     function copiar(txt, icono) {
-      // quitar caracteres escapados al copiar (reemplaza entidades)
-      const textToCopy = txt.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-      navigator.clipboard.writeText(textToCopy);
+      navigator.clipboard.writeText(txt);
       const msg = document.getElementById("mensajeCopiado");
       if (msg) msg.style.display = "block";
       icono.textContent = "✅";
@@ -333,16 +314,7 @@
     closeBtn.onclick = () => modal.style.display = "none";
     window.onclick = e => {
       if (e.target === modal) modal.style.display = "none";
-      if (e.target === authModal) {
-        // mantener bloqueado si hace click fuera del auth -> no permitir cerrar sin clave
-        // authModal.style.display = "flex"; // dejamos que siga visible (no cerramos)
-      }
     };
-
-    // Por seguridad: cada vez que la página vuelva a visibilidad visible (ej. cambio de pestaña),
-    // podemos (opcionalmente) volver a pedir clave. Aquí lo dejamos desactivado pero lo muestro:
-    // document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') showAuthModal(); });
-
   </script>
 </body>
 </html>
