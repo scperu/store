@@ -7,7 +7,7 @@ pin: DbV?tw2AyaM:KFz"yU
 programa: Kaspersky Total Security
 pin: 3M3K9-5R92S-ZDH5Y-NA944 
 programa: Eset NOD32 Antivirus
-PEDE-W37H-WE3M-M9CJ-8K2U
+pin: PEDE-W37H-WE3M-M9CJ-8K2U
 
 6 MESES
 https://i.imgur.com/GMYqs0J.jpeg
@@ -44,6 +44,7 @@ clave:
 programa: Glary Utilities PRO
 user: servicomp@gmail.com
 pin: E96DCB-052461-97E572-8B374C-CEC145
+
 
 
 
