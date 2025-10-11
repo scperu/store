@@ -1,28 +1,25 @@
 3 MESES
 https://i.imgur.com/NQ7WpvV.jpeg
-clave:
- Grupo:
-  Nota:
+clave: 
+programa: ServiSoft
+user: admin
+pin: 1111
 
 6 MESES
 https://i.imgur.com/GMYqs0J.jpeg
-clave:
- Grupo:
-  Nota:
+clave: 
+programa: ServiSoft
+user: admin
+pin: 1111
 
 12 MESES
 https://i.imgur.com/rGibhzn.jpeg
-clave:
- Grupo:
-  Nota:
+programa: ServiSoft
+user: admin
+pin: 1111
 
 PERMANENTE
 https://cdnx.jumpseller.com/valeny-store/image/58558086/resize/640/640?1734985110
-clave:
- Grupo: ADOBE ACROBAT PRO DC 2019
- Nota: 123384152874152685
-
-
-
-
-
+clave: 
+programa: ADOBE ACROBAT PRO DC 2019
+pin: 123384152874152685
