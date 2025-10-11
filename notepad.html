@@ -59,10 +59,20 @@
       background: rgba(255,255,255,0.2);
       border-radius: 8px;
       padding: 8px 10px;
-      margin: 8px 0;
+      margin: 6px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    .programa-block {
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    .programa-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
     .copy-icon { cursor: pointer; color: #00c3ff; transition: 0.2s; }
     .copy-icon:hover { color: #fff; transform: scale(1.2); }
@@ -219,26 +229,13 @@
 
         if (clave) clavesDisponibles.push(clave);
 
-        const card = document.createElement("div");
-        card.style.display = "flex";
-        card.style.flexDirection = "column";
-        card.style.alignItems = "center";
-
         const img = document.createElement("img");
         img.src = imagen;
         img.className = "imagen";
         img.title = titulo;
         img.onclick = () => pedirClave(id);
 
-        const label = document.createElement("p");
-        label.textContent = titulo;
-        label.style.marginTop = "8px";
-        label.style.fontWeight = "bold";
-        label.style.color = "#333";
-
-        card.appendChild(img);
-        card.appendChild(label);
-        contenedor.appendChild(card);
+        contenedor.appendChild(img);
       });
 
       showAuthModal();
@@ -274,19 +271,20 @@
 
       item.programas.forEach(p => {
         const div = document.createElement("div");
+        div.className = "programa-block";
         div.innerHTML = `<h4>${p.nombre}</h4>`;
 
         if (p.user) {
           const userEl = document.createElement("div");
           userEl.className = "nota";
-          userEl.innerHTML = `<span>User: ${p.user}</span><span class="copy-icon" onclick="copiar('${p.user}', this)">📋</span>`;
+          userEl.innerHTML = `<span>${p.user}</span><span class="copy-icon" onclick="copiar('${p.user}', this)">📋</span>`;
           div.appendChild(userEl);
         }
 
         if (p.pin) {
           const pinEl = document.createElement("div");
           pinEl.className = "nota";
-          pinEl.innerHTML = `<span>Pin: ${p.pin}</span><span class="copy-icon" onclick="copiar('${p.pin}', this)">📋</span>`;
+          pinEl.innerHTML = `<span>${p.pin}</span><span class="copy-icon" onclick="copiar('${p.pin}', this)">📋</span>`;
           div.appendChild(pinEl);
         }
 
