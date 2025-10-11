@@ -221,13 +221,16 @@
         let grupoActual = null;
         lineas.forEach(l => {
           const lower = l.toLowerCase();
-          if (lower.startsWith("grupo")) {
-            grupoActual = { nombre: l, notas: [] };
-            grupos.push(grupoActual);
-          } else if (lower.startsWith("nota")) {
-            if (grupoActual) grupoActual.notas.push(l);
-          }
-        });
+         if (lower.startsWith("group") || (!l.startsWith(" ") && !l.startsWith("note") && !lower.startsWith("clave"))) {
+  grupoActual = { nombre: l.replace(/^group/i, "").trim(), notas: [] };
+  grupos.push(grupoActual);
+} else if (lower.startsWith("note") || l.startsWith(" ")) {
+  if (!grupoActual) {
+    grupoActual = { nombre: "General", notas: [] };
+    grupos.push(grupoActual);
+  }
+  grupoActual.notas.push(l.replace(/^note/i, "").trim());
+}
 
         // Clave única por bloque (nombre + índice)
         const id = `${nombre}_${i}`;
