@@ -35,19 +35,6 @@
       color: #111;
     }
 
-    input[type="file"] {
-      display: none;
-    }
-
-    label {
-      background: #111;
-      color: #fff;
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
     select {
       padding: 0.6rem;
       border: 1px solid #ccc;
@@ -178,10 +165,6 @@
     <h1>🚗 KingCar Store</h1>
     <select id="filterMarca"><option value="">Todas las marcas</option></select>
     <select id="filterModelo"><option value="">Todos los modelos</option></select>
-    <div>
-      <label for="excelFile">📂 Cargar Excel</label>
-      <input type="file" id="excelFile" accept=".xlsx" />
-    </div>
   </header>
 
   <main id="productContainer"></main>
@@ -198,7 +181,6 @@
   </div>
 
   <script>
-    const input = document.getElementById('excelFile');
     const container = document.getElementById('productContainer');
     const filterMarca = document.getElementById('filterMarca');
     const filterModelo = document.getElementById('filterModelo');
@@ -211,41 +193,29 @@
     let groupedData = {};
 
     const colorMap = {
-  "ROJO": "red",
-  "AZUL": "blue",
-  "VERDE": "green",
-  "AMARILLO": "gold",
-  "NEGRO": "black",
-  "BLANCO": "white",
-  "GRIS": "gray",
-  "GUINDO": "#800020",
-  "MARRON": "brown",
-  "PLATA": "silver",
-  "NARANJA": "orange",
-  "ROSADO": "pink",
-  "CELESTE": "#87CEEB",
-  "MORADO": "purple",
-  "FUCSIA": "#ff00aa",
-  "DORADO": "#FFD700",
-  "TURQUESA": "#40E0D0"
-};
+      "ROJO": "red", "AZUL": "blue", "VERDE": "green", "AMARILLO": "gold",
+      "NEGRO": "black", "BLANCO": "white", "GRIS": "gray", "GUINDO": "#800020",
+      "MARRON": "brown", "PLATA": "silver", "NARANJA": "orange",
+      "ROSADO": "pink", "CELESTE": "#87CEEB", "MORADO": "purple",
+      "FUCSIA": "#ff00aa", "DORADO": "#FFD700", "TURQUESA": "#40E0D0"
+    };
 
-    input.addEventListener('change', handleFile);
+    window.addEventListener('load', loadFromGitHub);
 
-    function handleFile(e) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+    async function loadFromGitHub() {
+      const url = "https://scperu.github.io/store/kingcar.xlsx";
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const products = XLSX.utils.sheet_to_json(sheet);
-        
         groupedData = groupProducts(products);
         populateFilters(products);
         renderProducts(groupedData);
-      };
-      reader.readAsArrayBuffer(file);
+      } catch (error) {
+        console.error("Error cargando Excel:", error);
+      }
     }
 
     function groupProducts(products) {
