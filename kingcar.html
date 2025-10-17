@@ -958,7 +958,7 @@ function getColorHex(nombre) {
 
     /* --------- Poblar selects --------- */
     function poblarMarcas() {
-  const base = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > 0);
+  const base = G_PRODUCTOS.filter(p => Number(p['STOCK'] || 0) > -1);
 
   const marcas = Array.from(new Set(base.map(p => (p['MARCA'] || '').toString().trim()).filter(Boolean))).sort((a,b) => a.localeCompare(b));
   const sel = document.getElementById('marcaFiltro');
