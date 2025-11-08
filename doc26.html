@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promoción Docentes 2026 | Office 365 + McAfee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body { background: #f6f8fb; color: #222; overflow-x: hidden; }
+
+    [data-animate] { opacity: 0; transform: translateY(30px); transition: all 0.9s ease; }
+    [data-animate].active { opacity: 1; transform: translateY(0); }
+
+    /* ===== Banner ===== */
+    header {
+      background: linear-gradient(rgba(0, 120, 215, 0.7), rgba(0, 120, 215, 0.7)),
+                  url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=80') center/cover;
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    header h1 { font-size: 2.8rem; margin-bottom: 10px; }
+    header p { font-size: 1.2rem; opacity: 0.9; }
+
+    /* ===== Contenedor principal ===== */
+    .promo {
+      max-width: 1100px;
+      margin: 60px auto;
+      background: white;
+      border-radius: 16px;
+      padding: 60px 40px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .promo h2 {
+      text-align: center;
+      color: #0078d7;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      font-weight: 600;
+    }
+
+    /* ===== Tarjetas ===== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 40px;
+    }
+
+    .card-pro {
+      background: #fff;
+      border: 1px solid #e7ecf3;
+      border-radius: 14px;
+      padding: 40px 35px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+      transition: all 0.4s ease;
+      text-align: left;
+    }
+
+    .card-pro:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .card-header-pro {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .card-header-pro svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .divider {
+      width: 40px;
+      height: 3px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .price-pro {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #00a86b;
+      margin-bottom: 15px;
+    }
+
+    .list-pro {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 20px;
+    }
+
+    .list-pro li {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    /* ===== Botones sutiles ===== */
+    .download-btn {
+      display: inline-block;
+      color: #0078d7;
+      border: 1px solid #d3d9e1;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .download-btn:hover {
+      background: #0078d7;
+      color: #fff;
+      border-color: #0078d7;
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      text-align: center;
+      margin-top: 45px;
+      font-size: 1rem;
+      color: #333;
+      line-height: 1.6;
+    }
+    .teamviewer-link {
+      color: #00a86b;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    .teamviewer-link:hover { color: #007a52; }
+
+    /* ===== Formulario ===== */
+    .form-section {
+      background: #0078d7;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .form-section h2 { font-size: 2rem; margin-bottom: 15px; }
+    .form-section p { margin-bottom: 35px; opacity: 0.9; }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      color: #333;
+      text-align: left;
+    }
+
+    form label { display: block; font-weight: 600; margin-bottom: 8px; }
+    form input, form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    form button {
+      width: 100%;
+      background: #0078d7;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    form button:hover { background: #005fa3; }
+
+    /* ===== Contacto final ===== */
+    .contact-section {
+      background: #f8fbff;
+      padding: 60px 20px;
+      text-align: center;
+      border-top: 2px solid #e1e8f0;
+    }
+    .contact-section h2 { color: #0078d7; font-size: 1.8rem; margin-bottom: 10px; }
+    .contact-section p { color: #555; font-size: 1rem; margin-bottom: 30px; }
+
+    /* ===== WhatsApp flotante ===== */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: #25d366;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); background-color: #20b958; }
+    .whatsapp-float img { width: 34px; height: 34px; }
+
+    footer { text-align: center; padding: 25px; background: #0078d7; color: white; font-size: 0.9rem; }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      .promo { padding: 30px 20px; }
+      form { padding: 30px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header data-animate>
+    <h1>Promoción Exclusiva para Docentes 2026</h1>
+    <p>Equipa tus dispositivos con herramientas seguras y profesionales</p>
+  </header>
+
+  <section class="promo" data-animate>
+    <h2>Licencias Disponibles</h2>
+
+    <div class="cards">
+      <!-- Office -->
+      <div class="card-pro" data-animate>
+        <div class="card-header-pro" style="color:#0078d7;">
+          Office 365 
+        </div>
+        <div class="divider" style="background:#0078d7;"></div>
+        <p class="price-pro">$28 / 5 equipos</p>
+        <ul class="list-pro">
+          <li>Incluye Word, Excel, PowerPoint, Outlook y más</li>
+          <li>200 GB de almacenamiento en OneDrive</li>
+          <li>Uso en PC, Mac y dispositivos móviles</li>
+          <li>Licencia válida por 12 meses</li>
+        </ul>
+        <a href="http://officecdn.microsoft.com.edgesuite.net/db/492350F6-3A01-4F97-B9C0-C7C6DDF67D60/media/es-es/O365ProPlusRetail.img" 
+           class="download-btn" target="_blank">Descargar Office 365</a>
+      </div>
+
+      <!-- McAfee -->
+      <div class="card-pro" data-animate>
+        <div class="card-header-pro" style="color:#e50914;">
+
+          McAfee Internet Security
+        </div>
+        <div class="divider" style="background:#e50914;"></div>
+        <p class="price-pro">$28 / 5 equipos</p>
+        <ul class="list-pro">
+          <li>Protección contra virus, malware y ransomware</li>
+          <li>Seguridad web y control parental</li>
+          <li>Rendimiento rápido y sin interrupciones</li>
+          <li>Licencia válida por 12 meses</li>
+        </ul>
+        <a href="https://download.mcafee.com/molbin/iss-loc/wpsinstaller/en-us/1.34.103/1/WPSSetup.exe"
+           class="download-btn" target="_blank">Descargar McAfee</a>
+      </div>
+    </div>
+
+    <div class="cta" data-animate>
+      <p>Promoción válida del <strong>10 de enero al 28 de febrero de 2026</strong> o hasta agotar existencias.</p>
+      <p>Activación remota por 
+        <a href="https://www.teamviewer.com/latam/solutions/use-cases/quicksupport"
+           target="_blank" class="teamviewer-link">TeamViewer QuickSupport</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="form-section" data-animate>
+    <h2>Solicita tu Demo</h2>
+    <p>Déjanos tus datos y nos pondremos en contacto contigo en breve.</p>
+    <form action="https://formsubmit.co/comrade1302@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Nueva solicitud de Promoción Docentes 2026">
+      <label for="name">Nombre completo</label>
+      <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" name="email" placeholder="Tu correo docente" required>
+      <label for="message">Mensaje o consulta</label>
+      <textarea id="message" name="message" rows="4" placeholder="Ejemplo: Quiero una demo de Office 365" required></textarea>
+      <button type="submit">Enviar Solicitud</button>
+    </form>
+  </section>
+
+  <section class="contact-section" data-animate>
+    <h2>¿Tienes dudas o necesitas asistencia personalizada?</h2>
+    <p>Contáctanos directamente por WhatsApp para atención personalizada.</p>
+  </section>
+
+  <!-- WhatsApp flotante -->
+  <a href="https://wa.me/5491123456789?text=Hola,%20quiero%20más%20información%20sobre%20la%20Promoción%20Docentes%202026" 
+     class="whatsapp-float" target="_blank" title="Chatea con nosotros por WhatsApp">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
+
+  <footer data-animate>
+    © 2026 Promoción Docentes | Todos los derechos reservados
+  </footer>
+
+  <script>
+    const animatedElements = document.querySelectorAll("[data-animate]");
+    const onScroll = () => {
+      animatedElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) el.classList.add("active");
+      });
+    };
+    window.addEventListener("scroll", onScroll);
+    window.addEventListener("load", onScroll);
+  </script>
+</body>
+</html>
