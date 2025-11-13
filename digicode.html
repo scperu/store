@@ -1205,8 +1205,8 @@ function renderizarProductos() {
 
     // 👉 estrella solo si el código termina en 3 dígitos < 100
 let estrella = "";
-const match = String(p['CODIGO']).match(/(\d{3})$/);
-if (match && parseInt(match[1], 10) < 100) {
+const match = String(p['CODIGO']).match(/(\d{4})$/);
+if (match && parseInt(match[1], 10) < 1000) {
   estrella = `<div class="estrella">★</div>`;
 }
 
