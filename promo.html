@@ -507,6 +507,30 @@ body {
 
 
 
+/* ====================== ❄️ NIEVE PREMIUM ELEGANTE ❄️ ====================== */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: #ffffff;
+  font-size: 12px;
+  opacity: 0.9;
+  pointer-events: none;
+  animation: fall linear infinite;
+  z-index: 99999;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateX(25px);
+    opacity: 0.2;
+  }
+}
+
+
 
 
 </style>
@@ -1571,6 +1595,32 @@ document.addEventListener("DOMContentLoaded", () => {
 </a>
 
 
+
+<script>
+(function () {
+  const total = 35; // ❄️ Cantidad elegante (no satura)
+
+  for (let i = 0; i < total; i++) {
+    let flake = document.createElement("div");
+    flake.className = "snowflake";
+    flake.innerHTML = "❄"; // ❄️ Estrella minimal elegante
+
+    // posición horizontal inicial
+    flake.style.left = Math.random() * 100 + "vw";
+
+    // suavidad de caída
+    flake.style.animationDuration = (6 + Math.random() * 8) + "s";
+
+    // tamaño aleatorio pero elegante
+    flake.style.fontSize = (8 + Math.random() * 10) + "px";
+
+    // ligera diferencia de opacidad
+    flake.style.opacity = 0.3 + Math.random() * 0.7;
+
+    document.body.appendChild(flake);
+  }
+})();
+</script>
 
 
 
