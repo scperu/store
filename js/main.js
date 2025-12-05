@@ -42,3 +42,13 @@ function fadeOut(){
 }
 
 window.onload = fadeOut();
+
+// Redirección automática en 10 segundos
+setTimeout(() => {
+    window.location.href = "navidad.html";
+}, 10000);
+
+// Redirección al hacer clic en el pole
+document.getElementById("mail_pole").onclick = function() {
+    window.location.href = "navidad.html";
+};
