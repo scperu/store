@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ServiComp TI | Soporte TI, Seguridad y Automatización con IA</title>
+
+  <meta name="description" content="Soporte TI empresarial, seguridad y automatización con IA para reducir incidencias y acelerar tu operación. Diagnóstico por WhatsApp." />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ServiComp TI | Soporte TI, Seguridad y Automatización con IA" />
+  <meta property="og:description" content="Reducimos incidencias, mejoramos tiempos de respuesta y automatizamos procesos con IA. Solicita diagnóstico por WhatsApp." />
+  <meta property="og:type" content="website" />
+
+  <!-- Tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- AOS Animations -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    :root{
+      --primary:#007bff;
+      --accent:#ff7a3d;
+      --bg:#ffffff;
+      --ink:#0b1220;
+      --muted:#5c677d;
+      --radius:18px;
+      --shadow-md: 0 10px 26px rgba(0,0,0,0.10);
+      --shadow-lg: 0 18px 40px rgba(0,0,0,0.14);
+      --line: rgba(15, 23, 42, 0.10);
+      --alt:#f6f7fb;
+      --ok:#16a34a;
+      --wa:#25d366;
+      --wa-dark:#128c7e;
+      --max:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font:16px/1.65 "Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+    }
+    a{color:inherit}
+    .container{max-width:var(--max);margin:0 auto;padding:0 20px}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border:1px solid rgba(255,255,255,0.22);
+      border-radius:999px;color:#fff;background:rgba(255,255,255,0.10);
+      font-weight:700;font-size:13px;
+    }
+
+    /* NAV */
+    .nav{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,0.82);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+      max-width:var(--max);margin:0 auto;padding:10px 20px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px;
+    }
+    .brand .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 10px 18px rgba(0,0,0,0.12);
+    }
+    .nav-links{
+      display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+      font-weight:800;color:rgba(11,18,32,0.72);
+      font-size:14px;
+    }
+    .nav-links a{ text-decoration:none; padding:8px 10px; border-radius:10px; }
+    .nav-links a:hover{ background:rgba(0,123,255,0.08); color:var(--ink); }
+    .nav-cta{ display:flex; gap:10px; align-items:center; }
+
+    /* BUTTONS */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      border:0;border-radius:14px;padding:13px 18px;
+      font-weight:900;cursor:pointer;text-decoration:none;
+      box-shadow:var(--shadow-md);
+      transition:.22s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+    .btn:active{transform:translateY(0px);box-shadow:var(--shadow-md)}
+    .btn.primary{background:#fff;color:#0b1220}
+    .btn.accent{background:var(--accent);color:#fff}
+    .btn.ghost{
+      background:transparent;
+      box-shadow:none;
+      border:1px solid var(--line);
+      color:rgba(11,18,32,0.78);
+    }
+    .btn.ghost:hover{background:rgba(0,0,0,0.03);transform:none;box-shadow:none}
+    .btn.wa{background:var(--wa);color:#fff}
+    .btn.wa:hover{background:var(--wa-dark)}
+
+    /* HERO */
+    .hero{
+      background: radial-gradient(1200px 700px at 20% 20%, rgba(255,255,255,0.22), transparent 60%),
+                  linear-gradient(135deg, #0b1220 0%, #0f1c3a 48%, #111827 100%);
+      color:#fff;
+      padding:72px 0 54px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-grid{
+      display:grid;grid-template-columns: 1.25fr 0.75fr;gap:24px;align-items:center;
+    }
+    .hero h1{
+      font-size:clamp(34px, 4.8vw, 56px);
+      line-height:1.08;margin:14px 0 14px;
+      font-weight:900;
+      letter-spacing:-0.5px;
+    }
+    .hero p{
+      margin:0 0 22px;
+      max-width:720px;
+      font-size:18px;
+      color:rgba(255,255,255,0.86);
+    }
+    .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .hero-card{
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:22px;
+      padding:18px;
+      box-shadow:0 18px 50px rgba(0,0,0,0.25);
+    }
+    .kpis{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;
+    }
+    .kpi{
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:16px;padding:14px;
+    }
+    .kpi strong{display:block;font-size:18px}
+    .kpi span{color:rgba(255,255,255,0.78);font-weight:700;font-size:13px}
+    .note{
+      margin-top:12px;
+      color:rgba(255,255,255,0.76);
+      font-weight:700;
+      font-size:13px;
+    }
+
+    /* SECTION */
+    section{padding:72px 0}
+    section.alt{background:var(--alt)}
+    h2{
+      font-size:30px;font-weight:900;margin:0 0 10px;text-align:center;
+      letter-spacing:-0.2px;
+    }
+    .lead{
+      text-align:center;
+      margin:0 auto 34px;
+      color:var(--muted);
+      max-width:880px;
+      font-weight:700;
+    }
+
+    /* GRID + CARDS */
+    .grid{display:grid;gap:18px}
+    .cols-2{grid-template-columns:repeat(auto-fit, minmax(280px, 1fr))}
+    .cols-3{grid-template-columns:repeat(auto-fit, minmax(260px, 1fr))}
+    .cols-4{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+
+    .card{
+      background:#fff;border-radius:var(--radius);
+      padding:22px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      transition:.22s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+    .card h3{
+      margin:0 0 8px;font-size:19px;color:rgba(0,0,0,0.86);
+      font-weight:900;
+    }
+    .card p{margin:0;color:rgba(11,18,32,0.72);font-weight:700}
+    .card .meta{
+      margin-top:12px;
+      display:flex;gap:10px;flex-wrap:wrap
+    }
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      color:rgba(11,18,32,0.70);
+      background:rgba(0,0,0,0.02);
+      font-weight:900;font-size:12px;
+    }
+    .tag.ok{border-color:rgba(22,163,74,0.25);background:rgba(22,163,74,0.06);color:rgba(22,163,74,0.95)}
+    .tag.blue{border-color:rgba(0,123,255,0.25);background:rgba(0,123,255,0.06);color:rgba(0,123,255,0.95)}
+    .icon{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(0,123,255,0.15), rgba(255,122,61,0.15));
+      border:1px solid rgba(0,0,0,0.06);
+      margin-bottom:10px;
+      color:rgba(0,0,0,0.80);
+    }
+    .icon i{font-size:18px}
+
+    /* SOCIAL PROOF */
+    .logos{
+      display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:center;
+      margin-top:20px;
+      opacity:0.95;
+    }
+    .logo{
+      background:#fff;border:1px solid var(--line);border-radius:16px;
+      padding:12px 14px;display:flex;align-items:center;justify-content:center;
+      box-shadow:var(--shadow-md);
+      min-width:120px;
+    }
+    .logo img{max-height:28px;max-width:120px;object-fit:contain;display:block}
+
+    .quote{
+      max-width:900px;margin:26px auto 0;
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:18px 18px 16px;
+      box-shadow:var(--shadow-md);
+    }
+    .quote p{margin:0;color:rgba(11,18,32,0.78);font-weight:800}
+    .quote small{display:block;margin-top:10px;color:rgba(11,18,32,0.55);font-weight:900}
+
+    /* PROCESS */
+    .steps{counter-reset: step}
+    .step{
+      padding:20px;border-radius:18px;border:1px solid var(--line);
+      background:#fff;box-shadow:var(--shadow-md);
+      position:relative;
+    }
+    .step:before{
+      counter-increment: step;
+      content: counter(step);
+      position:absolute;top:14px;right:14px;
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      font-weight:900;
+      background:linear-gradient(135deg, rgba(0,123,255,0.18), rgba(255,122,61,0.18));
+      border:1px solid rgba(0,0,0,0.06);
+      color:rgba(11,18,32,0.70);
+    }
+    .step h3{margin:0 0 6px;font-weight:900}
+    .step p{margin:0;color:rgba(11,18,32,0.70);font-weight:800}
+
+    /* FOOTER */
+    footer{
+      background:linear-gradient(135deg, #0b1220 0%, #101b36 50%, #111827 100%);
+      color:#fff;
+      padding:60px 0 54px;
+      border-top:1px solid rgba(255,255,255,0.10);
+    }
+    footer a{color:#fff;text-decoration:none;font-weight:900}
+    footer a:hover{color:#FFD700}
+    .footer-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:18px;align-items:start}
+    .footer-card{
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:22px;
+      padding:18px;
+    }
+    .footer-card p{margin:0;color:rgba(255,255,255,0.86);font-weight:700}
+    .footer-card .lines{margin-top:14px;display:grid;gap:10px}
+    .line{
+      display:flex;gap:10px;align-items:flex-start;
+      color:rgba(255,255,255,0.88);
+      font-weight:800;
+    }
+    .line i{margin-top:2px;color:rgba(255,255,255,0.90)}
+    .copyright{
+      margin-top:18px;
+      color:rgba(255,255,255,0.70);
+      font-weight:800;
+      font-size:13px;
+    }
+
+    /* WHATSAPP FLOAT */
+    .whatsapp-float{
+      position:fixed;bottom:18px;right:18px;
+      width:58px;height:58px;border-radius:50%;
+      display:grid;place-items:center;
+      background:var(--wa);
+      color:#fff;font-size:28px;
+      box-shadow:0 12px 26px rgba(0,0,0,0.22);
+      z-index:9999;
+      transition:.2s ease;
+      text-decoration:none;
+    }
+    .whatsapp-float:hover{transform:scale(1.06);background:var(--wa-dark)}
+    .whatsapp-tooltip{
+      position:fixed;bottom:86px;right:18px;
+      background:var(--wa);
+      color:#fff;
+      padding:10px 14px;border-radius:999px;
+      font-weight:900;
+      box-shadow:0 10px 22px rgba(0,0,0,0.18);
+      opacity:0;transform:translateY(8px);
+      transition:.25s ease;
+      z-index:9998;
+      pointer-events:none;
+      font-size:13px;
+    }
+    .whatsapp-tooltip.show{opacity:1;transform:translateY(0)}
+
+    /* RESPONSIVE */
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand" aria-label="ServiComp TI">
+        <span class="dot" aria-hidden="true"></span>
+        <span>ServiComp TI</span>
+      </div>
+
+      <div class="nav-links" aria-label="Navegación">
+        <a href="#servicios">Servicios</a>
+        <a href="#automatizacion">Automatización IA</a>
+        <a href="#seguridad">Seguridad</a>
+        <a href="#marcas">Marcas</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+
+      <div class="nav-cta">
+        <a class="btn ghost" href="#contacto"><i class="fa-regular fa-envelope"></i> Contacto</a>
+        <a class="btn wa" id="ctaNavWhatsapp" target="_blank" rel="noopener noreferrer"
+           href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quiero%20un%20diagn%C3%B3stico%20TI%20para%20mi%20empresa.%20%C2%BFMe%20apoyan%20con%20una%20propuesta%3F">
+          <i class="fa-brands fa-whatsapp"></i> Diagnóstico
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="pill" data-aos="fade-right">
+          <i class="fa-solid fa-shield-halved"></i>
+          Desde 2009 · Soporte TI · Seguridad · Automatización
+        </span>
+
+        <h1 data-aos="fade-up">
+          Soporte TI y Automatización con IA para empresas que no pueden detenerse
+        </h1>
+
+        <p data-aos="fade-up" data-aos-delay="80">
+          Reducimos incidencias, mejoramos tiempos de respuesta y automatizamos procesos críticos
+          para que tu operación sea estable, segura y escalable.
+        </p>
+
+        <div class="hero-ctas" data-aos="zoom-in" data-aos-delay="120">
+          <a class="btn wa" id="ctaHeroWhatsapp" target="_blank" rel="noopener noreferrer"
+             href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quiero%20un%20diagn%C3%B3stico%20TI%20(soporte/seguridad/automatizaci%C3%B3n)%20para%20mi%20empresa.%20%C2%BFC%C3%B3mo%20empezamos%3F">
+            <i class="fa-brands fa-whatsapp"></i> Solicitar diagnóstico por WhatsApp
+          </a>
+          <a class="btn primary" href="#servicios">
+            <i class="fa-solid fa-arrow-down"></i> Ver servicios
+          </a>
+        </div>
+
+        <p class="note" data-aos="fade-up" data-aos-delay="170">
+          <i class="fa-solid fa-circle-check"></i> Respuesta rápida · Soporte remoto y en sitio · Propuesta clara
+        </p>
+      </div>
+
+      <div class="hero-card" data-aos="fade-left">
+        <strong style="font-weight:900;font-size:16px">Lo que más valoran nuestros clientes</strong>
+        <div class="kpis">
+          <div class="kpi">
+            <strong>Menos caídas</strong>
+            <span>Prevención + monitoreo</span>
+          </div>
+          <div class="kpi">
+            <strong>Respuesta ágil</strong>
+            <span>Prioridad por criticidad</span>
+          </div>
+          <div class="kpi">
+            <strong>Seguridad</strong>
+            <span>Antimalware + buenas prácticas</span>
+          </div>
+          <div class="kpi">
+            <strong>Productividad</strong>
+            <span>Automatización con IA</span>
+          </div>
+        </div>
+        <p class="note" style="margin-bottom:0">
+          <i class="fa-solid fa-bolt"></i> Tip: si ya tienes incidentes frecuentes, empezamos con un diagnóstico y plan de estabilización.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="alt">
+    <div class="container">
+      <h2 data-aos="fade-up"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios que resuelven problemas reales</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="80">
+        Menos “términos técnicos” y más resultados: estabilidad, seguridad y eficiencia operativa.
+      </p>
+
+      <div class="grid cols-3">
+        <div class="card" data-aos="zoom-in">
+          <div class="icon"><i class="fa-solid fa-headset"></i></div>
+          <h3>Soporte TI empresarial</h3>
+          <p>Atención remota y en sitio con enfoque en continuidad: menos paradas, más control.</p>
+          <div class="meta">
+            <span class="tag ok"><i class="fa-solid fa-check"></i> Respuesta rápida</span>
+            <span class="tag"><i class="fa-solid fa-ticket"></i> Mesa de ayuda</span>
+          </div>
+        </div>
+
+        <div class="card" data-aos="zoom-in" data-aos-delay="80">
+          <div class="icon"><i class="fa-solid fa-server"></i></div>
+          <h3>Servidores & sistemas</h3>
+          <p>Instalación, optimización y administración para rendimiento estable y escalable.</p>
+          <div class="meta">
+            <span class="tag blue"><i class="fa-solid fa-chart-line"></i> Estabilidad</span>
+            <span class="tag"><i class="fa-solid fa-cloud"></i> Nube / híbrido</span>
+          </div>
+        </div>
+
+        <div class="card" data-aos="zoom-in" data-aos-delay="160">
+          <div class="icon"><i class="fa-solid fa-network-wired"></i></div>
+          <h3>Redes & conectividad</h3>
+          <p>LAN/Wi-Fi/VPN con cobertura real, seguridad y rendimiento para tu día a día.</p>
+          <div class="meta">
+            <span class="tag"><i class="fa-solid fa-wifi"></i> Wi-Fi optimizado</span>
+            <span class="tag"><i class="fa-solid fa-lock"></i> VPN segura</span>
+          </div>
+        </div>
+
+        <div class="card" data-aos="zoom-in" data-aos-delay="240">
+          <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Seguridad y protección</h3>
+          <p>Antivirus corporativo, hardening y controles básicos que reducen riesgos y pérdidas.</p>
+          <div class="meta">
+            <span class="tag ok"><i class="fa-solid fa-shield"></i> Menos riesgos</span>
+            <span class="tag"><i class="fa-solid fa-user-shield"></i> Buenas prácticas</span>
+          </div>
+        </div>
+
+        <div class="card" data-aos="zoom-in" data-aos-delay="320">
+          <div class="icon"><i class="fa-solid fa-gears"></i></div>
+          <h3>Automatización con IA</h3>
+          <p>Reduce tareas manuales y errores: reportes, documentos, avisos y flujos conectados.</p>
+          <div class="meta">
+            <span class="tag blue"><i class="fa-solid fa-robot"></i> IA aplicada</span>
+            <span class="tag"><i class="fa-solid fa-clock"></i> Ahorro de tiempo</span>
+          </div>
+        </div>
+
+        <div class="card" data-aos="zoom-in" data-aos-delay="400">
+          <div class="icon"><i class="fa-solid fa-laptop"></i></div>
+          <h3>Hardware & licencias</h3>
+          <p>Asesoría para comprar bien: equipos, UPS, routers, impresoras y software legal.</p>
+          <div class="meta">
+            <span class="tag"><i class="fa-solid fa-receipt"></i> Garantía</span>
+            <span class="tag"><i class="fa-solid fa-circle-check"></i> Licencias</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:26px" data-aos="fade-up">
+        <a class="btn wa" id="ctaServicesWhatsapp" target="_blank" rel="noopener noreferrer"
+           href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quisiera%20un%20diagn%C3%B3stico%20TI.%20Mi%20necesidad%20principal%20es:%20(soporte/redes/seguridad/automatizaci%C3%B3n).">
+          <i class="fa-brands fa-whatsapp"></i> Quiero diagnóstico y propuesta
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTOMATIZACIÓN IA -->
+  <section id="automatizacion">
+    <div class="container">
+      <h2 data-aos="fade-up"><i class="fa-solid fa-robot"></i> Automatización con IA (enfocada en resultados)</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="80">
+        Implementamos automatizaciones para que tu equipo haga más con menos: menos tareas repetitivas, menos errores, más control.
+      </p>
+
+      <div class="grid cols-4">
+        <div class="card" data-aos="zoom-in">
+          <div class="icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+          <h3>Procesos administrativos</h3>
+          <p>Facturación, reportes, control documental y alertas automáticas.</p>
+        </div>
+        <div class="card" data-aos="zoom-in" data-aos-delay="80">
+          <div class="icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <h3>Flujos de trabajo</h3>
+          <p>Integraciones entre correo, Excel, Drive y herramientas de negocio.</p>
+        </div>
+        <div class="card" data-aos="zoom-in" data-aos-delay="160">
+          <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Reportes rápidos</h3>
+          <p>De horas/días a minutos con plantillas y validación automática.</p>
+        </div>
+        <div class="card" data-aos="zoom-in" data-aos-delay="240">
+          <div class="icon"><i class="fa-solid fa-file-signature"></i></div>
+          <h3>Documentos listos</h3>
+          <p>Oficios, memorandos y formatos con estructura estandarizada.</p>
+        </div>
+      </div>
+
+      <p class="lead" style="margin-top:24px" data-aos="fade-up">
+        ¿También quieres ver AutoData? <a href="autodata.html" style="color:var(--primary);font-weight:900">Ir a AutoData</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- SEGURIDAD -->
+  <section id="seguridad" class="alt">
+    <div class="container">
+      <h2 data-aos="fade-up"><i class="fa-solid fa-shield-halved"></i> Seguridad (lo esencial bien hecho)</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="80">
+        Seguridad no es solo “antivirus”: es reducir superficie de ataque, ordenar accesos y proteger información.
+      </p>
+
+      <div class="grid cols-3">
+        <div class="card" data-aos="zoom-in">
+          <div class="icon"><i class="fa-solid fa-shield-virus"></i></div>
+          <h3>Antimalware corporativo</h3>
+          <p>ESET, Kaspersky, Bitdefender (según necesidad) y configuración correcta.</p>
+        </div>
+        <div class="card" data-aos="zoom-in" data-aos-delay="80">
+          <div class="icon"><i class="fa-solid fa-database"></i></div>
+          <h3>Backups automáticos</h3>
+          <p>En nube o local con políticas claras, pruebas y recuperación.</p>
+        </div>
+        <div class="card" data-aos="zoom-in" data-aos-delay="160">
+          <div class="icon"><i class="fa-solid fa-recycle"></i></div>
+          <h3>Recuperación de datos</h3>
+          <p>Soporte especializado ante incidentes y contingencias.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARCAS / PRUEBA SOCIAL -->
+  <section id="marcas">
+    <div class="container">
+      <h2 data-aos="fade-up"><i class="fa-solid fa-award"></i> Marcas y ecosistema</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="80">
+        Trabajamos con marcas reconocidas y buenas prácticas para asegurar compatibilidad y soporte.
+      </p>
+
+      <div class="logos" data-aos="fade-up" data-aos-delay="120">
+        <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Dell_Logo.svg" alt="Dell"></div>
+        <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Hewlett-Packard_logo_2012.svg" alt="HP"></div>
+        <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Lenovo_logo_2015.svg" alt="Lenovo"></div>
+        <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft"></div>
+        <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_2015_logo.svg" alt="Google"></div>
+
+        <!-- Extras que ya tenías en tu HTML -->
+        <div class="logo"><img src="https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062015/advance.jpg" alt="Advance"></div>
+        <div class="logo"><img src="https://www.teroslatinamerica.com/wp-content/uploads/2022/07/Anadir-un-titulo-1024x1024.webp" alt="Teros Latin America"></div>
+      </div>
+
+      <div class="quote" data-aos="fade-up">
+        <p>“El valor está en la continuidad: un TI ordenado reduce pérdidas, mejora productividad y evita urgencias constantes.”</p>
+        <small>— Enfoque ServiComp TI (diagnóstico → estabilización → mejora continua)</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section id="proceso" class="alt">
+    <div class="container">
+      <h2 data-aos="fade-up"><i class="fa-solid fa-route"></i> Cómo trabajamos</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="80">
+        Proceso simple, medible y sin sorpresas: empezamos con diagnóstico y cerramos con un plan claro.
+      </p>
+
+      <div class="grid cols-3 steps">
+        <div class="step" data-aos="zoom-in">
+          <h3>1) Diagnóstico</h3>
+          <p>Revisión de estado TI, riesgos y puntos críticos. Priorizamos por impacto en tu operación.</p>
+        </div>
+        <div class="step" data-aos="zoom-in" data-aos-delay="80">
+          <h3>2) Plan y propuesta</h3>
+          <p>Acciones, tiempos y alcance. Recomendamos lo necesario, sin inflar costos.</p>
+        </div>
+        <div class="step" data-aos="zoom-in" data-aos-delay="160">
+          <h3>3) Implementación</h3>
+          <p>Soporte, seguridad, redes o automatización. Documentación y mejoras continuas.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:26px" data-aos="fade-up">
+        <a class="btn wa" id="ctaProcessWhatsapp" target="_blank" rel="noopener noreferrer"
+           href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quiero%20iniciar%20el%20diagn%C3%B3stico.%20Mi%20empresa%20es%20del%20rubro:%20__%20y%20mi%20principal%20problema%20es:%20__.">
+          <i class="fa-brands fa-whatsapp"></i> Empezar diagnóstico
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO / FOOTER -->
+  <footer id="contacto">
+    <div class="container footer-grid">
+      <div>
+        <h2 style="text-align:left;margin:0 0 12px" data-aos="fade-up">Hablemos</h2>
+        <p style="margin:0;color:rgba(255,255,255,0.86);font-weight:800" data-aos="fade-up" data-aos-delay="80">
+          Cuéntanos tu necesidad y preparamos una propuesta a la medida.
+        </p>
+
+        <div class="hero-ctas" style="margin-top:18px" data-aos="zoom-in" data-aos-delay="120">
+          <a class="btn wa" id="ctaFooterWhatsapp" target="_blank" rel="noopener noreferrer"
+             href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quisiera%20cotizar%20soporte/seguridad/automatizaci%C3%B3n%20para%20mi%20empresa.%20%C2%BFC%C3%B3mo%20coordinamos%3F">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          </a>
+          <a class="btn primary" href="mailto:servicombu@gmail.com">
+            <i class="fa-regular fa-envelope"></i> Escribir correo
+          </a>
+        </div>
+
+        <div class="copyright">
+          © 2009–2026 ServiComp · RUC: 10423201661 · Todos los derechos reservados.
+        </div>
+      </div>
+
+      <div class="footer-card" data-aos="fade-left">
+        <p style="font-weight:900;margin:0 0 10px">Contacto directo</p>
+        <div class="lines">
+          <div class="line">
+            <i class="fa-brands fa-whatsapp"></i>
+            <div>
+              WhatsApp:
+              <a target="_blank" rel="noopener noreferrer"
+                 href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quiero%20un%20diagn%C3%B3stico%20TI.">
+                +51 973 952 322
+              </a>
+            </div>
+          </div>
+          <div class="line">
+            <i class="fa-regular fa-envelope"></i>
+            <div>
+              Correo:
+              <a href="mailto:servicombu@gmail.com">servicombu@gmail.com</a>
+            </div>
+          </div>
+          <div class="line">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+              Horario: <span style="color:rgba(255,255,255,0.86);font-weight:900">Coordinación por WhatsApp</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Tooltip -->
+  <div id="whatsapp-tooltip" class="whatsapp-tooltip">💬 ¿Necesitas soporte TI? Escríbenos</div>
+
+  <!-- WhatsApp Float -->
+  <a href="https://wa.me/51973952322?text=Hola%20ServiComp%20TI,%20quiero%20un%20diagn%C3%B3stico%20TI%20para%20mi%20empresa."
+     class="whatsapp-float"
+     id="btnWhatsappFloat"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="WhatsApp ServiComp TI">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <script>
+    // AOS
+    AOS.init({ duration: 800, once: true });
+
+    // Tooltip WhatsApp (aparece y desaparece)
+    const tip = document.getElementById("whatsapp-tooltip");
+    const showTip = () => {
+      if (!tip) return;
+      tip.classList.add("show");
+      setTimeout(() => tip.classList.remove("show"), 4200);
+    };
+    window.addEventListener("load", () => setTimeout(showTip, 1200));
+
+    // Tracking simple (sin analytics externo): deja rastro en consola.
+    function track(eventName, extra = {}) {
+      try {
+        console.log("[TRACK]", eventName, { ts: new Date().toISOString(), ...extra });
+      } catch(e) {}
+    }
+
+    // Track click WhatsApp
+    ["ctaNavWhatsapp","ctaHeroWhatsapp","ctaServicesWhatsapp","ctaProcessWhatsapp","ctaFooterWhatsapp","btnWhatsappFloat"]
+      .forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("click", () => track("click_whatsapp", { id }));
+      });
+
+    // Track scroll 75%
+    let fired75 = false;
+    window.addEventListener("scroll", () => {
+      if (fired75) return;
+      const scrolled = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      if (scrolled >= 0.75) {
+        fired75 = true;
+        track("scroll_75");
+      }
+    });
+  </script>
+
+</body>
+</html>
