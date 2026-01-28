@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora SERVICOMP Ultimate</title>
+    <style>
+        :root {
+            --primary: #004691;
+            --accent: #00c853;
+            --danger: #d32f2f;
+            --warning: #ffa000;
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --text: #1a1a1a;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+        .app-container {
+            background-color: var(--card);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin: 0 0 20px 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: 700;
+            margin: 15px 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .input-group { margin-bottom: 0; }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: #444;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eef0f2;
+            background: #f9fafb;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,70,145,0.1);
+        }
+
+        /* SEMÁFORO DE CICLOS */
+        .cycle-meter {
+            background: #fff;
+            border: 2px solid #eef0f2;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .cycle-meter.safe { border-color: var(--accent); background: #e8f5e9; }
+        .cycle-meter.caution { border-color: var(--warning); background: #fff8e1; }
+        .cycle-meter.danger { border-color: var(--danger); background: #ffebee; }
+
+        .cycle-value {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .cycle-label { font-size: 0.8rem; font-weight: 700; margin-top: 5px; text-transform: uppercase; }
+
+        .btn-calc {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #003366 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,70,145,0.3);
+            transition: transform 0.2s;
+        }
+        .btn-calc:active { transform: scale(0.97); }
+
+        /* RESULTADOS */
+        #results { display: none; margin-top: 25px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        .result-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid #f0f0f0;
+        }
+        .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        .total-row { 
+            border-top: 2px dashed #eee; 
+            padding-top: 10px; 
+            margin-top: 10px;
+            font-size: 1.1rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+        }
+
+        .hack-box {
+            background: linear-gradient(135deg, #004691 0%, #002f6c 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,70,145,0.25);
+        }
+        .hack-box::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            transform: rotate(45deg);
+        }
+        .hack-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700; }
+        .hack-amount { font-size: 2.2rem; font-weight: 900; margin: 10px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .hack-desc { font-size: 0.9rem; opacity: 0.9; }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>🚀 SERVICOMP FINANCE</h1>
+
+    <div class="section-label">Configuración Tarjeta</div>
+    <div class="grid-2">
+        <div class="input-group">
+            <label>Línea (S/)</label>
+            <input type="number" id="linea" value="2000">
+        </div>
+        <div class="input-group">
+            <label>Día Cierre</label>
+            <input type="number" id="diaCierre" value="25">
+        </div>
+    </div>
+    <div class="grid-2" style="margin-top:10px">
+        <div class="input-group">
+            <label>Desgravamen (%)</label>
+            <input type="number" id="tasaDesg" value="0.256" step="0.001">
+        </div>
+        <div class="input-group">
+            <label>Tope Desg. (S/)</label>
+            <input type="number" id="topeDesg" value="20">
+        </div>
+    </div>
+
+    <div class="section-label">Gastos Planeados</div>
+    <div class="grid-2">
+        <div class="input-group">
+            <label>En Soles (S/)</label>
+            <input type="number" id="gastoSol" value="4500">
+        </div>
+        <div class="input-group">
+            <label>En Dólares ($)</label>
+            <input type="number" id="gastoDol" value="0">
+        </div>
+    </div>
+    <div class="grid-2" style="margin-top:10px">
+        <div class="input-group">
+            <label>T. Cambio</label>
+            <input type="number" id="tc" value="3.85" step="0.01">
+        </div>
+        <div class="input-group">
+            <label>Cashback (%)</label>
+            <input type="number" id="cashback" value="1" step="0.1">
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calcular()">CALCULAR ESTRATEGIA</button>
+
+    <!-- Semáforo de Riesgo (Ciclos) -->
+    <div id="cycleMeter" class="cycle-meter" style="display:none;">
+        <div class="cycle-value" id="cycleVal">0.0x</div>
+        <div class="cycle-label" id="cycleText">RIESGO BAJO</div>
+        <div style="font-size:0.75rem; color:#666; margin-top:5px;" id="cycleDesc"></div>
+    </div>
+
+    <div id="results">
+        <!-- Hack Card -->
+        <div class="hack-box">
+            <div class="hack-title">PAGO TÁCTICO (DÍA <span id="txtFechaPago">24</span>)</div>
+            <div class="hack-amount" id="txtPagoHack">S/ 0.00</div>
+            <div class="hack-desc">Deja tu deuda final en <strong style="color:#ffeb3b">S/ 150.00</strong></div>
+        </div>
+
+        <!-- Finanzas Card -->
+        <div class="result-card">
+            <div class="row"><span>Gasto Total Real:</span><strong id="resGasto">S/ 0.00</strong></div>
+            <div class="row"><span>+ Cashback:</span><span style="color:var(--accent)" id="resCash">S/ 0.00</span></div>
+            <div class="row"><span>- Desgravamen:</span><span style="color:var(--danger)" id="resDesg">S/ 0.00</span></div>
+            <div class="row"><span>- ITF (0.005%):</span><span style="color:var(--danger)" id="resItf">S/ 0.00</span></div>
+            <div class="row total-row"><span>= GANANCIA:</span><span id="resTotal">S/ 0.00</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calcular() {
+        // 1. Inputs
+        const linea = parseFloat(document.getElementById('linea').value) || 0;
+        const gastoSol = parseFloat(document.getElementById('gastoSol').value) || 0;
+        const gastoDol = parseFloat(document.getElementById('gastoDol').value) || 0;
+        const tc = parseFloat(document.getElementById('tc').value) || 3.85;
+        const tasaDesg = parseFloat(document.getElementById('tasaDesg').value) / 100;
+        const topeDesg = parseFloat(document.getElementById('topeDesg').value) || 20;
+        const cashbackPct = parseFloat(document.getElementById('cashback').value) / 100;
+        const diaCierre = parseInt(document.getElementById('diaCierre').value) || 25;
+
+        // 2. Cálculos Base
+        const gastoTotal = gastoSol + (gastoDol * tc);
+        const ciclos = gastoTotal / linea;
+
+        // 3. Semáforo de Riesgo (Ciclos)
+        const meter = document.getElementById('cycleMeter');
+        const valEl = document.getElementById('cycleVal');
+        const txtEl = document.getElementById('cycleText');
+        const descEl = document.getElementById('cycleDesc');
+
+        valEl.innerText = ciclos.toFixed(1) + 'x';
+        meter.style.display = 'block';
+        meter.className = 'cycle-meter'; // reset
+
+        if (ciclos <= 1.5) {
+            meter.classList.add('safe');
+            txtEl.innerText = "RIESGO BAJO (OK)";
+            txtEl.style.color = "var(--accent)";
+            descEl.innerText = "Operación segura. Sin alertas PLD.";
+        } else if (ciclos <= 3.0) {
+            meter.classList.add('caution');
+            txtEl.innerText = "RIESGO MEDIO (PRECAUCIÓN)";
+            txtEl.style.color = "#f57f17";
+            descEl.innerText = "Estás ciclando la tarjeta. Ten sustento de ingresos a mano.";
+        } else {
+            meter.classList.add('danger');
+            txtEl.innerText = "RIESGO ALTO (ALERTA)";
+            txtEl.style.color = "var(--danger)";
+            descEl.innerText = "⚠️ Peligro de bloqueo por Lavado de Activos. ¡Baja el gasto!";
+        }
+
+        // 4. Finanzas
+        const cashback = gastoTotal * cashbackPct;
+        const itf = gastoTotal * 0.00005;
+
+        // Desgravamen aprox (asumiendo saldo promedio medio del mes o tope)
+        let desgravamen = (gastoTotal / 2) * tasaDesg; 
+        if (desgravamen > topeDesg) desgravamen = topeDesg;
+        if (desgravamen < 1) desgravamen = 1.00; // minimo
+
+        const ganancia = cashback - desgravamen - itf;
+
+        // 5. Hack de Pago
+        // Target: Dejar S/ 150 si la linea es baja, o 7.5% si es alta
+        let saldoTarget = linea * 0.075;
+        if (saldoTarget < 150) saldoTarget = 150;
+        if (saldoTarget > linea) saldoTarget = linea; // por si acaso
+
+        let pagoHack = gastoTotal - saldoTarget;
+        if (pagoHack < 0) {
+            pagoHack = 0;
+            saldoTarget = gastoTotal;
+        }
+
+        // 6. Render
+        document.getElementById('resGasto').innerText = `S/ ${gastoTotal.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
+        document.getElementById('resCash').innerText = `+ S/ ${cashback.toFixed(2)}`;
+        document.getElementById('resDesg').innerText = `- S/ ${desgravamen.toFixed(2)}`;
+        document.getElementById('resItf').innerText = `- S/ ${itf.toFixed(2)}`;
+
+        const totalEl = document.getElementById('resTotal');
+        totalEl.innerText = `${ganancia >= 0 ? '+' : ''} S/ ${ganancia.toFixed(2)}`;
+        totalEl.style.color = ganancia >= 0 ? "var(--accent)" : "var(--danger)";
+
+        document.getElementById('txtFechaPago').innerText = diaCierre - 1;
+        document.getElementById('txtPagoHack').innerText = `S/ ${pagoHack.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
+
+        document.getElementById('results').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
