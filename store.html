@@ -1376,7 +1376,7 @@ function updateCart() {
     `\n\nSubtotal: S/ ${formatMoney(subtotal)}\nFlete: S/ ${formatMoney(shipping)}\nTotal: S/ ${formatMoney(total)}`
   );
   document.getElementById('whatsappCheckout').href =
-    `https://wa.me/51973952322?text=${waText}`;
+    `https://wa.me/?text=${waText}`;
 
   
   saveCart(); // guardar en localStorage
