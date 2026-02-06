@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <title>Cotizador | ServiComp+</title>
     
@@ -12,31 +12,36 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- SweetAlert2 -->
+    <!-- SweetAlert2 (Solo para errores) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* SEGURIDAD VISUAL: No permite seleccionar texto ni arrastrar imágenes */
+        /* SEGURIDAD: Bloqueo de selección SOLO en elementos de lectura */
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #f8fafc;
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* IE10+/Edge */
-            user-select: none; /* Standard */
-            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
-        img { pointer-events: none; } /* No arrastrar imágenes */
-        
+
+        /* PERMITIR INTERACCIÓN TOTAL EN INPUTS (CRÍTICO PARA MÓVIL) */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+
+        img { pointer-events: none; }
         .input-code { letter-spacing: 1px; font-weight: 700; text-transform: uppercase; font-family: monospace; }
         .product-card { transition: all 0.2s ease; }
         .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-
-        /* Permitir seleccionar solo en el input para poder escribir */
-        input { user-select: text !important; -webkit-user-select: text !important; }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col relative" oncontextmenu="return false;">
+<body class="text-slate-800 min-h-screen flex flex-col relative">
 
     <!-- Navbar -->
     <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50 border-b border-slate-800">
@@ -49,7 +54,7 @@
                     <i class="fa-solid fa-microchip text-slate-900 text-xl hidden"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-none tracking-tight">ServiComp<span class="text-blue-400">+</span></h1>
+                    <h1 class="font-bold text-lg leading-none tracking-tight">ServiComp<span class="text-red-400">+</span></h1>
                     <span class="text-[10px] text-gray-400 uppercase tracking-widest">Soluciones TI</span>
                 </div>
             </div>
@@ -74,12 +79,13 @@
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="fa-solid fa-barcode text-slate-400 text-lg"></i>
                     </div>
+                    <!-- INPUT PRINCIPAL -->
                     <input type="text" id="mainInput" 
                         class="input-code w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-lg text-slate-800 placeholder-slate-400 shadow-inner"
-                        placeholder="XXXX-XXXX-XXXX" autofocus autocomplete="off">
+                        placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" autofocus autocomplete="off">
                 </div>
                 <p class="text-xs text-slate-400 mt-2 ml-1 flex items-center gap-1">
-                    <i class="fa-solid fa-circle-info"></i> Incluye los guiones del código.
+                    <i class="fa-solid fa-circle-info"></i> Incluye los guiones del código.
                 </p>
             </div>
 
@@ -147,39 +153,30 @@
         </div>
     </main>
 
-    <!-- SCRIPTS PROTEGIDOS -->
+    <!-- SCRIPTS -->
     <script>
-        // --- CAPA DE SEGURIDAD JS ---
-        document.addEventListener('keydown', function(e) {
-            // Bloquear F12
-            if(e.keyCode == 123) { e.preventDefault(); return false; }
-            // Bloquear Ctrl+Shift+I (Inspector)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { e.preventDefault(); return false; }
-            // Bloquear Ctrl+Shift+J (Consola)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { e.preventDefault(); return false; }
-            // Bloquear Ctrl+Shift+C (Inspector Elemento)
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { e.preventDefault(); return false; }
-            // Bloquear Ctrl+U (Ver Código Fuente)
-            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { e.preventDefault(); return false; }
-            // Bloquear Ctrl+S (Guardar Como)
-            if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) { e.preventDefault(); return false; }
+        // --- SEGURIDAD HÍBRIDA (Compatible con Móvil) ---
+        document.addEventListener('contextmenu', function(e) {
+            // Permitir menú solo en inputs
+            if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') { return true; }
+            e.preventDefault(); return false;
         });
-        
-        // Bloquear Clic Derecho
-        document.addEventListener('contextmenu', event => event.preventDefault());
 
-        /* --- CONFIGURACIÓN OFUSCADA --- */
-        // La URL está en Base64 para que no sea legible a simple vista en el código
+        // Bloqueo de teclas PC
+        document.addEventListener('keydown', function(e) {
+            if(e.keyCode == 123) { e.preventDefault(); return false; } 
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { e.preventDefault(); return false; }
+        });
+
+        /* --- CONFIGURACIÓN --- */
         const _0x1a2b = "aHR0cHM6Ly9zY3BlcnUuZ2l0aHViLmlvL3N0b3JlL3Byb2R1Y3Rvcy54bHN4"; 
-        const CONFIG = {
-            excelUrl: atob(_0x1a2b), // Decodificamos la URL al vuelo
-            baseShipping: 19
-        };
+        const CONFIG = { excelUrl: atob(_0x1a2b), baseShipping: 19 };
 
-        /* --- ESTADO --- */
         let inventory = [];
         let globalExchangeRate = 0;
-
         const moneyFormatter = new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 });
         function formatMoney(amount) { return `S/ ${moneyFormatter.format(amount)}`; }
 
@@ -187,9 +184,12 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('dateDisplay').textContent = dateStr;
+            
             await initDatabase();
+            
+            // Foco automático en el input al cargar
+            document.getElementById('mainInput').focus();
             document.getElementById('mainInput').addEventListener('input', (e) => { processCodes(e.target.value); });
-            promptForCodes();
         });
 
         async function initDatabase() {
@@ -208,30 +208,32 @@
                     const getCol = (str) => { const k = keys.find(key => key.toLowerCase().includes(str)); return k ? row[k] : ''; };
                     const codeKey = keys.find(k => (k.toLowerCase().includes('codigo') || k.toLowerCase().includes('código')) && !k.toLowerCase().includes('mini'));
                     const miniKey = keys.find(k => k.toLowerCase().includes('mini'));
+                    
+                    let rawStock = getCol('stock');
+                    if (typeof rawStock === 'string') rawStock = parseInt(rawStock.replace(/\D/g,'')) || 0;
+                    
                     return {
                         codigo: row[codeKey] || 'N/A', 
                         mini: String(row[miniKey] || '').trim(),
                         desc: getCol('descrip'), marca: getCol('marca'), detalles: getCol('detalles'),
-                        precio: parseFloat(getCol('soles')) || 0, stock: getCol('stock')
+                        precio: parseFloat(getCol('soles')) || 0, 
+                        stock: rawStock
                     };
                 });
                 document.getElementById('resultsArea').innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200 h-full opacity-60"><i class="fa-solid fa-arrow-up text-3xl mb-3"></i><p>Listo para cotizar.</p></div>`;
             } catch (err) { Swal.fire('Error', 'Error de conexión con base de datos.', 'error'); }
         }
 
-        function promptForCodes() {
-            Swal.fire({
-                title: 'ServiComp+', text: 'Código de cotización:', input: 'text', inputPlaceholder: 'XXXX-XXXX-XXXX',
-                confirmButtonColor: '#0f172a', confirmButtonText: 'Aceptar', backdrop: `rgba(15, 23, 42, 0.8)`
-            }).then((result) => { if (result.isConfirmed && result.value) { document.getElementById('mainInput').value = result.value; processCodes(result.value); } });
-        }
-
         function processCodes(inputString) {
             if (!inputString) { renderList([]); return; }
             const rawCodes = inputString.split(/[-,\s]+/);
             const validCodes = rawCodes.filter(c => c.length > 0);
+            
             const matchedProducts = [];
-            validCodes.forEach(code => { const product = inventory.find(p => p.mini === code); if (product) matchedProducts.push(product); });
+            validCodes.forEach(code => { 
+                const product = inventory.find(p => p.mini === code);
+                if (product && product.stock > 0) matchedProducts.push(product);
+            });
             renderList(matchedProducts);
         }
 
@@ -239,13 +241,12 @@
             const container = document.getElementById('resultsArea');
             let subtotal = 0;
             if (products.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200"><i class="fa-solid fa-ghost text-3xl mb-3 opacity-50"></i><p>No se encontraron productos.</p></div>`;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200"><i class="fa-solid fa-ghost text-3xl mb-3 opacity-50"></i><p>No se encontraron productos con stock.</p></div>`;
                 updateTotals(0, 0); return;
             }
             let html = '';
             products.forEach(p => {
                 subtotal += p.precio;
-                // Enlace ofuscado visualmente en el HTML
                 const photoUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${p.codigo}&nomenu=1`;
                 html += `
                 <div class="product-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-blue-200 group relative overflow-hidden">
@@ -264,7 +265,7 @@
                             <h4 class="text-sm font-bold text-slate-800 leading-snug mb-1 pr-2">${p.desc}</h4>
                             ${p.detalles ? `<p class="text-xs text-slate-500 italic border-l-2 border-slate-200 pl-2 mb-2 line-clamp-2">${p.detalles}</p>` : ''}
                             <div class="flex items-center gap-3 text-xs mt-1">
-                                <span class="${p.stock > 0 ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'} px-2 py-0.5 rounded font-bold border border-current opacity-80">Stock: ${p.stock}</span>
+                                <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-current opacity-80">Stock: ${p.stock}</span>
                                 <span class="text-slate-400 font-mono">Cód: ${p.codigo}</span>
                             </div>
                         </div>
