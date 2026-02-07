@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catálogo v8.0 | ServiComp+</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* --- TARJETA --- */
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid white;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+            border-color: #bfdbfe;
+        }
+
+        /* --- IMAGEN CON PLACEHOLDER --- */
+        .img-container {
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .placeholder-icon {
+            position: absolute; z-index: 0; color: #cbd5e1; font-size: 1.5rem; transition: all 0.3s ease;
+        }
+        .product-img {
+            position: relative; z-index: 10; width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; opacity: 0;
+        }
+        .product-img.loaded { opacity: 1; }
+        .img-container:hover .product-img { transform: scale(1.08); }
+        .img-container:hover .placeholder-icon { color: #94a3b8; transform: scale(1.1); }
+        
+        .view-label {
+            position: absolute; bottom: 4px; right: 4px; background: rgba(255, 255, 255, 0.9);
+            color: #3b82f6; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+            z-index: 20; box-shadow: 0 1px 2px rgba(0,0,0,0.1); pointer-events: none;
+        }
+
+        /* --- COPY FEEDBACK --- */
+        .copy-tooltip {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; padding: 8px 16px; border-radius: 20px;
+            font-size: 12px; font-weight: bold; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .copy-tooltip.show { opacity: 1; bottom: 30px; }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* --- SELECTS --- */
+        .custom-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em;
+        }
+
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .product-card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 10px; page-break-inside: avoid; }
+            .profit-display { display: none !important; }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Feedback Tooltip -->
+    <div id="copyFeedback" class="copy-tooltip"><i class="fa-solid fa-check mr-1"></i> ¡Copiado!</div>
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 z-30 flex-shrink-0 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 space-y-4">
+            
+            <!-- Top Logo & Count -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="https://scperu.github.io/store/logo.png" class="h-9 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <h1 class="font-bold text-xl text-slate-800 leading-none">ServiComp<span class="text-red-600">+</span></h1>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Catálogo v8.0</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div id="resultCount" class="text-2xl font-black text-slate-800 leading-none">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Resultados</div>
+                </div>
+            </div>
+
+            <!-- FILTROS INTELIGENTES -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                <!-- Buscador -->
+                <div class="md:col-span-6 relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-layer-group text-slate-300 group-focus-within:text-blue-400 transition"></i>
+                    </div>
+                    <input type="text" id="searchInput" 
+                        class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition placeholder-slate-400 shadow-sm" 
+                        placeholder="Ej: i5 8gb dell (Busca coincidencia múltiple)">
+                </div>
+
+                <!-- Selectores -->
+                <div class="md:col-span-3">
+                    <select id="catSelect" onchange="applyFilters()" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
+                        <option value="">Todas las Categorías</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3">
+                    <select id="brandSelect" onchange="applyFilters()" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
+                        <option value="">Todas las Marcas</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center text-[10px] font-semibold text-slate-400 px-1 pt-1">
+                <span id="dateDisplay">...</span>
+                <span id="exchangeRate" class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">TC: ...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- LISTA DE PRODUCTOS -->
+    <main class="flex-grow overflow-y-auto p-4 md:p-6 bg-slate-50 scroll-smooth">
+        <div id="productsList" class="max-w-7xl mx-auto space-y-4 pb-24">
+            <!-- Loader -->
+            <div class="flex flex-col items-center justify-center h-80 text-slate-300">
+                <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+                <p class="text-xs font-bold uppercase tracking-widest animate-pulse">Cargando Inventario...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón Top -->
+    <button onclick="document.querySelector('main').scrollTop = 0" class="fixed bottom-8 right-8 bg-slate-800 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:bg-slate-700 transition z-40 no-print">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const EXCEL_URL = 'https://scperu.github.io/store/productos.xlsx';
+        let productsDB = [];
+        let categoryMap = {};
+        let filters = { search: '', category: '', brand: '' };
+        
+        const formatMoney = (amount) => `S/ ${Math.floor(amount).toLocaleString('en-US')}`;
+
+        /* --- ALGORITMO SHUFFLE --- */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const now = new Date();
+            document.getElementById('dateDisplay').innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+            await loadDatabase();
+            
+            let timeout;
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    filters.search = e.target.value.toLowerCase();
+                    applyFilters();
+                }, 150);
+            });
+        });
+
+        async function loadDatabase() {
+            try {
+                const response = await fetch(EXCEL_URL);
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                if (workbook.SheetNames.length > 1) {
+                    const sheet2 = workbook.Sheets[workbook.SheetNames[1]];
+                    const dataSheet2 = XLSX.utils.sheet_to_json(sheet2, { header: 1 });
+                    if (dataSheet2.length > 0) {
+                        dataSheet2[0].forEach((catName, colIndex) => {
+                            if (!catName) return;
+                            for (let i = 1; i < dataSheet2.length; i++) {
+                                const code = dataSheet2[i][colIndex];
+                                if (code) categoryMap[String(code).trim()] = catName;
+                            }
+                        });
+                    }
+                }
+
+                const sheet1 = workbook.Sheets[workbook.SheetNames[0]];
+                if (sheet1['K2']) document.getElementById('exchangeRate').textContent = `TC: ${parseFloat(sheet1['K2'].v).toFixed(3)}`;
+
+                const rawProducts = XLSX.utils.sheet_to_json(sheet1);
+                productsDB = rawProducts.map(row => {
+                    const keys = Object.keys(row);
+                    const getCol = (str) => { 
+                        let k = keys.find(key => key.toLowerCase() === str.toLowerCase());
+                        if (!k) k = keys.find(key => key.toLowerCase().includes(str.toLowerCase()));
+                        return k ? row[k] : ''; 
+                    };
+
+                    let gananciaVal = row['G'] || getCol('ganancia'); 
+                    const mini = String(getCol('mini') || '').trim();
+                    let stock = getCol('stock');
+                    if (typeof stock === 'string') stock = parseInt(stock.replace(/\D/g,'')) || 0;
+
+                    return {
+                        codigo: getCol('codigo') || '',
+                        mini: mini,
+                        desc: getCol('descrip'),
+                        marca: getCol('marca') || 'GENÉRICO',
+                        detalles: getCol('detalles') || '',
+                        precio: Math.floor(parseFloat(getCol('soles')) || 0),
+                        ganancia: Math.floor(parseFloat(gananciaVal) || 0),
+                        stock: stock,
+                        categoria: categoryMap[mini] || 'GENERAL'
+                    };
+                }).filter(p => p.stock > 0);
+
+                // Carga inicial 100% Random
+                productsDB = shuffleArray(productsDB);
+
+                populateFiltersUI();
+                applyFilters();
+
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo conectar con la base de datos.', 'error');
+            }
+        }
+
+        function populateFiltersUI() {
+            const brands = [...new Set(productsDB.map(p => p.marca))].sort();
+            const categories = [...new Set(productsDB.map(p => p.categoria))].sort();
+
+            brands.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b; opt.textContent = b;
+                document.getElementById('brandSelect').appendChild(opt);
+            });
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c;
+                document.getElementById('catSelect').appendChild(opt);
+            });
+        }
+
+        function applyFilters() {
+            filters.category = document.getElementById('catSelect').value;
+            filters.brand = document.getElementById('brandSelect').value;
+
+            // Verificar si hay algún filtro activo
+            const hasFilters = filters.category !== '' || filters.brand !== '' || filters.search !== '';
+
+            // Si NO hay filtros, re-barajamos todo para dar sensación de "nuevo"
+            if (!hasFilters) {
+                // Hacemos shuffle de la base completa de nuevo
+                // NOTA: Para UX, a veces es mejor barajar solo al limpiar, no en cada render, 
+                // pero aquí lo hacemos dinámico.
+                // Como queremos que al BORRAR vuelva a ser random, si no hay filtros, 
+                // tomamos productsDB (que ya fue mezclado al inicio) y lo volvemos a mezclar
+                // o simplemente mostramos como está si queremos persistencia hasta reload.
+                // Para cumplir tu petición: "al borrar... presentar totalmente aleatorios":
+                productsDB = shuffleArray(productsDB); 
+            }
+
+            let filtered = productsDB.filter(p => {
+                if (filters.brand && p.marca !== filters.brand) return false;
+                if (filters.category && p.categoria !== filters.category) return false;
+                
+                if (filters.search) {
+                    const terms = filters.search.split(/\s+/).filter(t => t.length > 0);
+                    const productText = `${p.mini} ${p.desc} ${p.marca} ${p.codigo} ${p.detalles}`.toLowerCase();
+                    const matchesAll = terms.every(term => productText.includes(term));
+                    if (!matchesAll) return false;
+                }
+                return true;
+            });
+
+            // Si hay filtros, ordenamos por precio para ayudar al usuario
+            if (hasFilters) {
+                filtered.sort((a, b) => a.precio - b.precio);
+            }
+            // Si NO hay filtros, dejamos el orden del array (que acabamos de hacer shuffle arriba)
+
+            document.getElementById('resultCount').textContent = filtered.length;
+            renderList(filtered);
+        }
+
+        window.copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                const tooltip = document.getElementById('copyFeedback');
+                tooltip.classList.add('show');
+                setTimeout(() => tooltip.classList.remove('show'), 1500);
+            });
+        };
+
+        function renderList(list) {
+            const container = document.getElementById('productsList');
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-slate-400"><i class="fa-solid fa-magnifying-glass text-4xl mb-3 opacity-20"></i><p>No hay resultados.</p></div>`;
+                return;
+            }
+
+            const displayList = list.slice(0, 100); 
+
+            container.innerHTML = displayList.map(p => {
+                const imgUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${p.codigo}&nomenu=1`;
+                const detailUrl = `https://www.deltron.com.pe/modulos/productos/items/postsql.php?from=new_product&item_number=${p.codigo}`;
+
+                return `
+                <div class="product-card bg-white rounded-2xl p-0 shadow-sm border border-slate-100 flex flex-col md:flex-row overflow-hidden relative group">
+                    
+                    <div class="md:w-32 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-100 cursor-pointer img-container group-hover:bg-white transition-colors">
+                         <a href="${imgUrl}" target="_blank" class="w-24 h-24 relative block flex items-center justify-center">
+                             <i class="fa-solid fa-camera placeholder-icon"></i>
+                             <img src="${imgUrl}" class="product-img" alt="img" 
+                                  onload="this.classList.add('loaded')" 
+                                  onerror="this.style.display='none'">
+                             <span class="view-label">Ver Foto <i class="fa-solid fa-arrow-up-right-from-square text-[8px] ml-0.5"></i></span>
+                         </a>
+                    </div>
+
+                    <div class="flex-grow p-5 flex flex-col justify-center">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <button onclick="copyToClipboard('${p.mini}')" class="bg-slate-900 hover:bg-slate-700 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer transition flex items-center gap-1 active:scale-95" title="Copiar">
+                                ${p.mini} <i class="fa-regular fa-copy text-[9px] opacity-70"></i>
+                            </button>
+                            <a href="${detailUrl}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 w-6 h-5 flex items-center justify-center rounded text-[10px] transition" title="Ver Ficha">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wide border border-blue-100 px-2 py-0.5 rounded">${p.marca}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded">${p.categoria}</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 leading-snug mb-2 pr-4 hover:text-blue-600 transition-colors">
+                            <a href="${detailUrl}" target="_blank">${p.desc}</a>
+                        </h3>
+                        <p class="text-xs text-slate-500 font-medium leading-relaxed max-w-2xl">${p.detalles}</p>
+                    </div>
+
+                    <div class="md:w-48 bg-slate-50/50 p-5 flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 border-t md:border-t-0 md:border-l border-slate-100">
+                        <div class="profit-display text-[9px] font-mono text-slate-300 mb-auto hidden md:block select-none">cod:${p.ganancia}</div>
+                        <div class="text-right">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Precio Contado</div>
+                            <div class="text-3xl font-black text-blue-600 tracking-tight leading-none">${formatMoney(p.precio)}</div>
+                        </div>
+                        <div class="mt-auto pt-2 md:pt-4">
+                            <div class="flex items-center gap-2 bg-white text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100 shadow-sm">
+                                <i class="fa-solid fa-box-open text-emerald-500 text-xs"></i>
+                                <span class="text-xs font-bold">${p.stock} Und.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>`;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
