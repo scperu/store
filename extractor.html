@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extractor + Packer (V5.0 Final)</title>
+    <style>
+        /* ESTILO MATRIX */
+        body { background: #050505; color: #00ff9f; font-family: 'Courier New', monospace; padding: 20px; text-align: center; }
+        #matrixRain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
+        .container { max-width: 850px; margin: 0 auto 30px; background: rgba(0, 20, 0, 0.85); padding: 25px; border: 1px solid #00ff9f; border-radius: 6px; }
+        
+        textarea { width: 100%; background: #0a0a0a; color: #00ff9f; border: 1px solid #333; padding: 12px; font-size: 16px; min-height: 120px; box-sizing: border-box; }
+        textarea:focus { outline: none; border-color: #00ff9f; box-shadow: 0 0 10px #00ff9f; }
+        
+        button { background: black; color: #00ff9f; border: 1px solid #00ff9f; padding: 12px 24px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 5px; }
+        button:hover { background: #00ff9f; color: black; box-shadow: 0 0 15px #00ff9f; }
+        
+        .result-box { background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 15px; color: #adff2f; font-size: 18px; word-break: break-all; min-height: 40px; }
+        .hidden { display: none; }
+        .label { font-size: 0.9em; color: #888; margin-bottom: 10px; display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="matrixRain"></canvas>
+
+    <!-- 1. EXTRACTOR -->
+    <div class="container">
+        <h2>1. Extractor</h2>
+        <span class="label">Pega el texto desordenado aquí:</span>
+        <textarea id="inputText" placeholder="Ej: Precio 100... Minicod: 12345..."></textarea>
+        <div>
+            <button onclick="extraer()">Extraer</button>
+            <button id="btnCopyExt" onclick="copiarExtractor()">Copiar Lista</button>
+            <button onclick="limpiarExtractor()">Limpiar</button>
+        </div>
+        <div id="extractorResult" class="result-box" style="text-align: left;"></div>
+    </div>
+
+    <!-- 2. PACKER PRO -->
+    <div class="container">
+        <h2>2. Packer Pro (Anti-Error)</h2>
+        <span class="label">
+            Pega aquí (1 por 1 o en masa). Se formateará automáticamente a 6 dígitos con guiones.
+        </span>
+        <textarea id="inputPacker" placeholder="Pega tus códigos..."></textarea>
+        <div>
+            <button onclick="compactar()">Compactar</button>
+            <button onclick="limpiarPacker()">Limpiar</button>
+        </div>
+        <div id="packerOutput" class="result-box" style="text-align: center;"></div>
+        <div style="margin-top:10px;">
+            <button id="btnCopyPacker" onclick="copiarPacker()" class="hidden">Copiar Código</button>
+        </div>
+    </div>
+
+    <script>
+        /* ================= LÓGICA PACKER REESCRITA DESDE CERO ================= */
+        const inputPacker = document.getElementById('inputPacker');
+
+        // Función auxiliar: Rellena con ceros a la izquierda hasta 6 dígitos
+        function pad6(str) {
+            let limpio = str.replace(/[^0-9]/g, '');
+            if (!limpio) return '';
+            return limpio.padStart(6, '0');
+        }
+
+        // EVENTO CLAVE: 'PASTE'
+        // Controlamos manualmente qué pasa cuando el usuario pega texto
+        inputPacker.addEventListener('paste', function(e) {
+            e.preventDefault(); // Detenemos el pegado normal del navegador
+
+            // 1. Obtener el texto del portapapeles
+            let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+            
+            // 2. Procesar lo pegado (Sea 1 código o una lista de 100)
+            // Separamos por cualquier cosa que no sea número (Enter, espacios, comas, guiones)
+            let items = pasteData.split(/[^0-9]+/).filter(x => x.trim() !== '');
+            
+            if (items.length === 0) return;
+
+            // 3. Estandarizar cada ítem pegado a 6 dígitos
+            let processedItems = items.map(pad6);
+            let textToInsert = processedItems.join('-');
+
+            // 4. Insertar inteligentemente en el textarea
+            let currentValue = this.value;
+            let cursorPosition = this.selectionStart;
+
+            // CASO A: El textarea estaba vacío
+            if (!currentValue) {
+                this.value = textToInsert;
+            } 
+            // CASO B: Ya tiene texto (El usuario pega el 2do, 3er código...)
+            else {
+                // Revisamos qué hay justo antes del cursor o al final
+                let charBefore = currentValue.slice(cursorPosition - 1, cursorPosition);
+                
+                // Si NO hay un guión antes, AGREGAMOS UNO AUTOMÁTICAMENTE
+                if (charBefore !== '-' && currentValue.length > 0) {
+                    textToInsert = '-' + textToInsert;
+                }
+                
+                // Pegamos lo nuevo
+                this.value = currentValue.slice(0, cursorPosition) + textToInsert + currentValue.slice(this.selectionEnd);
+            }
+        });
+
+        // EVENTO BLUR: Por si el usuario escribe manualmente y sale
+        inputPacker.addEventListener('blur', function() {
+            let val = this.value;
+            if(!val) return;
+            // Re-estandarizar todo por seguridad
+            let items = val.split('-').filter(x => x);
+            this.value = items.map(pad6).join('-');
+        });
+
+        /* ================= COMPACTAR (BASE 62) ================= */
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        function compactar() {
+            // Quitamos guiones para tener el número gigante
+            let val = inputPacker.value.replace(/-/g, '');
+            if (!val) return;
+
+            try {
+                let n = BigInt(val);
+                let res = '';
+                if (n === 0n) res = '0';
+                while (n > 0n) {
+                    res = chars[Number(n % 62n)] + res;
+                    n = n / 62n;
+                }
+                document.getElementById('packerOutput').innerText = res;
+                document.getElementById('btnCopyPacker').style.display = 'inline-block';
+            } catch (e) {
+                document.getElementById('packerOutput').innerText = "Error: Código inválido";
+            }
+        }
+
+        /* ================= OTRAS FUNCIONES (EXTRACTOR, COPIAR) ================= */
+        let minicodigos = [];
+        function extraer() {
+            const txt = document.getElementById('inputText').value;
+            const regex = /Minicod:\s*(\d+)/gi; 
+            minicodigos = [];
+            let match;
+            while ((match = regex.exec(txt)) !== null) minicodigos.push(match[1]);
+            document.getElementById('extractorResult').innerText = minicodigos.length ? minicodigos.join('\n') : "Nada encontrado.";
+        }
+        function copiarExtractor() {
+            if(!minicodigos.length) return;
+            navigator.clipboard.writeText(minicodigos.join('\n')).then(() => feedback('btnCopyExt'));
+        }
+        function limpiarExtractor() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('extractorResult').innerText = '';
+            minicodigos = [];
+        }
+        function copiarPacker() {
+            let txt = document.getElementById('packerOutput').innerText;
+            if(!txt) return;
+            navigator.clipboard.writeText(txt).then(() => feedback('btnCopyPacker'));
+        }
+        function limpiarPacker() {
+            inputPacker.value = '';
+            document.getElementById('packerOutput').innerText = '';
+            document.getElementById('btnCopyPacker').style.display = 'none';
+        }
+        function feedback(id) {
+            let btn = document.getElementById(id);
+            let orig = btn.innerText;
+            btn.innerText = "¡LISTO!";
+            setTimeout(() => { btn.innerText = orig; }, 1000);
+        }
+
+        /* MATRIX BG */
+        const canvas = document.getElementById('matrixRain'); const ctx = canvas.getContext('2d');
+        function resize() { canvas.height = window.innerHeight; canvas.width = window.innerWidth; }
+        window.addEventListener('resize', resize); resize();
+        const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ'; const fs = 14; 
+        const drops = Array(Math.floor(canvas.width/fs)).fill(1);
+        function draw(){
+            ctx.fillStyle='rgba(0,0,0,0.05)';ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#00ff9f';ctx.font=fs+'px Courier';
+            for(let i=0;i<drops.length;i++){
+                ctx.fillText(letters[Math.floor(Math.random()*letters.length)],i*fs,drops[i]*fs);
+                if(drops[i]*fs>canvas.height&&Math.random()>0.975)drops[i]=0; drops[i]++;
+            }
+        }
+        setInterval(draw,33);
+    </script>
+</body>
+</html>
