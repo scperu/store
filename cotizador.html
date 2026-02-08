@@ -332,7 +332,8 @@
             let html = '';
             products.forEach(p => {
                 subtotal += p.precio;
-                const photoUrl = `https://www.deltron.com.pe/modulos/productos/items/postsql_imagengrande.php?item_number=${p.codigo}&tipo_imagen=FOLDER&COLOR=`;
+                const photoUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(p.codigo)}&nomenu=1`;
+
                 
                 html += `
                 <div class="product-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-blue-200 group relative overflow-hidden">
