@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiComp Advisors | Planes de Asesoría</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
+        
+        /* Plan Básico: Gris Azulado */
+        .card-basic {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .card-basic:hover { border-color: rgba(148, 163, 184, 0.5); }
+
+        /* Plan Acompañamiento: Azul Vibrante */
+        .card-standard {
+            background: linear-gradient(180deg, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 30px -5px rgba(37, 99, 235, 0.15);
+        }
+        
+        /* Plan Premium: ORO (Gold) */
+        .card-gold {
+            background: linear-gradient(180deg, rgba(234, 179, 8, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(234, 179, 8, 0.5);
+            box-shadow: 0 0 40px -5px rgba(234, 179, 8, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+        }
+
+        .check-gold { color: #fbbf24; }
+        .text-gold { color: #fbbf24; }
+        .btn-gold {
+            background: linear-gradient(to right, #eab308, #d97706);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .btn-gold:hover {
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col">
+
+    <!-- Barra Superior: Idioma -->
+    <nav class="w-full flex justify-end px-6 py-4">
+        <div class="flex bg-slate-800 rounded-full p-1 border border-slate-700">
+            <button onclick="setLang('es')" id="btn-es" class="px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition">ES</button>
+            <button onclick="setLang('en')" id="btn-en" class="px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition">EN</button>
+        </div>
+    </nav>
+
+    <!-- Header Principal -->
+    <header class="text-center max-w-2xl mx-auto mb-12 px-4">
+        <div class="inline-flex items-center gap-2 text-blue-400 mb-4 bg-blue-900/20 px-4 py-1.5 rounded-full text-sm font-semibold border border-blue-800/50">
+            <i class="fa-solid fa-microchip"></i> ServiComp Advisors
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight" id="txt-title">
+            Asesoría de Compra Inteligente
+        </h1>
+        <p class="text-slate-400 text-lg mb-8" id="txt-subtitle">
+            No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.
+        </p>
+        
+        <!-- Selector de Región (Moneda) -->
+        <div class="inline-flex bg-slate-800 p-1 rounded-full border border-slate-700 shadow-lg">
+            <button onclick="setRegion('global')" id="btn-global" class="px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm">
+                Global (USD)
+            </button>
+            <button onclick="setRegion('peru')" id="btn-peru" class="px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white">
+                Perú (Residentes)
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenedor de Planes (3 Niveles) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4 w-full mb-16">
+        
+        <!-- PLAN 1: BÁSICO (La Guía) -->
+        <div class="card-basic rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
+            <div class="mb-4">
+                <h3 class="text-xl font-bold text-white" id="t-p1-title">Básico (Guía)</h3>
+                <p class="text-slate-400 text-sm mt-2 h-10" id="t-p1-desc">Solo necesito la lista de qué comprar. Yo armo todo.</p>
+            </div>
+            
+            <div class="flex items-baseline gap-2 mb-6">
+                <span class="text-3xl font-bold text-white price-display" data-usd="29"></span>
+                <span class="text-sm text-slate-500 line-through original-price hidden"></span>
+            </div>
+            
+            <ul class="space-y-3 mb-8 text-sm flex-grow">
+                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f1">Lista de piezas compatibles</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f2">Enlaces de compra directos</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f3">Análisis Costo/Rendimiento</span></li>
+            </ul>
+            
+            <a href="https://wa.me/51973952322?text=Info%20Plan%20Basico" class="w-full py-2.5 rounded-lg border border-slate-600 hover:bg-slate-700 text-white text-center transition text-sm font-medium" id="t-p1-btn">
+                Elegir Básico
+            </a>
+        </div>
+
+        <!-- PLAN 2: ACOMPAÑAMIENTO (Azul) -->
+        <div class="card-standard rounded-2xl p-8 flex flex-col relative transform md:scale-105 z-10">
+            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl shadow-lg" id="t-pop-badge">
+                POPULAR
+            </div>
+            <div class="mb-4">
+                <h3 class="text-2xl font-bold text-white" id="t-p2-title">Acompañamiento</h3>
+                <p class="text-blue-200 text-sm mt-2 h-10" id="t-p2-desc">Seguridad total. Valido stock y te ayudo por chat al comprar.</p>
+            </div>
+            
+            <div class="flex items-baseline gap-2 mb-6">
+                <span class="text-4xl font-bold text-blue-400 price-display" data-usd="59"></span>
+                <span class="text-sm text-blue-300/50 line-through original-price hidden"></span>
+            </div>
+            
+            <ul class="space-y-3 mb-8 text-sm flex-grow text-slate-200">
+                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span class="font-semibold" id="t-p2-f1">Todo lo del Básico +</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f2">Validación de Stock en Vivo</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f3">Soporte WhatsApp durante compra</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f4">Gestión de dudas y garantías</span></li>
+            </ul>
+            
+            <a href="https://wa.me/51973952322?text=Info%20Plan%20Acompañamiento" class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-center transition font-bold shadow-lg shadow-blue-900/40" id="t-p2-btn">
+                Elegir Acompañamiento
+            </a>
+        </div>
+
+        <!-- PLAN 3: PREMIUM (Oro) -->
+        <div class="card-gold rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-1">
+                    <h3 class="text-xl font-bold text-white" id="t-p3-title">Full Experience</h3>
+                    <i class="fa-solid fa-crown text-gold animate-pulse"></i>
+                </div>
+                <p class="text-yellow-100/70 text-sm mt-2 h-10" id="t-p3-desc">Servicio llave en mano. Incluye configuración y optimización.</p>
+            </div>
+            
+            <div class="flex items-baseline gap-2 mb-6">
+                <span class="text-3xl font-bold text-gold price-display" data-usd="99"></span>
+                <span class="text-sm text-yellow-600 line-through original-price hidden"></span>
+            </div>
+            
+            <ul class="space-y-3 mb-8 text-sm flex-grow">
+                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span class="text-white font-semibold" id="t-p3-f1">Todo lo del Acompañamiento +</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f2">Guía remota de ensamblaje</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f3">Instalación Drivers/BIOS/Windows</span></li>
+                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f4">Optimización (Overclock seguro)</span></li>
+            </ul>
+            
+            <a href="https://wa.me/51973952322?text=Info%20Plan%20Full%20Experience" class="w-full py-2.5 rounded-lg btn-gold text-center transition text-sm font-bold" id="t-p3-btn">
+                Quiero Todo Listo
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer: Métodos de Pago Dinámicos -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-900 py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm mb-4" id="txt-payments">Métodos de Pago Aceptados</p>
+            
+            <!-- Contenedor de Iconos (Cambia con JS) -->
+            <div id="payment-icons" class="flex justify-center items-center gap-6 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                <!-- Se llena con JS -->
+            </div>
+            
+            <p class="text-slate-600 text-xs mt-6">&copy; 2026 ServiComp Advisors. Lima, Perú.</p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA COMPLETA (Idioma + Región + Pagos) -->
+    <script>
+        // CONFIGURACIÓN
+        const EXCHANGE = 3.80; 
+        const DISCOUNT_PERU = 0.85; // 15% OFF
+
+        // TEXTOS (Diccionario)
+        const TEXTS = {
+            es: {
+                title: "Asesoría de Compra Inteligente",
+                subtitle: "No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.",
+                btnGlobal: "Global (USD)",
+                btnPeru: "Perú (Residentes)",
+                p1Title: "Básico (Guía)",
+                p1Desc: "Solo necesito la lista de qué comprar. Yo armo todo.",
+                p1Btn: "Elegir Básico",
+                p2Title: "Acompañamiento",
+                p2Desc: "Seguridad total. Valido stock y te ayudo por chat al comprar.",
+                p2Btn: "Elegir Acompañamiento",
+                p3Title: "Full Experience",
+                p3Desc: "Servicio llave en mano. Incluye configuración y optimización.",
+                p3Btn: "Quiero Todo Listo",
+                payments: "Métodos de Pago Aceptados"
+            },
+            en: {
+                title: "Smart PC Buying Advice",
+                subtitle: "Don't waste money. Choose the plan that secures your tech investment.",
+                btnGlobal: "Global (USD)",
+                btnPeru: "Peru (Residents)",
+                p1Title: "Basic (Guide)",
+                p1Desc: "I just need the parts list. I'll build it myself.",
+                p1Btn: "Choose Basic",
+                p2Title: "Guided Support",
+                p2Desc: "Total safety. I validate stock & chat support during purchase.",
+                p2Btn: "Choose Guided",
+                p3Title: "Full Experience",
+                p3Desc: "Turnkey service. Includes setup, BIOS & optimization.",
+                p3Btn: "I Want It Ready",
+                payments: "Accepted Payment Methods"
+            }
+        };
+
+        // ESTADO GLOBAL
+        let currentLang = 'es';
+        let currentRegion = 'global';
+
+        // FUNCIONES
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // Botones Idioma
+            document.getElementById('btn-es').className = lang === 'es' ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition" : "px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
+            document.getElementById('btn-en').className = lang === 'en' ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition" : "px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
+
+            // Actualizar Textos
+            const t = TEXTS[lang];
+            document.getElementById('txt-title').textContent = t.title;
+            document.getElementById('txt-subtitle').textContent = t.subtitle;
+            document.getElementById('btn-global').textContent = t.btnGlobal;
+            document.getElementById('btn-peru').textContent = t.btnPeru;
+            
+            document.getElementById('t-p1-title').textContent = t.p1Title;
+            document.getElementById('t-p1-desc').textContent = t.p1Desc;
+            document.getElementById('t-p1-btn').textContent = t.p1Btn;
+            
+            document.getElementById('t-p2-title').textContent = t.p2Title;
+            document.getElementById('t-p2-desc').textContent = t.p2Desc;
+            document.getElementById('t-p2-btn').textContent = t.p2Btn;
+            
+            document.getElementById('t-p3-title').textContent = t.p3Title;
+            document.getElementById('t-p3-desc').textContent = t.p3Desc;
+            document.getElementById('t-p3-btn').textContent = t.p3Btn;
+            
+            document.getElementById('txt-payments').textContent = t.payments;
+        }
+
+        function setRegion(region) {
+            currentRegion = region;
+            const isPeru = region === 'peru';
+            
+            // Estilos Botones Región
+            document.getElementById('btn-peru').className = isPeru 
+                ? "px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm"
+                : "px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white";
+            document.getElementById('btn-global').className = !isPeru 
+                ? "px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm"
+                : "px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white";
+
+            // Actualizar Precios
+            const displays = document.querySelectorAll('.price-display');
+            const originals = document.querySelectorAll('.original-price');
+
+            displays.forEach((el, index) => {
+                const usd = parseFloat(el.dataset.usd);
+                const original = originals[index];
+
+                if (isPeru) {
+                    const sol = Math.ceil((usd * EXCHANGE * DISCOUNT_PERU) / 5) * 5;
+                    const oldSol = Math.ceil((usd * EXCHANGE) / 5) * 5;
+                    el.textContent = `S/ ${sol}`;
+                    original.textContent = `S/ ${oldSol}`;
+                    original.classList.remove('hidden');
+                } else {
+                    el.textContent = `$${usd}`;
+                    original.classList.add('hidden');
+                }
+            });
+
+            // Actualizar Iconos de Pago
+            const paymentContainer = document.getElementById('payment-icons');
+            if (isPeru) {
+                paymentContainer.innerHTML = `
+                    <div class="flex flex-col items-center"><i class="fa-solid fa-building-columns text-2xl mb-1 text-orange-500"></i><span class="text-[10px] font-bold">BCP</span></div>
+                    <div class="flex flex-col items-center"><i class="fa-solid fa-qrcode text-2xl mb-1 text-purple-500"></i><span class="text-[10px] font-bold">Yape</span></div>
+                    <div class="flex flex-col items-center"><i class="fa-solid fa-mobile-screen text-2xl mb-1 text-cyan-400"></i><span class="text-[10px] font-bold">Plin</span></div>
+                    <div class="flex flex-col items-center"><i class="fa-solid fa-money-bill-transfer text-2xl mb-1 text-green-500"></i><span class="text-[10px] font-bold">Interbank</span></div>
+                `;
+            } else {
+                paymentContainer.innerHTML = `
+                    <div class="flex flex-col items-center"><i class="fa-brands fa-paypal text-2xl mb-1 text-blue-400"></i><span class="text-[10px] font-bold">PayPal</span></div>
+                    <div class="flex flex-col items-center"><i class="fa-brands fa-bitcoin text-2xl mb-1 text-yellow-500"></i><span class="text-[10px] font-bold">Crypto/USDT</span></div>
+                    <div class="flex flex-col items-center"><i class="fa-solid fa-credit-card text-2xl mb-1 text-slate-300"></i><span class="text-[10px] font-bold">Card (Stripe)</span></div>
+                `;
+            }
+        }
+
+        // INICIALIZAR
+        setLang('es');
+        setRegion('global');
+
+    </script>
+</body>
+</html>
