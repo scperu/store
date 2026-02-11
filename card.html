@@ -1,333 +1,338 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculadora SERVICOMP Ultimate</title>
-    <style>
-        :root {
-            --primary: #004691;
-            --accent: #00c853;
-            --danger: #d32f2f;
-            --warning: #ffa000;
-            --bg: #f4f6f8;
-            --card: #ffffff;
-            --text: #1a1a1a;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
-        .app-container {
-            background-color: var(--card);
-            width: 100%;
-            max-width: 480px;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            padding: 25px;
-            box-sizing: border-box;
-        }
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            font-size: 1.3rem;
-            margin: 0 0 20px 0;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .section-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #888;
-            font-weight: 700;
-            margin: 15px 0 8px 0;
-            letter-spacing: 0.5px;
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .input-group { margin-bottom: 0; }
+<meta charset="UTF-8">
+<title>Analizador de Créditos – Deluxe Plus FINAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            color: #444;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eef0f2;
-            background: #f9fafb;
-            border-radius: 10px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        input:focus {
-            border-color: var(--primary);
-            background: #fff;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,70,145,0.1);
-        }
-
-        /* SEMÁFORO DE CICLOS */
-        .cycle-meter {
-            background: #fff;
-            border: 2px solid #eef0f2;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .cycle-meter.safe { border-color: var(--accent); background: #e8f5e9; }
-        .cycle-meter.caution { border-color: var(--warning); background: #fff8e1; }
-        .cycle-meter.danger { border-color: var(--danger); background: #ffebee; }
-
-        .cycle-value {
-            font-size: 2rem;
-            font-weight: 900;
-            line-height: 1;
-        }
-        .cycle-label { font-size: 0.8rem; font-weight: 700; margin-top: 5px; text-transform: uppercase; }
-
-        .btn-calc {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, #003366 100%);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,70,145,0.3);
-            transition: transform 0.2s;
-        }
-        .btn-calc:active { transform: scale(0.97); }
-
-        /* RESULTADOS */
-        #results { display: none; margin-top: 25px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        .result-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border: 1px solid #f0f0f0;
-        }
-        .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
-        .total-row { 
-            border-top: 2px dashed #eee; 
-            padding-top: 10px; 
-            margin-top: 10px;
-            font-size: 1.1rem; 
-            font-weight: 800; 
-            color: var(--primary); 
-        }
-
-        .hack-box {
-            background: linear-gradient(135deg, #004691 0%, #002f6c 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,70,145,0.25);
-        }
-        .hack-box::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            transform: rotate(45deg);
-        }
-        .hack-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700; }
-        .hack-amount { font-size: 2.2rem; font-weight: 900; margin: 10px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .hack-desc { font-size: 0.9rem; opacity: 0.9; }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-    </style>
+<style>
+:root{
+  --bg:#020617; --card:#0b1220; --ink:#e5e7eb; --muted:#94a3b8;
+  --blue:#38bdf8; --orange:#fb923c; --red:#f87171; --green:#4ade80; --yellow:#fbbf24;
+}
+*{box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);margin:0}
+.container{max-width:1200px;margin:auto;padding:24px}
+h1{text-align:center;margin:10px 0 0}
+.subtitle{text-align:center;color:var(--muted);margin:6px 0 22px}
+.card{background:var(--card);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+label{display:block;margin-top:10px;color:var(--muted);font-size:.92rem}
+input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0a1020;color:var(--ink);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.kpi{background:#050a16;border-radius:14px;padding:14px;text-align:center;position:relative;border:1px solid rgba(255,255,255,.06)}
+.kpi span{font-size:.78rem;color:var(--muted)}
+.kpi strong{display:block;margin-top:6px;font-size:1.22rem}
+.tag{font-weight:700}
+.blue{color:var(--blue)} .orange{color:var(--orange)} .red{color:var(--red)} .green{color:var(--green)}
+.tooltip{margin-top:6px;font-size:.70rem;color:var(--muted)}
+.semaforo{padding:16px;border-radius:14px;font-weight:800;text-align:center;border:1px solid rgba(255,255,255,.06)}
+.bg-green{background:rgba(34,197,94,.15)}
+.bg-yellow{background:rgba(245,158,11,.15)}
+.bg-red{background:rgba(239,68,68,.15)}
+.note{margin:10px 0 0;text-align:center;color:var(--muted);font-size:.92rem;line-height:1.35}
+hr{border:none;border-top:1px solid rgba(255,255,255,.08);margin:16px 0}
+canvas{max-height:340px}
+table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:right}
+th{text-align:center;color:var(--muted);font-weight:600}
+td:first-child{text-align:center}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#070c18;border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.78rem}
+.small{font-size:.86rem;color:var(--muted)}
+</style>
 </head>
+
 <body>
+<div class="container">
+  <h1>🧠 Analizador de Créditos</h1>
+  <div class="subtitle">Deluxe Plus FINAL · Seguro + extras + desembolso neto + escenarios</div>
 
-<div class="app-container">
-    <h1>🚀 SERVICOMP FINANCE</h1>
-
-    <div class="section-label">Configuración Tarjeta</div>
-    <div class="grid-2">
-        <div class="input-group">
-            <label>Línea (S/)</label>
-            <input type="number" id="linea" value="2000">
-        </div>
-        <div class="input-group">
-            <label>Día Cierre</label>
-            <input type="number" id="diaCierre" value="25">
-        </div>
-    </div>
-    <div class="grid-2" style="margin-top:10px">
-        <div class="input-group">
-            <label>Desgravamen (%)</label>
-            <input type="number" id="tasaDesg" value="0.256" step="0.001">
-        </div>
-        <div class="input-group">
-            <label>Tope Desg. (S/)</label>
-            <input type="number" id="topeDesg" value="20">
-        </div>
-    </div>
-
-    <div class="section-label">Gastos Planeados</div>
-    <div class="grid-2">
-        <div class="input-group">
-            <label>En Soles (S/)</label>
-            <input type="number" id="gastoSol" value="4500">
-        </div>
-        <div class="input-group">
-            <label>En Dólares ($)</label>
-            <input type="number" id="gastoDol" value="0">
-        </div>
-    </div>
-    <div class="grid-2" style="margin-top:10px">
-        <div class="input-group">
-            <label>T. Cambio</label>
-            <input type="number" id="tc" value="3.85" step="0.01">
-        </div>
-        <div class="input-group">
-            <label>Cashback (%)</label>
-            <input type="number" id="cashback" value="1" step="0.1">
-        </div>
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label>Monto del crédito (capital)</label>
+        <input id="monto" type="number" value="1500" step="0.01">
+      </div>
+      <div>
+        <label>Cuota mensual</label>
+        <input id="cuota" type="number" value="148.8" step="0.01">
+      </div>
+      <div>
+        <label>Plazo (meses)</label>
+        <input id="meses" type="number" value="12" step="1" min="1">
+      </div>
+      <div>
+        <label>Seguro desgravamen (% mensual sobre saldo)</label>
+        <input id="seguroPct" type="number" value="0.05" step="0.01">
+      </div>
+      <div>
+        <label>Extras / comisión inicial (S/)</label>
+        <input id="extras" type="number" value="0" step="0.01">
+      </div>
     </div>
 
-    <button class="btn-calc" onclick="calcular()">CALCULAR ESTRATEGIA</button>
+    <hr>
 
-    <!-- Semáforo de Riesgo (Ciclos) -->
-    <div id="cycleMeter" class="cycle-meter" style="display:none;">
-        <div class="cycle-value" id="cycleVal">0.0x</div>
-        <div class="cycle-label" id="cycleText">RIESGO BAJO</div>
-        <div style="font-size:0.75rem; color:#666; margin-top:5px;" id="cycleDesc"></div>
+    <div class="grid">
+      <div>
+        <label>Adelanto de capital (S/)</label>
+        <input id="adelanto" type="number" value="500" step="0.01">
+      </div>
+      <div>
+        <label>Mes del adelanto</label>
+        <input id="mesAdelanto" type="number" value="2" step="1" min="1">
+      </div>
+      <div class="small" style="display:flex;align-items:flex-end;gap:10px">
+        <span class="pill">Auto-cálculo activo</span>
+      </div>
     </div>
+  </div>
 
-    <div id="results">
-        <!-- Hack Card -->
-        <div class="hack-box">
-            <div class="hack-title">PAGO TÁCTICO (DÍA <span id="txtFechaPago">24</span>)</div>
-            <div class="hack-amount" id="txtPagoHack">S/ 0.00</div>
-            <div class="hack-desc">Deja tu deuda final en <strong style="color:#ffeb3b">S/ 150.00</strong></div>
-        </div>
-
-        <!-- Finanzas Card -->
-        <div class="result-card">
-            <div class="row"><span>Gasto Total Real:</span><strong id="resGasto">S/ 0.00</strong></div>
-            <div class="row"><span>+ Cashback:</span><span style="color:var(--accent)" id="resCash">S/ 0.00</span></div>
-            <div class="row"><span>- Desgravamen:</span><span style="color:var(--danger)" id="resDesg">S/ 0.00</span></div>
-            <div class="row"><span>- ITF (0.005%):</span><span style="color:var(--danger)" id="resItf">S/ 0.00</span></div>
-            <div class="row total-row"><span>= GANANCIA:</span><span id="resTotal">S/ 0.00</span></div>
-        </div>
+  <div class="card grid">
+    <div class="kpi">
+      <span class="tag blue">TEM</span>
+      <strong id="tem">—</strong>
+      <div class="tooltip">Tasa efectiva mensual (calculada desde cuota)</div>
     </div>
+    <div class="kpi">
+      <span class="tag orange">TEA</span>
+      <strong id="tea">—</strong>
+      <div class="tooltip">Impacto anual: (1+TEM)^12 - 1</div>
+    </div>
+    <div class="kpi">
+      <span class="tag red">TCA (base)</span>
+      <strong id="tcaBase">—</strong>
+      <div class="tooltip">Costo real: (Interés+Seguro+Extras)/Desembolso neto</div>
+    </div>
+    <div class="kpi">
+      <span>Desembolso neto</span>
+      <strong id="desembolso">—</strong>
+      <div class="tooltip">Monto - extras (lo que recibes)</div>
+    </div>
+    <div class="kpi">
+      <span>Total pagar (base)</span>
+      <strong id="totalBase">—</strong>
+      <div class="tooltip">Suma de cuotas (sin incluir adelanto)</div>
+    </div>
+    <div class="kpi">
+      <span>Interés total (base)</span>
+      <strong id="interesBase">—</strong>
+      <div class="tooltip">Costo financiero por intereses</div>
+    </div>
+    <div class="kpi">
+      <span>Seguro total (base)</span>
+      <strong id="seguroBase">—</strong>
+      <div class="tooltip">Suma de desgravamen pagado</div>
+    </div>
+    <div class="kpi">
+      <span class="tag green">Ahorro intereses</span>
+      <strong id="ahorroInt">—</strong>
+      <div class="tooltip">Interés base - interés con adelanto</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="semaforo" class="semaforo">—</div>
+    <div id="reco" class="note">—</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 10px">📈 Comparación de saldos (con seguro)</h3>
+    <canvas id="chart"></canvas>
+    <div class="small">La línea “con adelanto” puede terminar antes si el saldo llega a 0.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0">📋 Amortización SIN adelanto</h3>
+    <table id="tablaSin"></table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0">📋 Amortización CON adelanto</h3>
+    <table id="tablaCon"></table>
+  </div>
 </div>
 
 <script>
-    function calcular() {
-        // 1. Inputs
-        const linea = parseFloat(document.getElementById('linea').value) || 0;
-        const gastoSol = parseFloat(document.getElementById('gastoSol').value) || 0;
-        const gastoDol = parseFloat(document.getElementById('gastoDol').value) || 0;
-        const tc = parseFloat(document.getElementById('tc').value) || 3.85;
-        const tasaDesg = parseFloat(document.getElementById('tasaDesg').value) / 100;
-        const topeDesg = parseFloat(document.getElementById('topeDesg').value) || 20;
-        const cashbackPct = parseFloat(document.getElementById('cashback').value) / 100;
-        const diaCierre = parseInt(document.getElementById('diaCierre').value) || 25;
+let chart;
+const money = new Intl.NumberFormat("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
 
-        // 2. Cálculos Base
-        const gastoTotal = gastoSol + (gastoDol * tc);
-        const ciclos = gastoTotal / linea;
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
-        // 3. Semáforo de Riesgo (Ciclos)
-        const meter = document.getElementById('cycleMeter');
-        const valEl = document.getElementById('cycleVal');
-        const txtEl = document.getElementById('cycleText');
-        const descEl = document.getElementById('cycleDesc');
+// TEM por iteración (aprox estilo Excel RATE)
+function calcularTEM(m, c, n){
+  let t = 0.01;
+  for(let i=0;i<7000;i++){
+    const r = m*t/(1-Math.pow(1+t,-n));
+    t += (c - r)/320000;  // paso estable
+    if(t<=0) t = 0.000001;
+  }
+  return t;
+}
 
-        valEl.innerText = ciclos.toFixed(1) + 'x';
-        meter.style.display = 'block';
-        meter.className = 'cycle-meter'; // reset
+function simular(m, c, n, tem, segPct, adel, mesA){
+  let saldo = m;
+  let interes = 0;
+  let seguro = 0;
+  let cuotasPagadas = 0;
+  let saldos = [];
+  let filas = [];
 
-        if (ciclos <= 1.5) {
-            meter.classList.add('safe');
-            txtEl.innerText = "RIESGO BAJO (OK)";
-            txtEl.style.color = "var(--accent)";
-            descEl.innerText = "Operación segura. Sin alertas PLD.";
-        } else if (ciclos <= 3.0) {
-            meter.classList.add('caution');
-            txtEl.innerText = "RIESGO MEDIO (PRECAUCIÓN)";
-            txtEl.style.color = "#f57f17";
-            descEl.innerText = "Estás ciclando la tarjeta. Ten sustento de ingresos a mano.";
-        } else {
-            meter.classList.add('danger');
-            txtEl.innerText = "RIESGO ALTO (ALERTA)";
-            txtEl.style.color = "var(--danger)";
-            descEl.innerText = "⚠️ Peligro de bloqueo por Lavado de Activos. ¡Baja el gasto!";
-        }
+  for(let mes=1; mes<=n; mes++){
+    const intMes = saldo * tem;
+    const segMes = saldo * segPct;
+    // cuota cubre interés + seguro + capital
+    const amort = c - intMes - segMes;
 
-        // 4. Finanzas
-        const cashback = gastoTotal * cashbackPct;
-        const itf = gastoTotal * 0.00005;
+    interes += intMes;
+    seguro += segMes;
+    cuotasPagadas += c;
 
-        // Desgravamen aprox (asumiendo saldo promedio medio del mes o tope)
-        let desgravamen = (gastoTotal / 2) * tasaDesg; 
-        if (desgravamen > topeDesg) desgravamen = topeDesg;
-        if (desgravamen < 1) desgravamen = 1.00; // minimo
+    saldo -= amort;
 
-        const ganancia = cashback - desgravamen - itf;
-
-        // 5. Hack de Pago
-        // Target: Dejar S/ 150 si la linea es baja, o 7.5% si es alta
-        let saldoTarget = linea * 0.075;
-        if (saldoTarget < 150) saldoTarget = 150;
-        if (saldoTarget > linea) saldoTarget = linea; // por si acaso
-
-        let pagoHack = gastoTotal - saldoTarget;
-        if (pagoHack < 0) {
-            pagoHack = 0;
-            saldoTarget = gastoTotal;
-        }
-
-        // 6. Render
-        document.getElementById('resGasto').innerText = `S/ ${gastoTotal.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
-        document.getElementById('resCash').innerText = `+ S/ ${cashback.toFixed(2)}`;
-        document.getElementById('resDesg').innerText = `- S/ ${desgravamen.toFixed(2)}`;
-        document.getElementById('resItf').innerText = `- S/ ${itf.toFixed(2)}`;
-
-        const totalEl = document.getElementById('resTotal');
-        totalEl.innerText = `${ganancia >= 0 ? '+' : ''} S/ ${ganancia.toFixed(2)}`;
-        totalEl.style.color = ganancia >= 0 ? "var(--accent)" : "var(--danger)";
-
-        document.getElementById('txtFechaPago').innerText = diaCierre - 1;
-        document.getElementById('txtPagoHack').innerText = `S/ ${pagoHack.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
-
-        document.getElementById('results').style.display = 'block';
+    // adelanto al final del mes (luego de pagar cuota)
+    if(mesA && mes === mesA && adel>0){
+      saldo -= adel;
     }
-</script>
 
+    saldos.push(Math.max(saldo,0));
+    filas.push({
+      mes,
+      saldo,
+      interes:intMes,
+      seguro:segMes,
+      amort,
+      pago:c
+    });
+
+    if(saldo<=0) break;
+  }
+
+  return {interes, seguro, cuotasPagadas, saldos, filas, mesesEfectivos: filas.length};
+}
+
+function evaluarRiesgo(tem, tea, tca){
+  // rangos simples (ajustables)
+  if(tem>0.035 || tea>0.50 || tca>0.20) return {cls:"bg-red", label:"🔴 ALTO RIESGO"};
+  if(tem>0.020 || tea>0.30 || tca>0.10) return {cls:"bg-yellow", label:"🟡 RIESGO MEDIO"};
+  return {cls:"bg-green", label:"🟢 BAJO RIESGO"};
+}
+
+function renderTabla(el, filas){
+  let html = "<tr><th>Mes</th><th>Pago</th><th>Interés</th><th>Seguro</th><th>Amort.</th><th>Saldo</th></tr>";
+  for(const f of filas){
+    html += `<tr>
+      <td>${f.mes}</td>
+      <td>S/ ${money.format(f.pago)}</td>
+      <td>S/ ${money.format(f.interes)}</td>
+      <td>S/ ${money.format(f.seguro)}</td>
+      <td>S/ ${money.format(f.amort)}</td>
+      <td>S/ ${money.format(f.saldo)}</td>
+    </tr>`;
+  }
+  el.innerHTML = html;
+}
+
+function analizar(){
+  const m = +document.getElementById("monto").value || 0;
+  const c = +document.getElementById("cuota").value || 0;
+  const n = clamp((+document.getElementById("meses").value || 1), 1, 600);
+
+  const segPct = (+document.getElementById("seguroPct").value || 0) / 100;
+  const extras = +document.getElementById("extras").value || 0;
+
+  const adel = Math.max(+document.getElementById("adelanto").value || 0, 0);
+  const mesA = clamp((+document.getElementById("mesAdelanto").value || 1), 1, n);
+
+  const desembolsoNeto = Math.max(m - extras, 0.01);
+
+  // Tasas desde escenario base (como lo harías en Excel)
+  const tem = calcularTEM(m, c, n);
+  const tea = Math.pow(1+tem,12) - 1;
+
+  // Simulaciones
+  const base = simular(m, c, n, tem, segPct, 0, 0);
+  const conA = simular(m, c, n, tem, segPct, adel, mesA);
+
+  // Costos y TCA
+  const costoTotalBase = base.interes + base.seguro + extras;
+  const tcaBase = costoTotalBase / desembolsoNeto;
+
+  const costoTotalCon = conA.interes + conA.seguro + extras;
+  const tcaCon = costoTotalCon / desembolsoNeto;
+
+  const ahorroInteres = base.interes - conA.interes;
+  const ahorroSeguro = base.seguro - conA.seguro;
+  const ahorroTotalCostos = (base.interes+base.seguro) - (conA.interes+conA.seguro);
+
+  // KPIs
+  document.getElementById("tem").innerText = (tem*100).toFixed(2) + "%";
+  document.getElementById("tea").innerText = (tea*100).toFixed(2) + "%";
+  document.getElementById("tcaBase").innerText = (tcaBase*100).toFixed(2) + "%";
+  document.getElementById("desembolso").innerText = "S/ " + money.format(desembolsoNeto);
+  document.getElementById("totalBase").innerText = "S/ " + money.format(base.cuotasPagadas);
+  document.getElementById("interesBase").innerText = "S/ " + money.format(base.interes);
+  document.getElementById("seguroBase").innerText = "S/ " + money.format(base.seguro);
+  document.getElementById("ahorroInt").innerText = "S/ " + money.format(ahorroInteres);
+
+  // Semáforo (base) + recomendación precisa con nuevo escenario
+  const risk = evaluarRiesgo(tem, tea, tcaBase);
+  const sem = document.getElementById("semaforo");
+  sem.className = "semaforo " + risk.cls;
+  sem.innerText = risk.label;
+
+  const mesesBase = base.mesesEfectivos;
+  const mesesCon = conA.mesesEfectivos;
+  const reduceMeses = mesesBase - mesesCon;
+
+  // Importante: por qué "dinero desembolsado" puede subir con adelanto
+  const dineroDesembolsadoCon = conA.cuotasPagadas + adel + extras; // flujo de bolsillo (incluye adelanto y extras)
+  const dineroDesembolsadoBase = base.cuotasPagadas + extras;
+
+  const rec = document.getElementById("reco");
+  rec.innerHTML =
+    `Escenario base: <b>${mesesBase}</b> meses · Interés <b>S/ ${money.format(base.interes)}</b> · Seguro <b>S/ ${money.format(base.seguro)}</b> · TCA <b>${(tcaBase*100).toFixed(2)}%</b>.<br>
+     Con adelanto de <b>S/ ${money.format(adel)}</b> en el mes <b>${mesA}</b>: terminas en <b>${mesesCon}</b> meses` +
+    (reduceMeses>0 ? ` (<b>${reduceMeses}</b> menos)` : ``) +
+    ` · Interés <b>S/ ${money.format(conA.interes)}</b> · Seguro <b>S/ ${money.format(conA.seguro)}</b> · TCA <b>${(tcaCon*100).toFixed(2)}%</b>.<br>
+     Ahorro estimado: Interés <b>S/ ${money.format(ahorroInteres)}</b> + Seguro <b>S/ ${money.format(ahorroSeguro)}</b> = <b>S/ ${money.format(ahorroTotalCostos)}</b>.<br>
+     Nota: “Dinero desembolsado” puede verse mayor porque incluye <b>capital pagado antes</b> (adelanto), no porque el crédito sea más caro.`;
+
+  // Tablas
+  renderTabla(document.getElementById("tablaSin"), base.filas);
+  renderTabla(document.getElementById("tablaCon"), conA.filas);
+
+  // Gráfico comparativo
+  if(chart) chart.destroy();
+  const labels = Array.from({length: Math.max(base.saldos.length, conA.saldos.length)}, (_,i)=>i+1);
+  const serieBase = labels.map((_,i)=> (i<base.saldos.length ? base.saldos[i] : null));
+  const serieCon  = labels.map((_,i)=> (i<conA.saldos.length ? conA.saldos[i] : null));
+
+  chart = new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
+      labels,
+      datasets:[
+        {label:"Sin adelanto", data: serieBase, borderColor:"#f87171", tension:.3, spanGaps:false},
+        {label:"Con adelanto", data: serieCon, borderColor:"#4ade80", tension:.3, spanGaps:false}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:"#e5e7eb"}}},
+      scales:{
+        x:{ticks:{color:"#94a3b8"}, grid:{color:"rgba(255,255,255,.06)"}},
+        y:{ticks:{color:"#94a3b8"}, grid:{color:"rgba(255,255,255,.06)"}}
+      }
+    }
+  });
+}
+
+["monto","cuota","meses","seguroPct","extras","adelanto","mesAdelanto"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", analizar);
+});
+window.onload = analizar;
+</script>
 </body>
 </html>
