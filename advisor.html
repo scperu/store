@@ -1,317 +1,818 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiComp Advisors | Planes de Asesoría</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
-        
-        /* Plan Básico: Gris Azulado */
-        .card-basic {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        .card-basic:hover { border-color: rgba(148, 163, 184, 0.5); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        /* Plan Acompañamiento: Azul Vibrante */
-        .card-standard {
-            background: linear-gradient(180deg, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            box-shadow: 0 0 30px -5px rgba(37, 99, 235, 0.15);
-        }
-        
-        /* Plan Premium: ORO (Gold) */
-        .card-gold {
-            background: linear-gradient(180deg, rgba(234, 179, 8, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 1px solid rgba(234, 179, 8, 0.5);
-            box-shadow: 0 0 40px -5px rgba(234, 179, 8, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .card-gold::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
-        }
+  <title>ServiComp Advisors | Planes de Asesoría</title>
+  <meta name="description" content="Asesoría de compra inteligente para PC: elige el plan que asegura tu inversión tecnológica. Lista de piezas, validación de stock y soporte en vivo." />
 
-        .check-gold { color: #fbbf24; }
-        .text-gold { color: #fbbf24; }
-        .btn-gold {
-            background: linear-gradient(to right, #eab308, #d97706);
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-        .btn-gold:hover {
-            box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
-            transform: translateY(-1px);
-        }
-    </style>
+  <meta property="og:title" content="ServiComp Advisors | Planes de Asesoría" />
+  <meta property="og:description" content="No gastes por gastar. Elige el plan que asegura tu inversión tecnológica." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    :root { color-scheme: dark; }
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b1224 !important; /* fuerza fondo oscuro */
+      color: #e2e8f0;
+      scroll-behavior: smooth;
+    }
+
+    .bg-glow {
+      background:
+        radial-gradient(900px 420px at 12% 10%, rgba(59,130,246,0.22), transparent 62%),
+        radial-gradient(760px 360px at 88% 8%, rgba(234,179,8,0.14), transparent 58%),
+        radial-gradient(900px 420px at 50% 92%, rgba(99,102,241,0.16), transparent 62%);
+    }
+
+    .card-basic {
+      background: rgba(15, 23, 42, 0.62);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      backdrop-filter: blur(10px);
+    }
+    .card-basic:hover { border-color: rgba(148, 163, 184, 0.45); }
+
+    .card-standard {
+      background: linear-gradient(180deg, rgba(30, 58, 138, 0.55) 0%, rgba(15, 23, 42, 0.92) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.55);
+      box-shadow: 0 18px 50px -30px rgba(37, 99, 235, 0.55);
+    }
+
+    .card-gold {
+      background: linear-gradient(180deg, rgba(234, 179, 8, 0.20) 0%, rgba(15, 23, 42, 0.92) 100%);
+      border: 1px solid rgba(234, 179, 8, 0.60);
+      box-shadow: 0 18px 60px -34px rgba(234, 179, 8, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-gold::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+    }
+
+    .check-gold { color: #fbbf24; }
+    .text-gold { color: #fbbf24; }
+    .btn-gold {
+      background: linear-gradient(to right, #eab308, #d97706);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .btn-gold:hover { box-shadow: 0 0 18px rgba(234, 179, 8, 0.55); transform: translateY(-1px); }
+
+    .focus-ring:focus { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35); }
+  </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col">
 
-    <!-- Barra Superior: Idioma -->
-    <nav class="w-full flex justify-end px-6 py-4">
-        <div class="flex bg-slate-800 rounded-full p-1 border border-slate-700">
-            <button onclick="setLang('es')" id="btn-es" class="px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition">ES</button>
-            <button onclick="setLang('en')" id="btn-en" class="px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition">EN</button>
+<body class="min-h-screen flex flex-col bg-glow">
+  <header class="w-full">
+    <nav class="max-w-6xl mx-auto px-4 pt-5 flex items-center justify-between">
+      <a href="#planes" class="inline-flex items-center gap-2 text-blue-200 font-semibold">
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-blue-900/25 border border-blue-800/40">
+          <i class="fa-solid fa-microchip"></i>
+        </span>
+        <span>ServiComp Advisors</span>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <div class="flex bg-slate-900/70 rounded-full p-1 border border-slate-700">
+          <button type="button" onclick="setLang('es')" id="btn-es"
+            class="px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition focus-ring"
+            aria-pressed="true">ES</button>
+          <button type="button" onclick="setLang('en')" id="btn-en"
+            class="px-3 py-1 text-xs font-bold rounded-full text-slate-300 hover:text-white transition focus-ring"
+            aria-pressed="false">EN</button>
         </div>
+
+        <div class="hidden sm:flex bg-slate-900/70 p-1 rounded-full border border-slate-700 shadow-lg">
+          <button type="button" onclick="setRegion('global')" id="btn-global"
+            class="px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+            aria-pressed="true">Global (USD)</button>
+          <button type="button" onclick="setRegion('peru')" id="btn-peru"
+            class="px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring"
+            aria-pressed="false">Perú (Residentes)</button>
+        </div>
+      </div>
     </nav>
 
-    <!-- Header Principal -->
-    <header class="text-center max-w-2xl mx-auto mb-12 px-4">
-        <div class="inline-flex items-center gap-2 text-blue-400 mb-4 bg-blue-900/20 px-4 py-1.5 rounded-full text-sm font-semibold border border-blue-800/50">
-            <i class="fa-solid fa-microchip"></i> ServiComp Advisors
+    <section class="max-w-6xl mx-auto px-4 pt-10 pb-8">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 text-blue-200 mb-4 bg-blue-900/20 px-4 py-2 rounded-full text-sm font-semibold border border-blue-800/40">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span id="txt-hero-badge">Compra seguro, sin arrepentirte</span>
         </div>
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight" id="txt-title">
-            Asesoría de Compra Inteligente
+
+        <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight" id="txt-title">
+          Asesoría de Compra Inteligente
         </h1>
-        <p class="text-slate-400 text-lg mb-8" id="txt-subtitle">
-            No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.
+        <p class="text-slate-300/80 text-lg mt-4" id="txt-subtitle">
+          No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.
         </p>
-        
-        <!-- Selector de Región (Moneda) -->
-        <div class="inline-flex bg-slate-800 p-1 rounded-full border border-slate-700 shadow-lg">
-            <button onclick="setRegion('global')" id="btn-global" class="px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm">
-                Global (USD)
-            </button>
-            <button onclick="setRegion('peru')" id="btn-peru" class="px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white">
-                Perú (Residentes)
-            </button>
-        </div>
-    </header>
 
-    <!-- Contenedor de Planes (3 Niveles) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4 w-full mb-16">
-        
-        <!-- PLAN 1: BÁSICO (La Guía) -->
-        <div class="card-basic rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
-            <div class="mb-4">
-                <h3 class="text-xl font-bold text-white" id="t-p1-title">Básico (Guía)</h3>
-                <p class="text-slate-400 text-sm mt-2 h-10" id="t-p1-desc">Solo necesito la lista de qué comprar. Yo armo todo.</p>
-            </div>
-            
-            <div class="flex items-baseline gap-2 mb-6">
-                <span class="text-3xl font-bold text-white price-display" data-usd="29"></span>
-                <span class="text-sm text-slate-500 line-through original-price hidden"></span>
-            </div>
-            
-            <ul class="space-y-3 mb-8 text-sm flex-grow">
-                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f1">Lista de piezas compatibles</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f2">Enlaces de compra directos</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check text-slate-400"></i> <span id="t-p1-f3">Análisis Costo/Rendimiento</span></li>
-            </ul>
-            
-            <a href="https://wa.me/51973952322?text=Info%20Plan%20Basico" class="w-full py-2.5 rounded-lg border border-slate-600 hover:bg-slate-700 text-white text-center transition text-sm font-medium" id="t-p1-btn">
-                Elegir Básico
-            </a>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <a href="#planes" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition shadow-lg shadow-blue-900/30 focus-ring">
+            <i class="fa-solid fa-list-check"></i>
+            <span id="txt-hero-cta">Ver planes</span>
+          </a>
+
+          <a id="btn-hero-wa" href="#"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/50 border border-slate-700 hover:bg-slate-900/70 text-white font-semibold transition focus-ring">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span id="txt-hero-wa">Hablar por WhatsApp</span>
+          </a>
         </div>
 
-        <!-- PLAN 2: ACOMPAÑAMIENTO (Azul) -->
-        <div class="card-standard rounded-2xl p-8 flex flex-col relative transform md:scale-105 z-10">
-            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl shadow-lg" id="t-pop-badge">
-                POPULAR
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+          <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+            <div class="font-semibold text-white" id="txt-kpi-1t">Compatibilidad real</div>
+            <div class="text-slate-400" id="txt-kpi-1d">Evita cuellos de botella</div>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+            <div class="font-semibold text-white" id="txt-kpi-2t">Compra guiada</div>
+            <div class="text-slate-400" id="txt-kpi-2d">Stock + garantía + dudas</div>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+            <div class="font-semibold text-white" id="txt-kpi-3t">Listo para usar</div>
+            <div class="text-slate-400" id="txt-kpi-3d">Setup y optimización</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm:hidden mt-7 inline-flex bg-slate-900/70 p-1 rounded-full border border-slate-700 shadow-lg">
+        <button type="button" onclick="setRegion('global')" id="btn-global-m"
+          class="px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+          aria-pressed="true">Global (USD)</button>
+        <button type="button" onclick="setRegion('peru')" id="btn-peru-m"
+          class="px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring"
+          aria-pressed="false">Perú (Residentes)</button>
+      </div>
+    </section>
+  </header>
+
+  <main id="planes" class="w-full">
+    <section class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="flex items-center justify-between gap-4 mb-6">
+        <h2 class="text-xl md:text-2xl font-bold text-white" id="txt-pricing-title">Elige tu nivel de seguridad</h2>
+        <div class="hidden md:flex items-center gap-2 text-xs text-slate-400">
+          <i class="fa-solid fa-tag"></i>
+          <span id="txt-peru-note">Perú: -15% para residentes</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Plan 1 -->
+        <article class="card-basic rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
+          <div class="mb-3">
+            <h3 class="text-xl font-bold text-white" id="t-p1-title">Básico (Guía)</h3>
+            <p class="text-slate-400 text-sm mt-2" id="t-p1-desc">Solo necesito la lista de qué comprar. Yo armo todo.</p>
+          </div>
+
+          <div class="flex items-end justify-between gap-3 mb-5">
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl font-bold text-white price-display" data-plan="basic" data-usd="29"></span>
+              <span class="text-sm text-slate-500 line-through original-price hidden"></span>
             </div>
-            <div class="mb-4">
-                <h3 class="text-2xl font-bold text-white" id="t-p2-title">Acompañamiento</h3>
-                <p class="text-blue-200 text-sm mt-2 h-10" id="t-p2-desc">Seguridad total. Valido stock y te ayudo por chat al comprar.</p>
+            <span class="text-xs text-slate-400" id="t-one-time-1">Pago único</span>
+          </div>
+
+          <ul class="space-y-3 mb-6 text-sm flex-grow">
+            <li class="flex gap-3"><i class="fa-solid fa-check text-slate-300 mt-0.5"></i><span id="t-p1-f1">Lista de piezas 100% compatibles</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-slate-300 mt-0.5"></i><span id="t-p1-f2">Enlaces de compra directos</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-slate-300 mt-0.5"></i><span id="t-p1-f3">Análisis costo/rendimiento</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-slate-300 mt-0.5"></i><span id="t-p1-f4">Checklist final antes de pagar</span></li>
+          </ul>
+
+          <a data-plan="basic" id="t-p1-btn" href="#"
+            class="w-full py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 hover:bg-slate-900/70 text-white text-center transition text-sm font-bold focus-ring">
+            Elegir Básico
+          </a>
+
+          <p class="text-xs text-slate-500 mt-4" id="t-p1-foot">Ideal si ya sabes ensamblar y solo quieres comprar bien.</p>
+        </article>
+
+        <!-- Plan 2 -->
+        <article class="card-standard rounded-2xl p-8 flex flex-col relative transform md:scale-105 z-10">
+          <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl shadow-lg" id="t-pop-badge">
+            POPULAR
+          </div>
+
+          <div class="mb-3">
+            <h3 class="text-2xl font-bold text-white" id="t-p2-title">Acompañamiento</h3>
+            <p class="text-blue-100/80 text-sm mt-2" id="t-p2-desc">Seguridad total. Valido stock y te ayudo por chat al comprar.</p>
+          </div>
+
+          <div class="flex items-end justify-between gap-3 mb-5">
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-bold text-blue-200 price-display" data-plan="guided" data-usd="59"></span>
+              <span class="text-sm text-blue-200/50 line-through original-price hidden"></span>
             </div>
-            
-            <div class="flex items-baseline gap-2 mb-6">
-                <span class="text-4xl font-bold text-blue-400 price-display" data-usd="59"></span>
-                <span class="text-sm text-blue-300/50 line-through original-price hidden"></span>
+            <span class="text-xs text-blue-100/70" id="t-one-time-2">Pago único</span>
+          </div>
+
+          <ul class="space-y-3 mb-6 text-sm flex-grow text-slate-100">
+            <li class="flex gap-3"><i class="fa-solid fa-check text-blue-200 mt-0.5"></i><span class="font-semibold" id="t-p2-f1">Todo lo del Básico +</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-blue-200 mt-0.5"></i><span id="t-p2-f2">Validación de stock en vivo</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-blue-200 mt-0.5"></i><span id="t-p2-f3">Soporte WhatsApp durante compra</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check text-blue-200 mt-0.5"></i><span id="t-p2-f4">Guía de garantías y alternativas</span></li>
+          </ul>
+
+          <a data-plan="guided" id="t-p2-btn" href="#"
+            class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-center transition font-extrabold shadow-lg shadow-blue-900/40 focus-ring">
+            Elegir Acompañamiento
+          </a>
+
+          <p class="text-xs text-blue-100/70 mt-4" id="t-p2-foot">Ideal si quieres comprar sin riesgo y con soporte en el momento.</p>
+        </article>
+
+        <!-- Plan 3 -->
+        <article class="card-gold rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
+          <div class="mb-3">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-xl font-bold text-white" id="t-p3-title">Full Experience</h3>
+              <i class="fa-solid fa-crown text-gold"></i>
             </div>
-            
-            <ul class="space-y-3 mb-8 text-sm flex-grow text-slate-200">
-                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span class="font-semibold" id="t-p2-f1">Todo lo del Básico +</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f2">Validación de Stock en Vivo</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f3">Soporte WhatsApp durante compra</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check text-blue-400"></i> <span id="t-p2-f4">Gestión de dudas y garantías</span></li>
-            </ul>
-            
-            <a href="https://wa.me/51973952322?text=Info%20Plan%20Acompañamiento" class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-center transition font-bold shadow-lg shadow-blue-900/40" id="t-p2-btn">
-                Elegir Acompañamiento
-            </a>
+            <p class="text-yellow-100/70 text-sm mt-2" id="t-p3-desc">Servicio llave en mano. Incluye configuración y optimización.</p>
+          </div>
+
+          <div class="flex items-end justify-between gap-3 mb-5">
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl font-bold text-gold price-display" data-plan="full" data-usd="99"></span>
+              <span class="text-sm text-yellow-600 line-through original-price hidden"></span>
+            </div>
+            <span class="text-xs text-yellow-100/70" id="t-one-time-3">Pago único</span>
+          </div>
+
+          <ul class="space-y-3 mb-6 text-sm flex-grow">
+            <li class="flex gap-3"><i class="fa-solid fa-check check-gold mt-0.5"></i><span class="text-white font-semibold" id="t-p3-f1">Todo lo del Acompañamiento +</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check check-gold mt-0.5"></i><span id="t-p3-f2">Guía remota de ensamblaje</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check check-gold mt-0.5"></i><span id="t-p3-f3">Drivers/BIOS/Windows (guía)</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-check check-gold mt-0.5"></i><span id="t-p3-f4">Optimización segura (perfil estable)</span></li>
+          </ul>
+
+          <a data-plan="full" id="t-p3-btn" href="#"
+            class="w-full py-2.5 rounded-xl btn-gold text-center transition text-sm font-extrabold focus-ring">
+            Quiero Todo Listo
+          </a>
+
+          <p class="text-xs text-yellow-100/70 mt-4" id="t-p3-foot">Ideal si quieres que te quede fino y listo para trabajar/jugar.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Trust: Testimonials -->
+    <section class="max-w-6xl mx-auto px-4 pb-10">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h3 class="text-lg md:text-xl font-bold text-white" id="txt-test-title">Testimonios</h3>
+          <p class="text-slate-400 text-sm mt-1" id="txt-test-sub">Personas que compraron sin perder dinero ni tiempo.</p>
+        </div>
+        <div class="hidden md:flex items-center gap-2 text-xs text-slate-500">
+          <i class="fa-solid fa-star text-yellow-300"></i>
+          <span id="txt-test-note">Resultados reales</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="font-semibold text-white" id="tst-1-name">Carlos M.</div>
+            <div class="text-yellow-300 text-sm">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p class="text-slate-400 mt-3 text-sm" id="tst-1-quote">“Me evitó comprar una fuente mala y una placa incompatible. Todo quedó perfecto a la primera.”</p>
+          <p class="text-xs text-slate-500 mt-4" id="tst-1-meta">Plan: Acompañamiento</p>
+        </article>
+
+        <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="font-semibold text-white" id="tst-2-name">Valeria R.</div>
+            <div class="text-yellow-300 text-sm">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p class="text-slate-400 mt-3 text-sm" id="tst-2-quote">“Compré por partes en distintas tiendas y siempre tuve alternativas. Cero estrés.”</p>
+          <p class="text-xs text-slate-500 mt-4" id="tst-2-meta">Plan: Full Experience</p>
+        </article>
+
+        <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="font-semibold text-white" id="tst-3-name">Diego P.</div>
+            <div class="text-yellow-300 text-sm">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p class="text-slate-400 mt-3 text-sm" id="tst-3-quote">“La lista estuvo impecable. Rendimiento brutal por el presupuesto. Recomendado.”</p>
+          <p class="text-xs text-slate-500 mt-4" id="tst-3-meta">Plan: Básico</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Trust: Guarantee -->
+    <section class="max-w-6xl mx-auto px-4 pb-12">
+      <div class="rounded-2xl border border-emerald-900/60 bg-emerald-950/25 p-6 md:p-7">
+        <div class="flex gap-4 items-start">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-900/30 border border-emerald-800/40 flex items-center justify-center">
+            <i class="fa-solid fa-badge-check text-emerald-300 text-xl"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-white font-bold text-lg" id="txt-guar-title">Garantía de compatibilidad</h3>
+            <p class="text-emerald-100/80 mt-1 text-sm" id="txt-guar-desc">
+              Si una pieza recomendada por mí no es compatible con el build acordado, lo corrijo sin costo (con alternativas equivalentes).
+            </p>
+            <p class="text-slate-400 mt-3 text-xs" id="txt-guar-note">
+              *Aplica cuando se compra la lista sugerida y se respeta el objetivo/presupuesto definido.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="max-w-6xl mx-auto px-4 pb-12">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 md:p-8">
+        <h3 class="text-lg md:text-xl font-bold text-white mb-4" id="txt-how-title">Cómo funciona</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+            <div class="text-blue-200 font-bold mb-1" id="txt-how-1t">1) Me dices tu objetivo</div>
+            <div class="text-slate-400" id="txt-how-1d">Trabajo, gaming, edición, presupuesto y país.</div>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+            <div class="text-blue-200 font-bold mb-1" id="txt-how-2t">2) Te armo la compra</div>
+            <div class="text-slate-400" id="txt-how-2d">Compatibilidad, rendimiento y links confiables.</div>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+            <div class="text-blue-200 font-bold mb-1" id="txt-how-3t">3) Te acompaño / configuro</div>
+            <div class="text-slate-400" id="txt-how-3d">Según el plan: soporte en vivo y optimización.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="max-w-6xl mx-auto px-4 pb-16">
+      <h3 class="text-lg md:text-xl font-bold text-white mb-4" id="txt-faq-title">Preguntas frecuentes</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <details class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <summary class="cursor-pointer font-semibold text-white" id="faq-1q">¿Esto sirve si compro por partes en tiendas distintas?</summary>
+          <p class="text-slate-400 mt-2" id="faq-1a">Sí. Te paso enlaces y alternativas por disponibilidad, manteniendo compatibilidad.</p>
+        </details>
+        <details class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <summary class="cursor-pointer font-semibold text-white" id="faq-2q">¿Incluye instalación de Windows?</summary>
+          <p class="text-slate-400 mt-2" id="faq-2a">En Full Experience te guío paso a paso (drivers/BIOS/Windows). No incluye licencias.</p>
+        </details>
+        <details class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <summary class="cursor-pointer font-semibold text-white" id="faq-3q">¿Qué pasa si un componente se agota?</summary>
+          <p class="text-slate-400 mt-2" id="faq-3a">En Acompañamiento y Full te propongo reemplazos equivalentes en tiempo real.</p>
+        </details>
+        <details class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <summary class="cursor-pointer font-semibold text-white" id="faq-4q">¿Cuánto demoras en entregar la guía?</summary>
+          <p class="text-slate-400 mt-2" id="faq-4a">Depende del caso, pero normalmente es rápido una vez confirmas presupuesto y objetivo.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-auto border-t border-slate-800 bg-slate-950/60 py-10">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <p class="text-slate-400 text-sm" id="txt-payments">Métodos de pago</p>
+          <div id="payment-icons" class="flex items-center gap-6 opacity-80 grayscale hover:grayscale-0 transition-all duration-500 mt-3"></div>
         </div>
 
-        <!-- PLAN 3: PREMIUM (Oro) -->
-        <div class="card-gold rounded-2xl p-6 flex flex-col relative transition-transform hover:-translate-y-1">
-            <div class="mb-4">
-                <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-xl font-bold text-white" id="t-p3-title">Full Experience</h3>
-                    <i class="fa-solid fa-crown text-gold animate-pulse"></i>
-                </div>
-                <p class="text-yellow-100/70 text-sm mt-2 h-10" id="t-p3-desc">Servicio llave en mano. Incluye configuración y optimización.</p>
-            </div>
-            
-            <div class="flex items-baseline gap-2 mb-6">
-                <span class="text-3xl font-bold text-gold price-display" data-usd="99"></span>
-                <span class="text-sm text-yellow-600 line-through original-price hidden"></span>
-            </div>
-            
-            <ul class="space-y-3 mb-8 text-sm flex-grow">
-                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span class="text-white font-semibold" id="t-p3-f1">Todo lo del Acompañamiento +</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f2">Guía remota de ensamblaje</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f3">Instalación Drivers/BIOS/Windows</span></li>
-                <li class="flex gap-3"><i class="fa-solid fa-check check-gold"></i> <span id="t-p3-f4">Optimización (Overclock seguro)</span></li>
-            </ul>
-            
-            <a href="https://wa.me/51973952322?text=Info%20Plan%20Full%20Experience" class="w-full py-2.5 rounded-lg btn-gold text-center transition text-sm font-bold" id="t-p3-btn">
-                Quiero Todo Listo
-            </a>
+        <div class="text-sm text-slate-400">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="txt-location">Lima, Perú</span>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <i class="fa-brands fa-whatsapp"></i>
+            <a id="footer-wa" class="hover:text-white transition" href="#">WhatsApp</a>
+          </div>
         </div>
+      </div>
 
+      <div class="mt-8 flex items-center justify-between text-xs text-slate-600">
+        <span id="txt-copyright"></span>
+        <span id="txt-smallnote">Los precios pueden variar por tipo de build y disponibilidad.</span>
+      </div>
     </div>
+  </footer>
 
-    <!-- Footer: Métodos de Pago Dinámicos -->
-    <footer class="mt-auto border-t border-slate-800 bg-slate-900 py-8">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <p class="text-slate-500 text-sm mb-4" id="txt-payments">Métodos de Pago Aceptados</p>
-            
-            <!-- Contenedor de Iconos (Cambia con JS) -->
-            <div id="payment-icons" class="flex justify-center items-center gap-6 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-                <!-- Se llena con JS -->
-            </div>
-            
-            <p class="text-slate-600 text-xs mt-6">&copy; 2026 ServiComp Advisors. Lima, Perú.</p>
-        </div>
-    </footer>
+  <noscript>
+    <div class="fixed bottom-3 left-3 right-3 max-w-3xl mx-auto rounded-xl bg-red-900/40 border border-red-800 p-3 text-sm text-red-100">
+      Activa JavaScript para ver precios por región y links dinámicos.
+    </div>
+  </noscript>
 
-    <!-- LÓGICA COMPLETA (Idioma + Región + Pagos) -->
-    <script>
-        // CONFIGURACIÓN
-        const EXCHANGE = 3.80; 
-        const DISCOUNT_PERU = 0.85; // 15% OFF
+  <script>
+    const PHONE = "51973952322";
+    const DEFAULT_EXCHANGE = 3.80;
+    const DISCOUNT_PERU = 0.85;
+    let EXCHANGE = DEFAULT_EXCHANGE;
 
-        // TEXTOS (Diccionario)
-        const TEXTS = {
-            es: {
-                title: "Asesoría de Compra Inteligente",
-                subtitle: "No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.",
-                btnGlobal: "Global (USD)",
-                btnPeru: "Perú (Residentes)",
-                p1Title: "Básico (Guía)",
-                p1Desc: "Solo necesito la lista de qué comprar. Yo armo todo.",
-                p1Btn: "Elegir Básico",
-                p2Title: "Acompañamiento",
-                p2Desc: "Seguridad total. Valido stock y te ayudo por chat al comprar.",
-                p2Btn: "Elegir Acompañamiento",
-                p3Title: "Full Experience",
-                p3Desc: "Servicio llave en mano. Incluye configuración y optimización.",
-                p3Btn: "Quiero Todo Listo",
-                payments: "Métodos de Pago Aceptados"
-            },
-            en: {
-                title: "Smart PC Buying Advice",
-                subtitle: "Don't waste money. Choose the plan that secures your tech investment.",
-                btnGlobal: "Global (USD)",
-                btnPeru: "Peru (Residents)",
-                p1Title: "Basic (Guide)",
-                p1Desc: "I just need the parts list. I'll build it myself.",
-                p1Btn: "Choose Basic",
-                p2Title: "Guided Support",
-                p2Desc: "Total safety. I validate stock & chat support during purchase.",
-                p2Btn: "Choose Guided",
-                p3Title: "Full Experience",
-                p3Desc: "Turnkey service. Includes setup, BIOS & optimization.",
-                p3Btn: "I Want It Ready",
-                payments: "Accepted Payment Methods"
-            }
-        };
+    const TEXTS = {
+      es: {
+        heroBadge: "Compra seguro, sin arrepentirte",
+        title: "Asesoría de Compra Inteligente",
+        subtitle: "No gastes por gastar. Elige el plan que asegura tu inversión tecnológica.",
+        heroCta: "Ver planes",
+        heroWa: "Hablar por WhatsApp",
+        pricingTitle: "Elige tu nivel de seguridad",
+        peruNote: "Perú: -15% para residentes",
+        payments: "Métodos de pago",
+        location: "Lima, Perú",
+        smallnote: "Los precios pueden variar por tipo de build y disponibilidad.",
 
-        // ESTADO GLOBAL
-        let currentLang = 'es';
-        let currentRegion = 'global';
+        btnGlobal: "Global (USD)",
+        btnPeru: "Perú (Residentes)",
 
-        // FUNCIONES
-        function setLang(lang) {
-            currentLang = lang;
-            
-            // Botones Idioma
-            document.getElementById('btn-es').className = lang === 'es' ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition" : "px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
-            document.getElementById('btn-en').className = lang === 'en' ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition" : "px-3 py-1 text-xs font-bold rounded-full text-slate-400 hover:text-white transition";
+        popBadge: "POPULAR",
+        oneTime: "Pago único",
 
-            // Actualizar Textos
-            const t = TEXTS[lang];
-            document.getElementById('txt-title').textContent = t.title;
-            document.getElementById('txt-subtitle').textContent = t.subtitle;
-            document.getElementById('btn-global').textContent = t.btnGlobal;
-            document.getElementById('btn-peru').textContent = t.btnPeru;
-            
-            document.getElementById('t-p1-title').textContent = t.p1Title;
-            document.getElementById('t-p1-desc').textContent = t.p1Desc;
-            document.getElementById('t-p1-btn').textContent = t.p1Btn;
-            
-            document.getElementById('t-p2-title').textContent = t.p2Title;
-            document.getElementById('t-p2-desc').textContent = t.p2Desc;
-            document.getElementById('t-p2-btn').textContent = t.p2Btn;
-            
-            document.getElementById('t-p3-title').textContent = t.p3Title;
-            document.getElementById('t-p3-desc').textContent = t.p3Desc;
-            document.getElementById('t-p3-btn').textContent = t.p3Btn;
-            
-            document.getElementById('txt-payments').textContent = t.payments;
+        p1Title: "Básico (Guía)",
+        p1Desc: "Solo necesito la lista de qué comprar. Yo armo todo.",
+        p1Btn: "Elegir Básico",
+        p1Foot: "Ideal si ya sabes ensamblar y solo quieres comprar bien.",
+        p1F1: "Lista de piezas 100% compatibles",
+        p1F2: "Enlaces de compra directos",
+        p1F3: "Análisis costo/rendimiento",
+        p1F4: "Checklist final antes de pagar",
+
+        p2Title: "Acompañamiento",
+        p2Desc: "Seguridad total. Valido stock y te ayudo por chat al comprar.",
+        p2Btn: "Elegir Acompañamiento",
+        p2Foot: "Ideal si quieres comprar sin riesgo y con soporte en el momento.",
+        p2F1: "Todo lo del Básico +",
+        p2F2: "Validación de stock en vivo",
+        p2F3: "Soporte WhatsApp durante compra",
+        p2F4: "Guía de garantías y alternativas",
+
+        p3Title: "Full Experience",
+        p3Desc: "Servicio llave en mano. Incluye configuración y optimización.",
+        p3Btn: "Quiero Todo Listo",
+        p3Foot: "Ideal si quieres que te quede fino y listo para trabajar/jugar.",
+        p3F1: "Todo lo del Acompañamiento +",
+        p3F2: "Guía remota de ensamblaje",
+        p3F3: "Drivers/BIOS/Windows (guía)",
+        p3F4: "Optimización segura (perfil estable)",
+
+        testTitle: "Testimonios",
+        testSub: "Personas que compraron sin perder dinero ni tiempo.",
+        testNote: "Resultados reales",
+        tst1: "“Me evitó comprar una fuente mala y una placa incompatible. Todo quedó perfecto a la primera.”",
+        tst1m: "Plan: Acompañamiento",
+        tst2: "“Compré por partes en distintas tiendas y siempre tuve alternativas. Cero estrés.”",
+        tst2m: "Plan: Full Experience",
+        tst3: "“La lista estuvo impecable. Rendimiento brutal por el presupuesto. Recomendado.”",
+        tst3m: "Plan: Básico",
+
+        guarTitle: "Garantía de compatibilidad",
+        guarDesc: "Si una pieza recomendada por mí no es compatible con el build acordado, lo corrijo sin costo (con alternativas equivalentes).",
+        guarNote: "*Aplica cuando se compra la lista sugerida y se respeta el objetivo/presupuesto definido.",
+
+        howTitle: "Cómo funciona",
+        how1t: "1) Me dices tu objetivo",
+        how1d: "Trabajo, gaming, edición, presupuesto y país.",
+        how2t: "2) Te armo la compra",
+        how2d: "Compatibilidad, rendimiento y links confiables.",
+        how3t: "3) Te acompaño / configuro",
+        how3d: "Según el plan: soporte en vivo y optimización.",
+
+        faqTitle: "Preguntas frecuentes",
+        faq1q: "¿Esto sirve si compro por partes en tiendas distintas?",
+        faq1a: "Sí. Te paso enlaces y alternativas por disponibilidad, manteniendo compatibilidad.",
+        faq2q: "¿Incluye instalación de Windows?",
+        faq2a: "En Full Experience te guío paso a paso (drivers/BIOS/Windows). No incluye licencias.",
+        faq3q: "¿Qué pasa si un componente se agota?",
+        faq3a: "En Acompañamiento y Full te propongo reemplazos equivalentes en tiempo real.",
+        faq4q: "¿Cuánto demoras en entregar la guía?",
+        faq4a: "Depende del caso, pero normalmente es rápido una vez confirmas presupuesto y objetivo."
+      },
+      en: {
+        heroBadge: "Buy safely, no regrets",
+        title: "Smart PC Buying Advice",
+        subtitle: "Don't waste money. Choose the plan that secures your tech investment.",
+        heroCta: "See plans",
+        heroWa: "Chat on WhatsApp",
+        pricingTitle: "Choose your safety level",
+        peruNote: "Peru: -15% for residents",
+        payments: "Payment methods",
+        location: "Lima, Peru",
+        smallnote: "Prices may vary based on build type and availability.",
+
+        btnGlobal: "Global (USD)",
+        btnPeru: "Peru (Residents)",
+
+        popBadge: "MOST CHOSEN",
+        oneTime: "One-time",
+
+        p1Title: "Basic (Guide)",
+        p1Desc: "I just need the parts list. I'll build it myself.",
+        p1Btn: "Choose Basic",
+        p1Foot: "Best if you can build and just want to buy the right parts.",
+        p1F1: "100% compatible parts list",
+        p1F2: "Direct purchase links",
+        p1F3: "Cost/performance analysis",
+        p1F4: "Final checklist before paying",
+
+        p2Title: "Guided Support",
+        p2Desc: "Total safety. I validate stock and guide you during purchase.",
+        p2Btn: "Choose Guided",
+        p2Foot: "Best if you want to buy risk-free with real-time support.",
+        p2F1: "Everything in Basic +",
+        p2F2: "Live stock validation",
+        p2F3: "WhatsApp support while buying",
+        p2F4: "Warranty + alternatives guidance",
+
+        p3Title: "Full Experience",
+        p3Desc: "Turnkey service. Includes setup and safe optimization.",
+        p3Btn: "I Want It Ready",
+        p3Foot: "Best if you want it tuned and ready for work/gaming.",
+        p3F1: "Everything in Guided +",
+        p3F2: "Remote build guidance",
+        p3F3: "Drivers/BIOS/Windows guidance",
+        p3F4: "Safe optimization (stable profile)",
+
+        testTitle: "Testimonials",
+        testSub: "People who bought without wasting money or time.",
+        testNote: "Real outcomes",
+        tst1: "“He saved me from buying a bad PSU and an incompatible board. Perfect on the first try.”",
+        tst1m: "Plan: Guided Support",
+        tst2: "“I bought parts from different stores and always had alternatives. Zero stress.”",
+        tst2m: "Plan: Full Experience",
+        tst3: "“The list was flawless. Amazing performance for the budget. Recommended.”",
+        tst3m: "Plan: Basic",
+
+        guarTitle: "Compatibility guarantee",
+        guarDesc: "If any part I recommended is not compatible with the agreed build, I fix it at no cost (with equivalent alternatives).",
+        guarNote: "*Applies when buying the suggested list and sticking to the defined goal/budget.",
+
+        howTitle: "How it works",
+        how1t: "1) Tell me your goal",
+        how1d: "Work, gaming, editing, budget and country.",
+        how2t: "2) I build your shopping list",
+        how2d: "Compatibility, performance and trusted links.",
+        how3t: "3) I guide / setup",
+        how3d: "Depending on plan: live support and optimization.",
+
+        faqTitle: "FAQ",
+        faq1q: "Does this work if I buy parts from different stores?",
+        faq1a: "Yes. You'll get links and alternatives while keeping compatibility.",
+        faq2q: "Does it include Windows installation?",
+        faq2a: "Full Experience includes step-by-step guidance (drivers/BIOS/Windows). Licenses not included.",
+        faq3q: "What if a component goes out of stock?",
+        faq3a: "Guided and Full include real-time equivalent replacements.",
+        faq4q: "How fast do you deliver?",
+        faq4a: "Usually fast once we confirm budget and goal (varies by case)."
+      }
+    };
+
+    let currentLang = "es";
+    let currentRegion = "global";
+
+    function $(id) { return document.getElementById(id); }
+    function setPressed(el, pressed) { if (!el) return; el.setAttribute("aria-pressed", pressed ? "true" : "false"); }
+    function fmtUSD(n) { return `$${n}`; }
+    function roundTo5(n) { return Math.ceil(n / 5) * 5; }
+
+    function planName(planKey, lang) {
+      const t = TEXTS[lang];
+      if (planKey === "basic") return t.p1Title;
+      if (planKey === "guided") return t.p2Title;
+      return t.p3Title;
+    }
+
+    function waLink(message) {
+      return `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
+    }
+
+    function updateWhatsAppLinks() {
+      const baseMsg = currentLang === "es"
+        ? "Hola, quiero asesoría para comprar/armar una PC. ¿Me ayudas?"
+        : "Hi! I want advice to buy/build a PC. Can you help me?";
+      $("btn-hero-wa").href = waLink(baseMsg);
+      $("footer-wa").href = waLink(baseMsg);
+
+      document.querySelectorAll("a[data-plan]").forEach(a => {
+        const plan = a.dataset.plan;
+        const regionText = currentRegion === "peru" ? "Perú" : "Global";
+        const msg = (currentLang === "es")
+          ? `Hola, quiero el plan: ${planName(plan, "es")} (${regionText}).`
+          : `Hi! I want the plan: ${planName(plan, "en")} (${regionText}).`;
+        a.href = waLink(msg);
+      });
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+
+      $("btn-es").className = lang === "es"
+        ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition focus-ring"
+        : "px-3 py-1 text-xs font-bold rounded-full text-slate-300 hover:text-white transition focus-ring";
+      $("btn-en").className = lang === "en"
+        ? "px-3 py-1 text-xs font-bold rounded-full bg-slate-600 text-white transition focus-ring"
+        : "px-3 py-1 text-xs font-bold rounded-full text-slate-300 hover:text-white transition focus-ring";
+
+      setPressed($("btn-es"), lang === "es");
+      setPressed($("btn-en"), lang === "en");
+
+      const t = TEXTS[lang];
+
+      $("txt-hero-badge").textContent = t.heroBadge;
+      $("txt-title").textContent = t.title;
+      $("txt-subtitle").textContent = t.subtitle;
+      $("txt-hero-cta").textContent = t.heroCta;
+      $("txt-hero-wa").textContent = t.heroWa;
+
+      $("txt-pricing-title").textContent = t.pricingTitle;
+      $("txt-peru-note").textContent = t.peruNote;
+
+      $("txt-payments").textContent = t.payments;
+      $("txt-location").textContent = t.location;
+      $("txt-smallnote").textContent = t.smallnote;
+
+      ["btn-global", "btn-global-m"].forEach(id => { if ($(id)) $(id).textContent = t.btnGlobal; });
+      ["btn-peru", "btn-peru-m"].forEach(id => { if ($(id)) $(id).textContent = t.btnPeru; });
+
+      $("t-pop-badge").textContent = t.popBadge;
+      $("t-one-time-1").textContent = t.oneTime;
+      $("t-one-time-2").textContent = t.oneTime;
+      $("t-one-time-3").textContent = t.oneTime;
+
+      $("t-p1-title").textContent = t.p1Title;
+      $("t-p1-desc").textContent = t.p1Desc;
+      $("t-p1-btn").textContent = t.p1Btn;
+      $("t-p1-foot").textContent = t.p1Foot;
+      $("t-p1-f1").textContent = t.p1F1;
+      $("t-p1-f2").textContent = t.p1F2;
+      $("t-p1-f3").textContent = t.p1F3;
+      $("t-p1-f4").textContent = t.p1F4;
+
+      $("t-p2-title").textContent = t.p2Title;
+      $("t-p2-desc").textContent = t.p2Desc;
+      $("t-p2-btn").textContent = t.p2Btn;
+      $("t-p2-foot").textContent = t.p2Foot;
+      $("t-p2-f1").textContent = t.p2F1;
+      $("t-p2-f2").textContent = t.p2F2;
+      $("t-p2-f3").textContent = t.p2F3;
+      $("t-p2-f4").textContent = t.p2F4;
+
+      $("t-p3-title").textContent = t.p3Title;
+      $("t-p3-desc").textContent = t.p3Desc;
+      $("t-p3-btn").textContent = t.p3Btn;
+      $("t-p3-foot").textContent = t.p3Foot;
+      $("t-p3-f1").textContent = t.p3F1;
+      $("t-p3-f2").textContent = t.p3F2;
+      $("t-p3-f3").textContent = t.p3F3;
+      $("t-p3-f4").textContent = t.p3F4;
+
+      // Testimonials + Guarantee
+      $("txt-test-title").textContent = t.testTitle;
+      $("txt-test-sub").textContent = t.testSub;
+      $("txt-test-note").textContent = t.testNote;
+      $("tst-1-quote").textContent = t.tst1;
+      $("tst-1-meta").textContent = t.tst1m;
+      $("tst-2-quote").textContent = t.tst2;
+      $("tst-2-meta").textContent = t.tst2m;
+      $("tst-3-quote").textContent = t.tst3;
+      $("tst-3-meta").textContent = t.tst3m;
+
+      $("txt-guar-title").textContent = t.guarTitle;
+      $("txt-guar-desc").textContent = t.guarDesc;
+      $("txt-guar-note").textContent = t.guarNote;
+
+      $("txt-how-title").textContent = t.howTitle;
+      $("txt-how-1t").textContent = t.how1t;
+      $("txt-how-1d").textContent = t.how1d;
+      $("txt-how-2t").textContent = t.how2t;
+      $("txt-how-2d").textContent = t.how2d;
+      $("txt-how-3t").textContent = t.how3t;
+      $("txt-how-3d").textContent = t.how3d;
+
+      $("txt-faq-title").textContent = t.faqTitle;
+      $("faq-1q").textContent = t.faq1q;
+      $("faq-1a").textContent = t.faq1a;
+      $("faq-2q").textContent = t.faq2q;
+      $("faq-2a").textContent = t.faq2a;
+      $("faq-3q").textContent = t.faq3q;
+      $("faq-3a").textContent = t.faq3a;
+      $("faq-4q").textContent = t.faq4q;
+      $("faq-4a").textContent = t.faq4a;
+
+      $("txt-kpi-1t").textContent = (lang === "es") ? "Compatibilidad real" : "Real compatibility";
+      $("txt-kpi-1d").textContent = (lang === "es") ? "Evita cuellos de botella" : "Avoid bottlenecks";
+      $("txt-kpi-2t").textContent = (lang === "es") ? "Compra guiada" : "Guided purchase";
+      $("txt-kpi-2d").textContent = (lang === "es") ? "Stock + garantía + dudas" : "Stock + warranty + Q&A";
+      $("txt-kpi-3t").textContent = (lang === "es") ? "Listo para usar" : "Ready to use";
+      $("txt-kpi-3d").textContent = (lang === "es") ? "Setup y optimización" : "Setup & optimization";
+
+      updateWhatsAppLinks();
+      renderPayments();
+    }
+
+    function setRegion(region) {
+      currentRegion = region;
+      const isPeru = region === "peru";
+
+      if ($("btn-peru") && $("btn-global")) {
+        $("btn-peru").className = isPeru
+          ? "px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+          : "px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring";
+        $("btn-global").className = !isPeru
+          ? "px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+          : "px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring";
+        setPressed($("btn-peru"), isPeru);
+        setPressed($("btn-global"), !isPeru);
+      }
+
+      if ($("btn-peru-m") && $("btn-global-m")) {
+        $("btn-peru-m").className = isPeru
+          ? "px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+          : "px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring";
+        $("btn-global-m").className = !isPeru
+          ? "px-5 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm focus-ring"
+          : "px-5 py-2 rounded-full text-sm font-semibold transition-all text-slate-300 hover:text-white focus-ring";
+        setPressed($("btn-peru-m"), isPeru);
+        setPressed($("btn-global-m"), !isPeru);
+      }
+
+      document.querySelectorAll(".price-display").forEach((el) => {
+        const usd = parseFloat(el.dataset.usd);
+        const wrapper = el.parentElement;
+        const original = wrapper.querySelector(".original-price");
+
+        if (isPeru) {
+          const sol = roundTo5(usd * EXCHANGE * DISCOUNT_PERU);
+          const oldSol = roundTo5(usd * EXCHANGE);
+          el.textContent = `S/ ${sol}`;
+          if (original) {
+            original.textContent = `S/ ${oldSol}`;
+            original.classList.remove("hidden");
+          }
+        } else {
+          el.textContent = fmtUSD(usd);
+          if (original) original.classList.add("hidden");
         }
+      });
 
-        function setRegion(region) {
-            currentRegion = region;
-            const isPeru = region === 'peru';
-            
-            // Estilos Botones Región
-            document.getElementById('btn-peru').className = isPeru 
-                ? "px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm"
-                : "px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white";
-            document.getElementById('btn-global').className = !isPeru 
-                ? "px-6 py-2 rounded-full text-sm font-semibold transition-all text-white bg-blue-600 shadow-sm"
-                : "px-6 py-2 rounded-full text-sm font-semibold transition-all text-slate-400 hover:text-white";
+      renderPayments();
+      updateWhatsAppLinks();
+    }
 
-            // Actualizar Precios
-            const displays = document.querySelectorAll('.price-display');
-            const originals = document.querySelectorAll('.original-price');
+    function renderPayments() {
+      const isPeru = currentRegion === "peru";
+      const c = $("payment-icons");
+      if (!c) return;
 
-            displays.forEach((el, index) => {
-                const usd = parseFloat(el.dataset.usd);
-                const original = originals[index];
+      if (isPeru) {
+        c.innerHTML = `
+          <div class="flex flex-col items-center"><i class="fa-solid fa-building-columns text-2xl mb-1 text-orange-500"></i><span class="text-[10px] font-bold">BCP</span></div>
+          <div class="flex flex-col items-center"><i class="fa-solid fa-qrcode text-2xl mb-1 text-purple-500"></i><span class="text-[10px] font-bold">Yape</span></div>
+          <div class="flex flex-col items-center"><i class="fa-solid fa-mobile-screen text-2xl mb-1 text-cyan-400"></i><span class="text-[10px] font-bold">Plin</span></div>
+          <div class="flex flex-col items-center"><i class="fa-solid fa-money-bill-transfer text-2xl mb-1 text-green-500"></i><span class="text-[10px] font-bold">Interbank</span></div>
+        `;
+      } else {
+        c.innerHTML = `
+          <div class="flex flex-col items-center"><i class="fa-brands fa-paypal text-2xl mb-1 text-blue-400"></i><span class="text-[10px] font-bold">PayPal</span></div>
+          <div class="flex flex-col items-center"><i class="fa-brands fa-bitcoin text-2xl mb-1 text-yellow-500"></i><span class="text-[10px] font-bold">Crypto/USDT</span></div>
+          <div class="flex flex-col items-center"><i class="fa-solid fa-credit-card text-2xl mb-1 text-slate-200"></i><span class="text-[10px] font-bold">${currentLang === "es" ? "Tarjeta (Stripe)" : "Card (Stripe)"}</span></div>
+        `;
+      }
+    }
 
-                if (isPeru) {
-                    const sol = Math.ceil((usd * EXCHANGE * DISCOUNT_PERU) / 5) * 5;
-                    const oldSol = Math.ceil((usd * EXCHANGE) / 5) * 5;
-                    el.textContent = `S/ ${sol}`;
-                    original.textContent = `S/ ${oldSol}`;
-                    original.classList.remove('hidden');
-                } else {
-                    el.textContent = `$${usd}`;
-                    original.classList.add('hidden');
-                }
-            });
+    async function tryLoadExchangeRate() {
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.rates && data.rates.PEN) EXCHANGE = Number(data.rates.PEN);
+      } catch (_) {
+        EXCHANGE = DEFAULT_EXCHANGE;
+      }
+    }
 
-            // Actualizar Iconos de Pago
-            const paymentContainer = document.getElementById('payment-icons');
-            if (isPeru) {
-                paymentContainer.innerHTML = `
-                    <div class="flex flex-col items-center"><i class="fa-solid fa-building-columns text-2xl mb-1 text-orange-500"></i><span class="text-[10px] font-bold">BCP</span></div>
-                    <div class="flex flex-col items-center"><i class="fa-solid fa-qrcode text-2xl mb-1 text-purple-500"></i><span class="text-[10px] font-bold">Yape</span></div>
-                    <div class="flex flex-col items-center"><i class="fa-solid fa-mobile-screen text-2xl mb-1 text-cyan-400"></i><span class="text-[10px] font-bold">Plin</span></div>
-                    <div class="flex flex-col items-center"><i class="fa-solid fa-money-bill-transfer text-2xl mb-1 text-green-500"></i><span class="text-[10px] font-bold">Interbank</span></div>
-                `;
-            } else {
-                paymentContainer.innerHTML = `
-                    <div class="flex flex-col items-center"><i class="fa-brands fa-paypal text-2xl mb-1 text-blue-400"></i><span class="text-[10px] font-bold">PayPal</span></div>
-                    <div class="flex flex-col items-center"><i class="fa-brands fa-bitcoin text-2xl mb-1 text-yellow-500"></i><span class="text-[10px] font-bold">Crypto/USDT</span></div>
-                    <div class="flex flex-col items-center"><i class="fa-solid fa-credit-card text-2xl mb-1 text-slate-300"></i><span class="text-[10px] font-bold">Card (Stripe)</span></div>
-                `;
-            }
-        }
+    (async function init() {
+      const y = new Date().getFullYear();
+      $("txt-copyright").textContent = `© ${y} ServiComp Advisors`;
 
-        // INICIALIZAR
-        setLang('es');
-        setRegion('global');
+      await tryLoadExchangeRate();
 
-    </script>
+      setLang("es");
+      setRegion("global");
+    })();
+  </script>
 </body>
 </html>
