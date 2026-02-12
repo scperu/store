@@ -333,16 +333,25 @@
             products.forEach(p => {
                 subtotal += p.precio;
                 const photoUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(p.codigo)}&nomenu=1`;
+                    // Thumb pattern (foto pequeñita)
+                    const c_thumb = String(p.codigo).toLowerCase().trim();
+                    const sub1_thumb = c_thumb.substring(0, 2);
+                    const sub2_thumb = c_thumb.substring(2, 4);
+                    const thumbUrl = `https://imagenes.deltron.com.pe/images/productos/items/${sub1_thumb}/${sub2_thumb}/${c_thumb}.jpg`;
+
 
                 
                 html += `
                 <div class="product-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-blue-200 group relative overflow-hidden">
                     <div class="flex items-start gap-4 z-10 relative">
-                        <div class="flex-shrink-0 pt-1">
-                            <a href="${photoUrl}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white flex items-center justify-center transition border border-slate-200 group-hover:border-blue-200 shadow-sm">
-                                <i class="fa-solid fa-eye text-lg"></i>
-                            </a>
-                        </div>
+                        <div class="flex-shrink-0 pt-1 flex flex-col items-center gap-1">
+                                    <a href="${photoUrl}" target="_blank" rel="noopener noreferrer" class="w-16 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden hover:border-blue-300 transition relative shadow-sm">
+                                        <img src="${thumbUrl}" alt="img" class="w-full h-full object-contain p-0.5">
+                                    </a>
+                                    <a href="${photoUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 leading-none">
+                                        Ver Foto <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                                    </a>
+                                </div>
                         <div class="flex-grow min-w-0">
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-[10px] font-black tracking-wider bg-slate-800 text-white px-1.5 py-0.5 rounded uppercase">${p.mini}</span>
