@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel de Márgenes y Decisiones</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111b2e; --muted:#8aa0c2; --text:#e9f0ff;
+      --accent:#4ea1ff; --good:#2dd4bf; --warn:#fbbf24; --bad:#fb7185;
+      --line: rgba(255,255,255,.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); background: radial-gradient(1200px 800px at 20% 0%, #0f2447 0%, var(--bg) 55%, #070b14 100%);
+      color:var(--text);
+    }
+
+    /* TOP BAR */
+    .topbar{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.65);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar .inner{
+      max-width:1200px; margin:0 auto; padding:14px 18px;
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    h1{margin:0; font-size:16px; letter-spacing:.2px;}
+    .sub{margin:0; color:var(--muted); font-size:12px; line-height:1.35;}
+    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .fieldInline{display:flex; gap:8px; align-items:center;}
+    label{font-size:12px; color:var(--muted);}
+
+    input, textarea, select{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:10px 10px;
+      border-radius:12px;
+      outline:none;
+      width:100%;
+    }
+    select{width:auto; min-width:130px;}
+    input:focus, textarea:focus, select:focus{border-color: rgba(78,161,255,.65); box-shadow:0 0 0 3px rgba(78,161,255,.15)}
+    textarea{min-height:40px; resize:vertical;}
+
+    .wrap{max-width:1200px; margin:0 auto; padding:16px 18px 30px;}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03) 0%, rgba(255,255,255,.01) 100%), var(--card);
+      border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px; font-size:14px; color:#dbe8ff;}
+
+    /* MAIN GRID: left wider, right wider than before */
+    .grid{display:grid; grid-template-columns: 1.35fr 1fr; gap:14px;}
+    @media (max-width: 1000px){ .grid{grid-template-columns:1fr;} }
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:end}
+    .field{flex:1; min-width:170px;}
+    .field.wide{flex:2; min-width:240px;}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background: rgba(78,161,255,.12);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.15s transform, .15s background;
+      white-space:nowrap;
+    }
+    button:hover{transform: translateY(-1px); background: rgba(78,161,255,.18);}
+    button.danger{background: rgba(251,113,133,.14);}
+    button.danger:hover{background: rgba(251,113,133,.2);}
+    button.ghost{background: rgba(255,255,255,.04);}
+    button.ghost:hover{background: rgba(255,255,255,.06);}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid var(--line);}
+    thead th{
+      text-align:left; font-size:11px; color:var(--muted);
+      background: rgba(255,255,255,.04);
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      position:sticky; top:0;
+    }
+    tbody td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:top;
+      font-size:13px;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    .mono{font-family:var(--mono); font-size:12px;}
+    .small{font-size:11px; color:var(--muted)}
+    .nowrap{white-space:nowrap}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background: rgba(0,0,0,.18);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .pill.good{border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.10);}
+    .pill.warn{border-color: rgba(251,191,36,.35); background: rgba(251,191,36,.10);}
+    .pill.bad{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.10);}
+
+    .hint{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4;}
+
+    /* RIGHT: more breathing room */
+    .sideStack{display:flex; flex-direction:column; gap:12px;}
+    .suggestions{display:flex; flex-direction:column; gap:8px;}
+    .suggestion{
+      border:1px solid var(--line); border-radius:14px; padding:10px 12px;
+      background: rgba(0,0,0,.16);
+      font-size:13px; line-height:1.35;
+    }
+    .suggestion b{color:#dbe8ff}
+
+    /* BOTTOM AREA (KPIs + thresholds) */
+    .bottomGrid{
+      margin-top:14px;
+      display:grid; grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 1000px){ .bottomGrid{grid-template-columns:1fr;} }
+
+    .kpi{
+      display:grid; grid-template-columns: repeat(4,1fr); gap:10px;
+    }
+    @media (max-width: 1000px){ .kpi{grid-template-columns: repeat(2,1fr);} }
+    @media (max-width: 520px){ .kpi{grid-template-columns:1fr;} }
+    .kpi .box{
+      border:1px solid var(--line); border-radius:14px; padding:12px;
+      background: rgba(255,255,255,.02);
+    }
+    .kpi .t{font-size:11px; color:var(--muted)}
+    .kpi .v{margin-top:6px; font-size:18px; font-weight:700;}
+    .kpi .s{margin-top:2px; font-size:12px; color:var(--muted)}
+
+    .rightActions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+  </style>
+</head>
+
+<body>
+  <!-- TOP BAR: moneda arriba -->
+  <div class="topbar">
+    <div class="inner">
+      <div>
+        <h1>Panel de Márgenes y Decisiones</h1>
+        <p class="sub">Productos, ganancia, márgenes y proyecciones. (Se guarda en tu navegador.)</p>
+      </div>
+
+      <div class="topActions">
+        <div class="fieldInline">
+          <label for="moneda">Moneda</label>
+          <select id="moneda">
+            <option value="S/">S/ (PEN)</option>
+            <option value="$">$ (USD)</option>
+          </select>
+        </div>
+        <button class="ghost" id="exportBtn">⬇ Exportar JSON</button>
+        <button class="ghost" id="importBtn">⬆ Importar JSON</button>
+        <input id="fileInput" type="file" accept="application/json" style="display:none;" />
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- MAIN GRID -->
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card">
+        <h2>Agregar / editar producto</h2>
+
+        <div class="row">
+          <div class="field">
+            <label>Mini-código</label>
+            <input id="miniCodigo" placeholder="Ej: SSD240-A400" />
+          </div>
+          <div class="field wide">
+            <label>Producto</label>
+            <input id="producto" placeholder="Ej: SSD Kingston A400 240GB" />
+          </div>
+          <div class="field wide">
+            <label>Detalles (opcional)</label>
+            <input id="detalles" placeholder="Ej: SATA 2.5, nuevo, garantía 1 año" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="field">
+            <label>Precio compra (unitario)</label>
+            <input id="pc" type="number" step="0.01" placeholder="Ej: 180.00" />
+          </div>
+          <div class="field">
+            <label>Cantidad</label>
+            <input id="cant" type="number" step="1" placeholder="Ej: 6" />
+          </div>
+          <div class="field">
+            <label>Precio venta (unitario)</label>
+            <input id="pv" type="number" step="0.01" placeholder="Ej: 229.00" />
+          </div>
+          <div class="field">
+            <label>Unidades vendidas/mes (estimación)</label>
+            <input id="uMes" type="number" step="1" placeholder="Ej: 20" />
+          </div>
+        </div>
+
+        <div class="btns">
+          <button id="addBtn">➕ Agregar</button>
+          <button id="updateBtn" class="ghost" disabled>✅ Actualizar</button>
+          <button id="cancelEditBtn" class="ghost" disabled>↩ Cancelar edición</button>
+          <div style="flex:1"></div>
+          <button id="clearBtn" class="danger">🗑 Borrar todo</button>
+        </div>
+
+        <div class="hint">
+          Tip: Publica un poco más alto si hay regateo. Tu meta es no bajar del margen recomendado.
+        </div>
+
+        <div style="margin-top:14px;">
+          <h2>Tabla de productos</h2>
+          <div style="overflow:auto; max-height: 440px;">
+            <table>
+              <thead>
+                <tr>
+                  <th class="nowrap">Mini-código</th>
+                  <th>Producto / detalles</th>
+                  <th class="nowrap">Compra</th>
+                  <th class="nowrap">Venta</th>
+                  <th class="nowrap">Cant.</th>
+                  <th class="nowrap">Ganancia/u</th>
+                  <th class="nowrap">Margen %</th>
+                  <th class="nowrap">Ganancia total</th>
+                  <th class="nowrap">Precio sugerido (recomendado)</th>
+                  <th class="nowrap">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <div class="hint">
+            * Margen % = (Ganancia por unidad / Precio de venta) × 100.<br/>
+            * “Precio sugerido” usa el margen objetivo recomendado (abajo) para calcular el precio ideal.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card">
+        <h2>Sugerencias y decisiones</h2>
+
+        <div class="sideStack">
+          <div class="suggestions" id="suggestions"></div>
+
+          <div class="hint">
+            Las sugerencias se basan en: margen actual, diferencia vs margen recomendado, y proyección mensual.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM: thresholds + KPIs -->
+    <div class="bottomGrid">
+      <div class="card">
+        <h2>Recomendación de márgenes (fijo)</h2>
+        <div class="row">
+          <div class="field">
+            <label>Margen objetivo recomendado</label>
+            <input id="margenObjetivo" value="30" readonly />
+          </div>
+          <div class="field">
+            <label>Umbral “Bajo”</label>
+            <input id="umbralBajo" value="20" readonly />
+          </div>
+          <div class="field">
+            <label>Umbral “Saludable”</label>
+            <input id="umbralSaludable" value="30" readonly />
+          </div>
+        </div>
+        <div class="hint">
+          Interpretación rápida: &lt;20% = frágil, 20–30% = ajustado, ≥30% = saludable (especialmente si hay regateo/costos extra).
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Totales y estimaciones</h2>
+        <div class="kpi">
+          <div class="box">
+            <div class="t">Ganancia total inventario (si vendes todo)</div>
+            <div class="v" id="kpiGanTotal">—</div>
+            <div class="s" id="kpiGanTotalS">—</div>
+          </div>
+          <div class="box">
+            <div class="t">Margen promedio (ponderado por venta)</div>
+            <div class="v" id="kpiMargProm">—</div>
+            <div class="s" id="kpiMargPromS">—</div>
+          </div>
+          <div class="box">
+            <div class="t">Proyección ganancia mensual</div>
+            <div class="v" id="kpiGanMes">—</div>
+            <div class="s" id="kpiGanMesS">—</div>
+          </div>
+          <div class="box">
+            <div class="t">Ingresos mensuales estimados</div>
+            <div class="v" id="kpiIngMes">—</div>
+            <div class="s" id="kpiIngMesS">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // Fixed recommendations (NOT editable)
+  const TARGET_MARGIN = 30;   // %
+  const LOW_THRESHOLD = 20;   // %
+  const HEALTHY_THRESHOLD = 30; // %
+
+  const LS_KEY = "mgmt_margin_products_v2";
+  let items = [];
+  let editIndex = null;
+
+  const fmt = (n, cur) => {
+    const x = Number(n);
+    if (!isFinite(x)) return "—";
+    const s = x.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return `${cur} ${s}`;
+  };
+
+  const marginPct = (pc, pv) => {
+    const c = Number(pc), v = Number(pv);
+    if (!(c>=0) || !(v>0)) return 0;
+    return ((v - c) / v) * 100;
+  };
+
+  const profitUnit = (pc, pv) => {
+    const c = Number(pc), v = Number(pv);
+    if (!isFinite(c) || !isFinite(v)) return 0;
+    return v - c;
+  };
+
+  const suggestedPriceForMargin = (pc, targetPct) => {
+    const c = Number(pc);
+    const m = Number(targetPct) / 100;
+    if (!(c>=0) || !(m>=0) || m >= 0.95) return NaN;
+    return c / (1 - m);
+  };
+
+  const grade = (m) => {
+    if (m >= HEALTHY_THRESHOLD) return "good";
+    if (m >= LOW_THRESHOLD) return "warn";
+    return "bad";
+  };
+
+  const escapeHtml = (s) => (s ?? "").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+  // Elements
+  const miniCodigo = $("miniCodigo");
+  const producto = $("producto");
+  const detalles = $("detalles");
+  const pc = $("pc");
+  const cant = $("cant");
+  const pv = $("pv");
+  const uMes = $("uMes");
+
+  const moneda = $("moneda");
+  const tbody = $("tbody");
+
+  const addBtn = $("addBtn");
+  const updateBtn = $("updateBtn");
+  const cancelEditBtn = $("cancelEditBtn");
+  const clearBtn = $("clearBtn");
+
+  const suggestionsBox = $("suggestions");
+
+  const kpiGanTotal = $("kpiGanTotal");
+  const kpiGanTotalS = $("kpiGanTotalS");
+  const kpiMargProm = $("kpiMargProm");
+  const kpiMargPromS = $("kpiMargPromS");
+  const kpiGanMes = $("kpiGanMes");
+  const kpiGanMesS = $("kpiGanMesS");
+  const kpiIngMes = $("kpiIngMes");
+  const kpiIngMesS = $("kpiIngMesS");
+
+  const exportBtn = $("exportBtn");
+  const importBtn = $("importBtn");
+  const fileInput = $("fileInput");
+
+  // Set bottom readonly values
+  $("margenObjetivo").value = TARGET_MARGIN;
+  $("umbralBajo").value = LOW_THRESHOLD;
+  $("umbralSaludable").value = HEALTHY_THRESHOLD;
+
+  const save = () => localStorage.setItem(LS_KEY, JSON.stringify({
+    items,
+    settings: { moneda: moneda.value }
+  }));
+
+  const load = () => {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    try {
+      const obj = JSON.parse(raw);
+      items = Array.isArray(obj.items) ? obj.items : [];
+      if (obj.settings?.moneda) moneda.value = obj.settings.moneda;
+    } catch {}
+  };
+
+  const resetForm = () => {
+    miniCodigo.value = "";
+    producto.value = "";
+    detalles.value = "";
+    pc.value = "";
+    cant.value = "";
+    pv.value = "";
+    uMes.value = "";
+    editIndex = null;
+    updateBtn.disabled = true;
+    cancelEditBtn.disabled = true;
+    addBtn.disabled = false;
+    miniCodigo.focus();
+  };
+
+  const validateRow = (row) => {
+    const c = Number(row.pc), v = Number(row.pv), q = Number(row.cant);
+    if (!row.producto?.trim()) return "Falta producto.";
+    if (!(c >= 0)) return "Precio de compra inválido.";
+    if (!(v > 0)) return "Precio de venta inválido.";
+    if (!(q > 0)) return "Cantidad inválida.";
+    return null;
+  };
+
+  const getRowFromForm = () => ({
+    miniCodigo: miniCodigo.value.trim(),
+    producto: producto.value.trim(),
+    detalles: detalles.value.trim(),
+    pc: Number(pc.value),
+    cant: Number(cant.value),
+    pv: Number(pv.value),
+    uMes: Number(uMes.value || 0)
+  });
+
+  const renderSuggestions = ({cur, margProm, totalProfitMonth}) => {
+    const tips = [];
+
+    if (items.length === 0) {
+      tips.push({ kind:"warn", title:"Agrega tu primer producto", text:"Ingresa compra/venta/cantidad. Luego verás márgenes, sugerencias y proyección." });
+    } else if (margProm < LOW_THRESHOLD) {
+      tips.push({ kind:"bad", title:"Margen promedio bajo", text:`Tu margen promedio es ${margProm.toFixed(1)}%. Sube precio, baja costo o agrega servicio (instalación/entrega).` });
+    } else if (margProm < HEALTHY_THRESHOLD) {
+      tips.push({ kind:"warn", title:"Margen ajustado", text:`Estás en ${margProm.toFixed(1)}%. Publica más alto y define un “mínimo” para no regalar margen.` });
+    } else {
+      tips.push({ kind:"good", title:"Margen saludable", text:`Bien: ${margProm.toFixed(1)}%. Ahora enfócate en rotación, stock y reputación.` });
+    }
+
+    const belowTarget = items
+      .map((it, i) => ({i, it, m: marginPct(it.pc, it.pv), sug: suggestedPriceForMargin(it.pc, TARGET_MARGIN)}))
+      .filter(x => x.m + 0.01 < TARGET_MARGIN)
+      .sort((a,b) => a.m - b.m)
+      .slice(0, 3);
+
+    if (belowTarget.length) {
+      const list = belowTarget.map(x => {
+        const sugTxt = isFinite(x.sug) ? fmt(x.sug, cur) : "—";
+        return `• <b>${escapeHtml(x.it.producto)}</b>: margen ${x.m.toFixed(1)}% → sugerido ${sugTxt}`;
+      }).join("<br/>");
+      tips.push({ kind:"warn", title:"Productos por debajo del objetivo recomendado", text: list });
+    }
+
+    if (totalProfitMonth > 0) {
+      tips.push({ kind:"good", title:"Proyección mensual", text:`Con tus unidades/mes, estimas ganancia mensual de <b>${fmt(totalProfitMonth, cur)}</b>. Ajusta “u/mes” para simular.` });
+    } else if (items.length) {
+      tips.push({ kind:"warn", title:"Completa unidades/mes", text:"Pon una estimación de ventas mensuales por producto para activar proyección y foco de esfuerzo." });
+    }
+
+    tips.push({
+      kind:"neutral",
+      title:"Regla rápida (venta directa / Facebook)",
+      text:`<b>&lt;${LOW_THRESHOLD}%</b>: no escales. <b>${LOW_THRESHOLD}-${HEALTHY_THRESHOLD}%</b>: escala con control. <b>≥${HEALTHY_THRESHOLD}%</b>: prioriza rotación.`
+    });
+
+    suggestionsBox.innerHTML = "";
+    tips.forEach(t => {
+      const cls = t.kind === "good" ? "pill good" : t.kind === "warn" ? "pill warn" : t.kind === "bad" ? "pill bad" : "pill";
+      const label = t.kind === "good" ? "Saludable" : t.kind === "warn" ? "Atención" : t.kind === "bad" ? "Crítico" : "Tip";
+      const div = document.createElement("div");
+      div.className = "suggestion";
+      div.innerHTML = `
+        <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
+          <div><b>${t.title}</b></div>
+          <span class="${cls}">${label}</span>
+        </div>
+        <div style="margin-top:6px;">${t.text}</div>
+      `;
+      suggestionsBox.appendChild(div);
+    });
+  };
+
+  const render = () => {
+    const cur = moneda.value;
+
+    // Table
+    tbody.innerHTML = "";
+    items.forEach((it, idx) => {
+      const m = marginPct(it.pc, it.pv);
+      const pu = profitUnit(it.pc, it.pv);
+      const pt = pu * (Number(it.cant) || 0);
+      const cls = grade(m);
+
+      const suggested = suggestedPriceForMargin(it.pc, TARGET_MARGIN);
+      const sugTxt = isFinite(suggested) ? fmt(suggested, cur) : "—";
+      const detailsLine = it.detalles ? `<div class="small">${escapeHtml(it.detalles)}</div>` : "";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${escapeHtml(it.miniCodigo || "—")}</td>
+        <td>
+          <div><b>${escapeHtml(it.producto)}</b></div>
+          ${detailsLine}
+        </td>
+        <td class="nowrap">${fmt(it.pc, cur)}</td>
+        <td class="nowrap">${fmt(it.pv, cur)}</td>
+        <td class="nowrap">${Number(it.cant) || 0}</td>
+        <td class="nowrap">${fmt(pu, cur)}</td>
+        <td class="nowrap"><span class="pill ${cls}">${m.toFixed(1)}%</span></td>
+        <td class="nowrap">${fmt(pt, cur)}</td>
+        <td class="nowrap">${sugTxt}</td>
+        <td class="nowrap">
+          <button class="ghost" data-act="edit" data-idx="${idx}">Editar</button>
+          <button class="danger" data-act="del" data-idx="${idx}">Borrar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // KPIs
+    let totalProfitAll = 0, totalRevenueAll = 0, totalProfitMonth = 0, totalRevenueMonth = 0;
+
+    items.forEach(it => {
+      const q = Number(it.cant) || 0;
+      const um = Number(it.uMes) || 0;
+      const revAll = (Number(it.pv) || 0) * q;
+      const profAll = profitUnit(it.pc, it.pv) * q;
+
+      const revM = (Number(it.pv) || 0) * um;
+      const profM = profitUnit(it.pc, it.pv) * um;
+
+      totalRevenueAll += revAll;
+      totalProfitAll += profAll;
+      totalRevenueMonth += revM;
+      totalProfitMonth += profM;
+    });
+
+    const margProm = totalRevenueAll > 0 ? (totalProfitAll / totalRevenueAll) * 100 : 0;
+
+    kpiGanTotal.textContent = fmt(totalProfitAll, cur);
+    kpiGanTotalS.textContent = `Sobre ingresos ${fmt(totalRevenueAll, cur)} (si vendes todo)`;
+    kpiMargProm.textContent = `${margProm.toFixed(1)}%`;
+    kpiMargPromS.textContent = `Recomendado: ${TARGET_MARGIN}% | Bajo: <${LOW_THRESHOLD}% | Saludable: ≥${HEALTHY_THRESHOLD}%`;
+    kpiGanMes.textContent = fmt(totalProfitMonth, cur);
+    kpiGanMesS.textContent = `Según “unidades/mes” por producto`;
+    kpiIngMes.textContent = fmt(totalRevenueMonth, cur);
+    kpiIngMesS.textContent = `Ingresos mensuales estimados`;
+
+    renderSuggestions({cur, margProm, totalProfitMonth});
+    save();
+  };
+
+  // Events
+  addBtn.addEventListener("click", () => {
+    const row = getRowFromForm();
+    const err = validateRow(row);
+    if (err) return alert(err);
+    items.unshift(row);
+    resetForm();
+    render();
+  });
+
+  updateBtn.addEventListener("click", () => {
+    if (editIndex === null) return;
+    const row = getRowFromForm();
+    const err = validateRow(row);
+    if (err) return alert(err);
+    items[editIndex] = row;
+    resetForm();
+    render();
+  });
+
+  cancelEditBtn.addEventListener("click", resetForm);
+
+  clearBtn.addEventListener("click", () => {
+    if (!confirm("¿Seguro que quieres borrar todo?")) return;
+    items = [];
+    resetForm();
+    render();
+  });
+
+  tbody.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const act = btn.dataset.act;
+    const idx = Number(btn.dataset.idx);
+    if (!Number.isInteger(idx) || idx < 0 || idx >= items.length) return;
+
+    if (act === "del") {
+      if (!confirm("¿Borrar este producto?")) return;
+      items.splice(idx, 1);
+      resetForm();
+      render();
+      return;
+    }
+
+    if (act === "edit") {
+      const it = items[idx];
+      editIndex = idx;
+
+      miniCodigo.value = it.miniCodigo ?? "";
+      producto.value = it.producto ?? "";
+      detalles.value = it.detalles ?? "";
+      pc.value = isFinite(it.pc) ? it.pc : "";
+      cant.value = isFinite(it.cant) ? it.cant : "";
+      pv.value = isFinite(it.pv) ? it.pv : "";
+      uMes.value = isFinite(it.uMes) ? it.uMes : "";
+
+      updateBtn.disabled = false;
+      cancelEditBtn.disabled = false;
+      addBtn.disabled = true;
+      miniCodigo.focus();
+    }
+  });
+
+  moneda.addEventListener("change", render);
+
+  // Export / Import
+  exportBtn.addEventListener("click", () => {
+    const data = { exportedAt: new Date().toISOString(), items, settings: { moneda: moneda.value } };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "margenes_productos.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  importBtn.addEventListener("click", () => fileInput.click());
+
+  fileInput.addEventListener("change", async () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    try {
+      const text = await f.text();
+      const obj = JSON.parse(text);
+      if (!Array.isArray(obj.items)) throw new Error("Formato inválido (items).");
+      items = obj.items.map(x => ({
+        miniCodigo: (x.miniCodigo ?? "").toString(),
+        producto: (x.producto ?? "").toString(),
+        detalles: (x.detalles ?? "").toString(),
+        pc: Number(x.pc),
+        cant: Number(x.cant),
+        pv: Number(x.pv),
+        uMes: Number(x.uMes || 0),
+      })).filter(x => x.producto && isFinite(x.pc) && isFinite(x.pv) && isFinite(x.cant));
+      if (obj.settings?.moneda) moneda.value = obj.settings.moneda;
+      resetForm();
+      render();
+    } catch (err) {
+      alert("No se pudo importar: " + (err?.message || err));
+    } finally {
+      fileInput.value = "";
+    }
+  });
+
+  // Init
+  load();
+  render();
+})();
+</script>
+</body>
+</html>
