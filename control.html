@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ServiComp+ - Sistema v1 (Layout Corregido)</title>
+    <style>
+        :root { --primary: #0078D4; --bg: #f8fafc; --surface: #ffffff; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --text: #334155; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+        .container { max-width: 1400px; margin: 0 auto; background: var(--surface); padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
+        h2 { margin: 0; color: var(--primary); display: flex; align-items: center; gap: 12px; font-size: 1.8rem; }
+        .tag-version { background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; }
+
+        .btn-group { display: flex; gap: 10px; }
+        button { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(0,120,212,0.2); }
+        .btn-success { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; color: #475569; }
+
+        .tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 2px; }
+        .tab { padding: 12px 20px; cursor: pointer; color: #64748b; font-weight: 600; font-size: 1rem; border-radius: 8px; transition: 0.2s; }
+        .tab:hover { background: #f1f5f9; color: var(--primary); }
+        .tab.active { background: #eff6ff; color: var(--primary); }
+
+        .filtros-bar { display: flex; gap: 12px; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+        .filter-input { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none; transition: 0.2s; }
+
+        .table-container { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #f8fafc; text-align: left; padding: 16px; font-size: 0.8rem; color: #475569; text-transform: uppercase; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #334155; }
+        td input, td select { width: 100%; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; font-family: inherit; font-size: inherit; color: inherit; }
+        .mini-code { font-family: 'Monaco', monospace; color: #e11d48; background: #fff1f2; padding: 2px 6px; border-radius: 4px; border: 1px solid #fecdd3; font-size: 0.85rem; }
+
+        /* --- LAYOUT GRID ASIMÉTRICO (NUEVO v16) --- */
+        .dashboard-wrapper { display: flex; flex-direction: column; gap: 25px; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .kpi-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .kpi-label { font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .kpi-number { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+        .kpi-sub { font-size: 0.8rem; margin-top:3px; color:#64748b; }
+
+        /* Grid Principal: Izquierda (Grande) vs Derecha (Pequeña) */
+        .dashboard-main { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+
+        .card-panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
+        .panel-header { font-size: 1rem; font-weight: 700; color: #334155; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+        .table-dash th { font-size: 0.75rem; text-transform: uppercase; color: #64748b; padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .table-dash td { padding: 10px 8px; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
+        .table-dash tr:last-child td { border-bottom: none; }
+
+        /* Estilos específicos derecha */
+        .right-column { display: flex; flex-direction: column; gap: 20px; }
+        .alert-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .alert-badge { background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        .progress-bg { background: #f1f5f9; height: 6px; border-radius: 3px; overflow: hidden; }
+        .progress-fg { background: var(--primary); height: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>ServiComp+ <span class="tag-version">v16</span></h2>
+        <div class="btn-group">
+            <button class="btn-outline" onclick="exportarBackup()">💾 Backup</button>
+            <button class="btn-outline" onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
+            <input type="file" id="fileInput" hidden onchange="importarBackup(this)">
+            <button class="btn-success" onclick="exportarExcel()">📊 Excel</button>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="cambiarTab('reporte')">📈 Reporte General</div>
+        <div class="tab" onclick="cambiarTab('ventas')">💰 Punto de Venta</div>
+        <div class="tab" onclick="cambiarTab('inventario')">📦 Inventario</div>
+        <div class="tab" onclick="cambiarTab('compras')">🛒 Compras</div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-bar" id="filtros-container" style="display:none;"></div>
+
+    <!-- Tablas Datos -->
+    <div id="vista-tablas" class="table-container" style="display:none;">
+        <table id="tablaPrincipal">
+            <thead id="cabeceraTabla"></thead>
+            <tbody id="cuerpoTabla"></tbody>
+            <tfoot id="pieTabla" style="display:none; background:#f8fafc; font-weight:bold;"></tfoot>
+        </table>
+    </div>
+
+    <!-- DASHBOARD V16 -->
+    <div id="vista-dashboard">
+        <div class="dashboard-wrapper">
+
+            <!-- 1. KPIs Arriba (Fila única) -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Ventas Totales</div>
+                    <div class="kpi-number" id="kpi-ventas">S/. 0.00</div>
+                    <div class="kpi-sub" style="color:var(--success);">↗ Bruto</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Ganancia Real</div>
+                    <div class="kpi-number" id="kpi-ganancia" style="color:var(--success);">S/. 0.00</div>
+                    <div class="kpi-sub">Neto (Venta - Costo)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Valor Almacén</div>
+                    <div class="kpi-number" id="kpi-costo">S/. 0.00</div>
+                    <div class="kpi-sub">Capital Parado</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Productos</div>
+                    <div class="kpi-number" id="kpi-items">0</div>
+                    <div class="kpi-sub">Total SKUs</div>
+                </div>
+            </div>
+
+            <!-- 2. Grid Principal (2 Col Izq / 1 Col Der) -->
+            <div class="dashboard-main">
+
+                <!-- Columna Izquierda (Ancha) -->
+                <div class="left-column" style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- Top Ventas -->
+                    <div class="card-panel" style="flex:1;">
+                        <div class="panel-header">🏆 Top 10 Productos Más Vendidos</div>
+                        <table class="table-dash" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th width="50%">Producto</th>
+                                    <th width="20%" style="text-align:right">Und.</th>
+                                    <th width="30%" style="text-align:right">Total S/.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-top-ventas"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha (Angosta) -->
+                <div class="right-column">
+
+                    <!-- Stock Bajo -->
+                    <div class="card-panel" style="border-top: 4px solid var(--danger);">
+                        <div class="panel-header" style="color:var(--danger); margin-bottom:10px;">⚠️ Alertas Stock Bajo</div>
+                        <div id="lista-stock-bajo" style="display:flex; flex-direction:column; gap:5px;"></div>
+                    </div>
+
+                    <!-- Resumen Operativo -->
+                    <div class="card-panel">
+                        <div class="panel-header">📊 Resumen Operativo</div>
+                        <div style="padding: 5px 0;">
+                            <div class="stat-row">
+                                <span>Transacciones</span>
+                                <strong id="kpi-transacciones">0</strong>
+                            </div>
+                            <div class="progress-bg" style="margin-bottom:15px;"><div class="progress-fg" style="width:100%; background:#cbd5e1;"></div></div>
+
+                            <div class="stat-row">
+                                <span>Ticket Promedio</span>
+                                <strong id="kpi-ticket">S/. 0.00</strong>
+                            </div>
+                            <div class="progress-bg"><div class="progress-fg" style="width:65%;"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Stock Alto -->
+                    <div class="card-panel" style="border-top: 4px solid var(--warning);">
+                         <div class="panel-header" style="color:#d97706; margin-bottom:10px;">📦 Stock Lento (>10)</div>
+                         <div id="lista-stock-alto" style="display:flex; flex-direction:column; gap:5px;"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- ESQUEMAS (Igual v14/15) ---
+    const esquemas = {
+        compras: [
+            { key: 'norden', label: 'N° Orden', type: 'text' },
+            { key: 'tc', label: 'T.C.', type: 'number', readonly: true },
+            { key: 'fecha', label: 'Fecha', type: 'date' },
+            { key: 'comprobante', label: 'Comprobante', type: 'text' },
+            { key: 'total_usd', label: 'Total $', type: 'number', sum: true },
+            { key: 'total_sol', label: 'Total S/.', type: 'number', sum: true },
+            { key: 'venta', label: 'Proyección', type: 'number', sum: true }
+        ],
+        inventario: [
+            { key: 'norden_ref', label: 'Ref. Orden', type: 'select_orden' },
+            { key: 'tc_ref', label: 'T.C.', type: 'number', readonly: true },
+            { key: 'fecha_ref', label: 'Fecha', type: 'date', readonly: true },
+            { key: 'minicod', label: 'Mini Cod', type: 'text', className: 'mini-code' },
+            { key: 'producto', label: 'Producto', type: 'text' },
+            { key: 'marca', label: 'Marca', type: 'text' },
+            { key: 'cant', label: 'Stock', type: 'number' },
+            { key: 'precio_usd', label: 'Costo $', type: 'number' },
+            { key: 'precio_sol_calc', label: 'Costo S/.', type: 'number', readonly: true },
+            { key: 'total_val', label: 'Total Valor', type: 'number', readonly: true, sum: true }
+        ],
+        ventas: [
+             { key: 'minicod_venta', label: 'Buscar (Cod)', type: 'text', className: 'mini-code' },
+             { key: 'producto', label: 'Producto', type: 'text', readonly: true },
+             { key: 'precio_unit', label: 'Precio Unit.', type: 'number' }, 
+             { key: 'cantidad', label: 'Cant.', type: 'number' }, 
+             { key: 'total_venta', label: 'Total (S/.)', type: 'number', sum: true, readonly: true },
+             { key: 'fecha_venta', label: 'Fecha', type: 'date' },
+             { key: 'estado', label: 'Acción', type: 'button' },
+             { key: 'costo_historico', label: 'Costo Hist.', type: 'number', hidden: true } 
+        ]
+    };
+
+    let tabActual = 'reporte';
+    let db = JSON.parse(localStorage.getItem('servicecomp_db_v1')) || { compras: [], inventario: [], ventas: [] };
+
+    // --- PARCHE GANANCIA RETROACTIVA ---
+    // Si una venta vieja no tiene costo_historico, intentamos buscar el costo actual del producto
+    // para dar una estimación mejor que "0".
+    function obtenerCostoEstimado(minicod) {
+        let p = db.inventario.find(x => x.minicod && x.minicod.toLowerCase() === minicod.toLowerCase());
+        return p ? (parseFloat(p.precio_sol_calc) || 0) : 0;
+    }
+
+    // --- RENDERIZADO ---
+    function init() { renderizar(); }
+
+    function renderizar() {
+        const filtros = document.getElementById('filtros-container');
+        const tablas = document.getElementById('vista-tablas');
+        const dash = document.getElementById('vista-dashboard');
+
+        if(tabActual === 'reporte') {
+            tablas.style.display = 'none'; filtros.style.display = 'none'; dash.style.display = 'block';
+            renderizarDashboard();
+        } else {
+            dash.style.display = 'none'; tablas.style.display = 'block'; filtros.style.display = 'flex';
+
+            let htmlF = `<input type="text" id="buscador" class="filter-input" placeholder="🔍 Buscar..." onkeyup="renderizarTabla()" style="flex:1">
+                         <div style="display:flex; align-items:center; gap:5px;"><span style="color:#64748b;">📅</span><input type="month" id="filtroFecha" class="filter-input" onchange="renderizarTabla()"></div>`;
+
+            if(tabActual==='compras') htmlF+=`<button class="btn-primary" onclick="agregarFila()">+ Compra</button>`;
+            if(tabActual==='inventario') htmlF+=`<button class="btn-primary" onclick="agregarFila()">+ Producto</button>`;
+            if(tabActual==='ventas') htmlF+=`<button class="btn-success" onclick="agregarFilaVenta()">+ Venta</button>`;
+            filtros.innerHTML = htmlF;
+
+            let thead = `<tr>`;
+            esquemas[tabActual].forEach(c => { if(!c.hidden) thead += `<th>${c.label}</th>`; });
+            thead += `<th></th></tr>`;
+            document.getElementById('cabeceraTabla').innerHTML = thead;
+            renderizarTabla();
+        }
+    }
+
+    function renderizarTabla() {
+        const tbody = document.getElementById('cuerpoTabla');
+        const busqueda = document.getElementById('buscador') ? document.getElementById('buscador').value.toLowerCase() : '';
+        const filtroFecha = document.getElementById('filtroFecha') ? document.getElementById('filtroFecha').value : '';
+        tbody.innerHTML = '';
+
+        db[tabActual].forEach((item, index) => {
+            let txt = Object.values(item).join(' ').toLowerCase();
+            if (!txt.includes(busqueda)) return;
+            if (filtroFecha) {
+                let fechaItem = tabActual==='ventas' ? item.fecha_venta : (tabActual==='compras' ? item.fecha : item.fecha_ref);
+                if (!fechaItem || !fechaItem.startsWith(filtroFecha)) return;
+            }
+
+            let tr = document.createElement('tr');
+            esquemas[tabActual].forEach((col) => {
+                if(col.hidden) return; 
+                let td = document.createElement('td');
+                let val = item[col.key] || '';
+
+                if (tabActual === 'ventas' && col.key === 'minicod_venta') {
+                    td.innerHTML = `<input type="text" value="${val}" class="mini-code" placeholder="Cod..." onchange="buscarProductoVenta(${index}, this.value)">`;
+                } else if (col.type === 'select_orden') {
+                    let opts = db.compras.map(c => `<option value="${c.norden}">${c.norden}</option>`).join('');
+                    td.innerHTML = `<select onchange="vincularOrden(${index}, this.value)"><option value="">-</option>${opts}</select>`;
+                    setTimeout(()=>{let s=td.querySelector('select'); if(s) s.value=val},0);
+                } else if (tabActual === 'ventas' && col.key === 'estado') {
+                    td.innerHTML = item.vendido ? `<span style="color:#10b981; font-weight:bold">✔ Vendido</span>` : `<button class="btn-success" style="padding:6px 12px" onclick="registrarSalidaFIFO_UI(${index})">Cobrar</button>`;
+                } else {
+                    let tipo = col.type==='number'?'number step="0.01"':(col.type==='date'?'date':'text');
+                    let ro = col.readonly ? 'readonly' : '';
+                    let evt = `onchange="guardar(${index}, '${col.key}', this.value)"`; 
+                    if(col.key==='cantidad' || col.key==='precio_unit') evt=`oninput="calcTotalVenta(${index},this)"`;
+                    if(col.key==='cant'||col.key==='precio_usd') evt=`oninput="calcInv(${index},this)"`;
+                    if(col.key==='total_usd'||col.key==='total_sol') evt=`oninput="calcTC(${index},this)"`;
+
+                    td.innerHTML = `<input type="${tipo}" value="${val}" class="${col.className||''}" ${ro} ${evt} data-key="${col.key}">`;
+                }
+                tr.appendChild(td);
+            });
+            tr.innerHTML += `<td style="text-align:center"><button class="btn-outline" style="padding:4px 8px; color:#ef4444; border-color:#fee2e2" onclick="eliminar(${index})">✕</button></td>`;
+            tbody.appendChild(tr);
+        });
+        // Footer (simplificado)
+        const tfoot = document.getElementById('pieTabla'); tfoot.innerHTML='';
+    }
+
+    function renderizarDashboard() {
+        let ventasTotal = 0;
+        let costoVentasTotal = 0;
+        let transacciones = 0;
+        let productosVendidos = {};
+
+        db.ventas.forEach(v => {
+            if(v.vendido) {
+                transacciones++;
+                let venta = parseFloat(v.total_venta) || 0;
+
+                // --- FIX GANANCIA RETROACTIVA ---
+                let costo = parseFloat(v.costo_historico);
+                if (isNaN(costo) || costo === 0) {
+                    // Si no tiene costo histórico (venta vieja), estimamos con el costo actual del producto
+                    // Multiplicado por cantidad vendida
+                    let costoUnit = obtenerCostoEstimado(v.minicod_venta);
+                    costo = costoUnit * (parseFloat(v.cantidad) || 0);
+                }
+
+                ventasTotal += venta;
+                costoVentasTotal += costo;
+
+                let prod = v.producto || 'Desconocido';
+                if(!productosVendidos[prod]) productosVendidos[prod] = { cant:0, total:0 };
+                productosVendidos[prod].cant += parseFloat(v.cantidad)||0;
+                productosVendidos[prod].total += venta;
+            }
+        });
+
+        let gananciaNeta = ventasTotal - costoVentasTotal;
+        let ticketPromedio = transacciones > 0 ? (ventasTotal / transacciones) : 0;
+
+        // Cálculos Inventario
+        let valorInventario = 0;
+        let itemsUnicos = 0;
+        let stockBajo = [];
+        let stockAlto = [];
+
+        db.inventario.forEach(i => {
+            let stock = parseFloat(i.cant) || 0;
+            let valor = parseFloat(i.total_val) || 0;
+            if(stock > 0) { valorInventario += valor; itemsUnicos++; }
+            if(stock > 0 && stock < 3) stockBajo.push(i);
+            if(stock > 10) stockAlto.push(i);
+        });
+
+        // DOM Updates
+        document.getElementById('kpi-ventas').innerText = `S/. ${ventasTotal.toFixed(2)}`;
+        document.getElementById('kpi-ganancia').innerText = `S/. ${gananciaNeta.toFixed(2)}`;
+        document.getElementById('kpi-costo').innerText = `S/. ${valorInventario.toFixed(2)}`;
+        document.getElementById('kpi-items').innerText = itemsUnicos;
+        document.getElementById('kpi-transacciones').innerText = transacciones;
+        document.getElementById('kpi-ticket').innerText = `S/. ${ticketPromedio.toFixed(2)}`;
+
+        // Tablas Dashboard
+        let htmlTop = '';
+        Object.entries(productosVendidos).sort((a,b) => b[1].total - a[1].total).slice(0, 10).forEach(([nom, data]) => {
+            htmlTop += `<tr><td>${nom}</td><td style="text-align:right"><b>${data.cant}</b></td><td style="text-align:right">S/. ${data.total.toFixed(2)}</td></tr>`;
+        });
+        document.getElementById('tabla-top-ventas').innerHTML = htmlTop || '<tr><td colspan="3" class="text-center">Sin datos</td></tr>';
+
+        // Listas Columna Derecha
+        let htmlBajo = '';
+        stockBajo.slice(0, 6).forEach(i => {
+            htmlBajo += `<div class="alert-item"><span>${i.producto.substring(0,20)}...</span><span class="alert-badge">${i.cant} und</span></div>`;
+        });
+        document.getElementById('lista-stock-bajo').innerHTML = htmlBajo || '<div style="color:green; font-size:0.9rem;">Todo OK ✅</div>';
+
+        let htmlAlto = '';
+        stockAlto.sort((a,b)=>parseFloat(b.total_val)-parseFloat(a.total_val)).slice(0, 4).forEach(i => {
+             htmlAlto += `<div class="alert-item"><span>${i.producto.substring(0,20)}...</span><span class="alert-badge" style="background:#fef3c7; color:#b45309">${i.cant} und</span></div>`;
+        });
+        document.getElementById('lista-stock-alto').innerHTML = htmlAlto || '<div style="color:#999; font-size:0.9rem;">Sin sobre-stock</div>';
+    }
+
+    // --- FUNCIONES LOGICAS (Igual v14) ---
+    function buscarStockDisponible(minicod, cantidadNecesaria) {
+        let lotes = [];
+        db.inventario.forEach((p, index) => {
+            if (p.minicod && p.minicod.toLowerCase() === minicod.toLowerCase() && parseFloat(p.cant) > 0) {
+                lotes.push({ idx: index, cant: parseFloat(p.cant), costo: parseFloat(p.precio_sol_calc)||0 });
+            }
+        });
+        let stockTotal = 0, lotesAUsar = [], costoPonderadoTotal = 0;
+        for(let lote of lotes) {
+            if (stockTotal >= cantidadNecesaria) break;
+            let disponible = lote.cant, falta = cantidadNecesaria - stockTotal;
+            let tomar = Math.min(disponible, falta);
+            lotesAUsar.push({ idx: lote.idx, tomar: tomar });
+            stockTotal += tomar;
+            costoPonderadoTotal += (tomar * lote.costo);
+        }
+        return { total: stockTotal, lotes: lotesAUsar, costo_total_lotes: costoPonderadoTotal };
+    }
+
+    function registrarSalidaFIFO_UI(i) {
+        let v = db.ventas[i];
+        let cant = parseFloat(v.cantidad) || 0;
+        let stockInfo = buscarStockDisponible(v.minicod_venta, cant);
+        if(stockInfo.total < cant) return alert(`Stock Insuficiente. Disponible: ${stockInfo.total}`);
+        if(confirm(`¿Vender ${cant} unds?`)) {
+            stockInfo.lotes.forEach(l => { db.inventario[l.idx].cant -= l.tomar; calcInv(l.idx, null); });
+            v.costo_historico = stockInfo.costo_total_lotes; v.vendido = true;
+            guardarDB(); renderizar(); alert('Venta Exitosa');
+        }
+    }
+
+    function cambiarTab(t) { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); event.target.classList.add('active'); tabActual = t; renderizar(); }
+    function guardar(i,k,v) { db[tabActual][i][k]=v; guardarDB(); }
+    function agregarFila() { db[tabActual].unshift({}); guardarDB(); renderizar(); }
+    function agregarFilaVenta() { db.ventas.unshift({cantidad:'1', fecha_venta: new Date().toISOString().split('T')[0], vendido:false}); guardarDB(); renderizar(); }
+    function eliminar(i) { if(confirm('¿Eliminar?')) { db[tabActual].splice(i,1); guardarDB(); renderizar(); } }
+
+    // Calcs...
+    function calcTC(i, el) { let f=db.compras[i]; if(el.dataset.key=='total_usd') f.total_usd=el.value; if(el.dataset.key=='total_sol') f.total_sol=el.value; let u=parseFloat(f.total_usd)||0, s=parseFloat(f.total_sol)||0; if(u>0) f.tc=(s/u).toFixed(2); let tr=el.closest('tr'); if(tr.cells[1].querySelector('input')) tr.cells[1].querySelector('input').value=f.tc||''; guardarDB(); }
+    function calcInv(i, el) { let f=db.inventario[i]; if(el && el.dataset.key=='cant') f.cant=el.value; if(el && el.dataset.key=='precio_usd') f.precio_usd=el.value; let tc=parseFloat(f.tc_ref)||0, u=parseFloat(f.precio_usd)||0, c=parseFloat(f.cant)||0; if(tc>0&&u>0){ f.precio_sol_calc=(u*tc*1.18).toFixed(2); f.total_val=(parseFloat(f.precio_sol_calc)*c).toFixed(2); } if(el) { let tr=el.closest('tr'); if(tr.cells[8].querySelector('input')) tr.cells[8].querySelector('input').value=f.precio_sol_calc||''; if(tr.cells[9].querySelector('input')) tr.cells[9].querySelector('input').value=f.total_val||''; } guardarDB(); }
+    function calcTotalVenta(i, el) { let f=db.ventas[i]; if(el.dataset.key=='precio_unit') f.precio_unit=el.value; if(el.dataset.key=='cantidad') f.cantidad=el.value; let u=parseFloat(f.precio_unit)||0, c=parseFloat(f.cantidad)||0; f.total_venta=(u*c).toFixed(2); let tr=el.closest('tr'); if(tr.cells[4].querySelector('input')) tr.cells[4].querySelector('input').value=f.total_venta||''; guardarDB(); }
+    function buscarProductoVenta(i,c) { let stockInfo=buscarStockDisponible(c,9999); let f=db.ventas[i]; f.minicod_venta=c; if(stockInfo.total>0){ let p=db.inventario[stockInfo.lotes[0].idx]; f.producto=p.producto; f.precio_unit=p.precio_sol_calc; calcTotalVenta(i,{dataset:{key:'precio_unit'}, value:p.precio_sol_calc, closest:()=>({cells:[{},{},{},{},{querySelector:()=>{}}]})}); } else { f.producto='❌ Sin Stock'; f.precio_unit=''; } guardarDB(); renderizar(); }
+    function vincularOrden(i,o) { let c=db.compras.find(x=>x.norden===o); let f=db.inventario[i]; if(c){f.norden_ref=o;f.tc_ref=c.tc;f.fecha_ref=c.fecha;} guardarDB(); renderizar(); }
+
+    function guardarDB() { localStorage.setItem('servicecomp_db_v1', JSON.stringify(db)); }
+    function exportarBackup() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(db)); a.download="ServiceComp_v1.json"; a.click(); }
+    function importarBackup(el) { const r=new FileReader(); r.onload=e=>{db=JSON.parse(e.target.result);guardarDB();renderizar();alert('Ok');}; r.readAsText(el.files[0]); }
+    function exportarExcel() { let csv="﻿"+esquemas[tabActual].map(c=>c.label).join(";")+"\n"; db[tabActual].forEach(r=>csv+=esquemas[tabActual].map(c=>`"${r[c.key]||''}"`).join(";")+"\n"); const a=document.createElement("a"); a.href="data:text/csv;charset=utf-8,"+encodeURI(csv); a.download=`Reporte_${tabActual}.csv`; a.click(); }
+
+    init();
+</script>
+</body>
+</html>
