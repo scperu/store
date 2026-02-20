@@ -60,6 +60,28 @@
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
         .progress-bg { background: #f1f5f9; height: 6px; border-radius: 3px; overflow: hidden; }
         .progress-fg { background: var(--primary); height: 100%; }
+    
+        /* --- MEJORAS RESPONSIVE + SUNAT (v2) --- */
+        .btn-chip { padding: 7px 12px; border-radius: 999px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; font-size: 0.85rem; font-weight: 700; }
+        .btn-chip.active { background: var(--primary); border-color: var(--primary); color: #ffffff; }
+        .chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+
+        body.reporte-fullwidth .dashboard-main { grid-template-columns: 1fr; }
+        body.reporte-fullwidth .right-column { margin-top: 6px; }
+
+        /* En pantallas medianas / celulares, apilar columnas para que el reporte se vea limpio */
+        @media (max-width: 1100px) {
+            .dashboard-main { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .panel-header { flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+        }
+        @media (max-width: 680px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            button { width: auto; }
+            table { min-width: 780px; }
+        }
+
     </style>
 </head>
 <body>
@@ -141,6 +163,129 @@
                             <tbody id="tabla-top-ventas"></tbody>
                         </table>
                     </div>
+
+                    <!-- Reportes SUNAT Mensuales -->
+                    <div class="card-panel" id="sunat-report-panel">
+                        <div class="panel-header" style="flex-wrap:wrap; gap:10px; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <span>📅 Reportes SUNAT por Mes (Estimado)</span>
+                                <div class="chip-row" aria-label="Seleccionar régimen">
+                                    <button id="btn-sunat-rer" class="btn-chip active" onclick="setSunatModo('RER')">RER</button>
+                                    <button id="btn-sunat-rus" class="btn-chip" onclick="setSunatModo('RUS')">RUS</button>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <input type="month" id="filtroMesSunat" class="filter-input" onchange="renderizarReporteSunat()" title="Filtrar por mes (YYYY-MM)">
+                                <button class="btn-outline" onclick="document.getElementById('filtroMesSunat').value=''; renderizarReporteSunat()">🗓️ Todo</button>
+                                <button class="btn-outline" onclick="exportarReporteSunatCSV()">⬇️ CSV</button>
+                            </div>
+                        </div>
+
+                        <!-- RER -->
+                        <div id="sunat-rer-view" style="overflow:auto;">
+                            <table class="table-dash" style="width:100%; min-width:1250px;">
+                                <thead>
+                                    <tr>
+                                        <th>Mes</th>
+                                        <th style="text-align:right">Ventas (S/.)</th>
+                                        <th style="text-align:right">Base Ventas</th>
+                                        <th style="text-align:right">IGV Ventas</th>
+                                        <th style="text-align:right">Compras (S/.)</th>
+                                        <th style="text-align:right">Base Compras</th>
+                                        <th style="text-align:right">IGV Compras</th>
+                                        <th style="text-align:right">IGV x Pagar</th>
+                                        <th style="text-align:right">Renta 1.5%</th>
+                                        <th style="text-align:right">Tributos (Est.)</th>
+                                        <th style="text-align:right">Costo</th>
+                                        <th style="text-align:right">Ganancia</th>
+                                        <th style="text-align:right">Margen %</th>
+                                        <th style="text-align:right">Trans.</th>
+                                        <th style="text-align:right">Und.</th>
+                                        <th style="text-align:right">Ticket</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-sunat-rer"></tbody>
+                                <tfoot id="tabla-sunat-rer-foot"></tfoot>
+                            </table>
+                        </div>
+
+                        <!-- RUS -->
+                        <div id="sunat-rus-view" style="overflow:auto; display:none;">
+                            <table class="table-dash" style="width:100%; min-width:1050px;">
+                                <thead>
+                                    <tr>
+                                        <th>Mes</th>
+                                        <th style="text-align:right">Ventas (S/.)</th>
+                                        <th style="text-align:right">Compras (S/.)</th>
+                                        <th style="text-align:center">Categoría</th>
+                                        <th style="text-align:right">Cuota RUS</th>
+                                        <th style="text-align:right">Costo</th>
+                                        <th style="text-align:right">Ganancia</th>
+                                        <th style="text-align:right">Margen %</th>
+                                        <th style="text-align:right">Trans.</th>
+                                        <th style="text-align:right">Und.</th>
+                                        <th style="text-align:right">Ticket</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-sunat-rus"></tbody>
+                                <tfoot id="tabla-sunat-rus-foot"></tfoot>
+                            </table>
+                        </div>
+
+                        <div style="margin-top:12px; font-size:0.85rem; color:#64748b;" id="nota-sunat">
+                            *RER: IGV mensual y pago a cuenta 1.5% de ingresos netos. RUS: cuota fija según categoría (estimado). Este reporte es orientativo; valida con tus comprobantes reales.
+                        </div>
+
+                        <details id="sunat-detalle-ventas-box" style="margin-top:12px;">
+                            <summary style="cursor:pointer; font-weight:800; color:#334155;">🧾 Detalle Ventas del Mes</summary>
+                            <div style="overflow:auto; margin-top:10px;">
+                                <table class="table-dash" style="width:100%; min-width:1050px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Producto</th>
+                                            <th>Cod</th>
+                                            <th style="text-align:right">Cant</th>
+                                            <th style="text-align:right">P. Unit</th>
+                                            <th style="text-align:right">Total</th>
+                                            <th style="text-align:right">Base</th>
+                                            <th style="text-align:right">IGV</th>
+                                            <th style="text-align:right">Costo</th>
+                                            <th style="text-align:right">Ganancia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-sunat-detalle-ventas"></tbody>
+                                    <tfoot id="tabla-sunat-detalle-ventas-foot"></tfoot>
+                                </table>
+                            </div>
+                        </details>
+
+                        <details id="sunat-detalle-compras-box" style="margin-top:12px;">
+                            <summary style="cursor:pointer; font-weight:800; color:#334155;">🧾 Detalle Compras del Mes</summary>
+                            <div style="overflow:auto; margin-top:10px;">
+                                <table class="table-dash" style="width:100%; min-width:950px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>N° Orden</th>
+                                            <th>Comprobante</th>
+                                            <th style="text-align:right">Total S/.</th>
+                                            <th style="text-align:right">Base</th>
+                                            <th style="text-align:right">IGV</th>
+                                            <th style="text-align:right">Total $</th>
+                                            <th style="text-align:right">T.C.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-sunat-detalle-compras"></tbody>
+                                    <tfoot id="tabla-sunat-detalle-compras-foot"></tfoot>
+                                </table>
+                            </div>
+                        </details>
+
+                        <div id="sunat-ayuda" style="margin-top:10px; font-size:0.85rem; color:#64748b;"></div>
+                    </div>
+
                 </div>
 
                 <!-- Columna Derecha (Angosta) -->
@@ -184,6 +329,7 @@
 </div>
 
 <script>
+
     // --- ESQUEMAS (Igual v14/15) ---
     const esquemas = {
         compras: [
@@ -381,6 +527,682 @@
              htmlAlto += `<div class="alert-item"><span>${i.producto.substring(0,20)}...</span><span class="alert-badge" style="background:#fef3c7; color:#b45309">${i.cant} und</span></div>`;
         });
         document.getElementById('lista-stock-alto').innerHTML = htmlAlto || '<div style="color:#999; font-size:0.9rem;">Sin sobre-stock</div>';
+
+        // Render SUNAT mensual (solo en Reporte General)
+        renderizarReporteSunat();
+    }
+
+
+    // --- REPORTE SUNAT MENSUAL (Estimado) ---
+    const IGV_RATE = 0.18;
+    const IGV_DIV = 1 + IGV_RATE;
+    let cacheReporteSunatMensual = [];
+
+    function _n(v) { let x = parseFloat(v); return isNaN(x) ? 0 : x; }
+    function fmtNum(v, dec=2) { 
+        let x = _n(v);
+        if (Math.abs(x) < 1e-9) x = 0;
+
+        // Separador de miles solicitado: ", "  (coma + espacio)
+        // Ej: 12345.67 => "12, 345.67"
+        const s = x.toFixed(dec);
+        const parts = s.split(".");
+        let intp = parts[0];
+        const sign = intp.startsWith("-") ? "-" : "";
+        if(sign) intp = intp.slice(1);
+
+        intp = intp.replace(/\B(?=(\d{3})+(?!\d))/g, ", ");
+        return sign + intp + (parts.length > 1 ? ("." + parts[1]) : "");
+    }
+    function fmtInt(v) { 
+        let x = Math.round(_n(v));
+        const sign = x < 0 ? "-" : "";
+        x = Math.abs(x);
+        let s = String(x);
+        s = s.replace(/\B(?=(\d{3})+(?!\d))/g, ", ");
+        return sign + s;
+    }
+
+    function igvSplit(total) {
+        let t = _n(total);
+        let base = t / IGV_DIV;
+        let igv = t - base;
+        return { total: t, base: base, igv: igv };
+    }
+    function mesToSunat(ym) { return (ym || '').replace('-', ''); }
+
+    function generarReporteSunatMensual(filtroMes='') {
+        const map = {};
+        const ensure = (mes) => {
+            if(!map[mes]) map[mes] = {
+                mes,
+                ventas_total: 0, ventas_base: 0, ventas_igv: 0,
+                costo_ventas: 0, ganancia: 0, margen: 0,
+                compras_total: 0, compras_base: 0, compras_igv: 0,
+                igv_pagar: 0, transacciones: 0, unidades: 0, ticket: 0
+            };
+            return map[mes];
+        };
+
+        // Ventas (solo marcadas como "vendido")
+        db.ventas.forEach(v => {
+            if(!v.vendido) return;
+            const mes = (v.fecha_venta || '').slice(0,7);
+            if(!mes) return;
+            if(filtroMes && mes !== filtroMes) return;
+
+            const total = _n(v.total_venta);
+            const split = igvSplit(total);
+
+            // Costo (histórico o estimado)
+            let costo = parseFloat(v.costo_historico);
+            if (isNaN(costo) || costo === 0) {
+                let costoUnit = obtenerCostoEstimado(v.minicod_venta);
+                costo = costoUnit * (_n(v.cantidad));
+            }
+
+            const a = ensure(mes);
+            a.ventas_total += split.total;
+            a.ventas_base += split.base;
+            a.ventas_igv  += split.igv;
+            a.costo_ventas += costo;
+            a.transacciones += 1;
+            a.unidades += _n(v.cantidad);
+        });
+
+        // Compras (total_sol)
+        db.compras.forEach(c => {
+            const mes = (c.fecha || '').slice(0,7);
+            if(!mes) return;
+            if(filtroMes && mes !== filtroMes) return;
+
+            const total = _n(c.total_sol);
+            const split = igvSplit(total);
+
+            const a = ensure(mes);
+            a.compras_total += split.total;
+            a.compras_base += split.base;
+            a.compras_igv  += split.igv;
+        });
+
+        // Finalizar métricas
+        let rows = Object.values(map).sort((a,b)=>a.mes.localeCompare(b.mes));
+        rows.forEach(r => {
+            r.ganancia = r.ventas_total - r.costo_ventas;
+            r.margen = r.ventas_total > 0 ? (r.ganancia / r.ventas_total) * 100 : 0;
+            r.igv_pagar = r.ventas_igv - r.compras_igv;
+            r.ticket = r.transacciones > 0 ? (r.ventas_total / r.transacciones) : 0;
+        });
+        return rows;
+    }
+    // --- SUNAT (v2): Reporte doble RER / RUS ---
+    let sunatModo = 'RER'; // 'RER' | 'RUS'
+    let cacheReporteSunatRER = [];
+    let cacheReporteSunatRUS = [];
+
+    const RUS_CAT1_LIM = 5000;
+    const RUS_CAT2_LIM = 8000;
+    const RUS_CUOTA1 = 20;
+    const RUS_CUOTA2 = 50;
+    const RER_TASA_RENTA = 0.015;
+
+    function setSunatModo(m) {
+        sunatModo = (m === 'RUS') ? 'RUS' : 'RER';
+
+        const br = document.getElementById('btn-sunat-rer');
+        const bu = document.getElementById('btn-sunat-rus');
+        if(br && bu) {
+            br.classList.toggle('active', sunatModo === 'RER');
+            bu.classList.toggle('active', sunatModo === 'RUS');
+        }
+
+        const vRER = document.getElementById('sunat-rer-view');
+        const vRUS = document.getElementById('sunat-rus-view');
+        if(vRER && vRUS) {
+            vRER.style.display = (sunatModo === 'RER') ? 'block' : 'none';
+            vRUS.style.display = (sunatModo === 'RUS') ? 'block' : 'none';
+        }
+
+        renderizarReporteSunat();
+    }
+
+    function generarReporteSunatRER(filtroMes='') {
+        const base = generarReporteSunatMensual(filtroMes);
+        return base.map(r => {
+            const renta = r.ventas_base * RER_TASA_RENTA;
+            const tributos = r.igv_pagar + renta;
+            return { ...r, renta_pagar: renta, tributos_est: tributos };
+        });
+    }
+
+    function _rusCategoria(ventasTotal, comprasTotal) {
+        const v = _n(ventasTotal), c = _n(comprasTotal);
+        if(v <= RUS_CAT1_LIM && c <= RUS_CAT1_LIM) return { cat: '1', cuota: RUS_CUOTA1, estado: 'OK' };
+        if(v <= RUS_CAT2_LIM && c <= RUS_CAT2_LIM) return { cat: '2', cuota: RUS_CUOTA2, estado: 'OK' };
+        return { cat: '-', cuota: 0, estado: 'EXCEDE (migrar)' };
+    }
+
+    function generarReporteSunatRUS(filtroMes='') {
+        const base = generarReporteSunatMensual(filtroMes);
+        return base.map(r => {
+            const info = _rusCategoria(r.ventas_total, r.compras_total);
+            return { ...r, rus_cat: info.cat, rus_cuota: info.cuota, rus_estado: info.estado };
+        });
+    }
+
+    function renderizarReporteSunat() {
+        const filtroEl = document.getElementById('filtroMesSunat');
+        const filtroMes = filtroEl ? filtroEl.value : '';
+
+        // asegurar vista correcta aunque se recargue
+        const vRER = document.getElementById('sunat-rer-view');
+        const vRUS = document.getElementById('sunat-rus-view');
+        if(vRER && vRUS) {
+            vRER.style.display = (sunatModo === 'RER') ? 'block' : 'none';
+            vRUS.style.display = (sunatModo === 'RUS') ? 'block' : 'none';
+        }
+
+        if(sunatModo === 'RUS') renderizarReporteSunatRUS(filtroMes);
+        else renderizarReporteSunatRER(filtroMes);
+    }
+
+    function renderizarReporteSunatRER(filtroMes='') {
+        const tbody = document.getElementById('tabla-sunat-rer');
+        const tfoot = document.getElementById('tabla-sunat-rer-foot');
+        if(!tbody || !tfoot) return;
+
+        cacheReporteSunatRER = generarReporteSunatRER(filtroMes);
+        tbody.innerHTML = '';
+        tfoot.innerHTML = '';
+
+        if(cacheReporteSunatRER.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="16" style="color:#64748b;">Sin datos para el periodo seleccionado.</td></tr>`;
+            renderizarDetalleSunatMes(filtroMes);
+            return;
+        }
+
+        const tot = {
+            ventas_total:0, ventas_base:0, ventas_igv:0,
+            compras_total:0, compras_base:0, compras_igv:0,
+            igv_pagar:0, renta_pagar:0, tributos_est:0,
+            costo_ventas:0, ganancia:0, transacciones:0, unidades:0, ticket:0
+        };
+
+        cacheReporteSunatRER.forEach(r => {
+            tot.ventas_total += r.ventas_total;
+            tot.ventas_base  += r.ventas_base;
+            tot.ventas_igv   += r.ventas_igv;
+            tot.compras_total += r.compras_total;
+            tot.compras_base  += r.compras_base;
+            tot.compras_igv   += r.compras_igv;
+            tot.igv_pagar    += r.igv_pagar;
+            tot.renta_pagar  += r.renta_pagar;
+            tot.tributos_est += r.tributos_est;
+            tot.costo_ventas += r.costo_ventas;
+            tot.ganancia     += r.ganancia;
+            tot.transacciones += r.transacciones;
+            tot.unidades     += r.unidades;
+        });
+        tot.ticket = tot.transacciones > 0 ? (tot.ventas_total / tot.transacciones) : 0;
+        const totMargen = tot.ventas_total > 0 ? (tot.ganancia / tot.ventas_total) * 100 : 0;
+
+        cacheReporteSunatRER.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.title = 'Clic para filtrar este mes y ver detalle';
+            tr.onclick = () => { 
+                const f = document.getElementById('filtroMesSunat');
+                if(f) { f.value = r.mes; renderizarReporteSunat(); }
+            };
+
+            const igvColor = r.igv_pagar < 0 ? '#ef4444' : '#0f172a';
+            const tribColor = r.tributos_est < 0 ? '#ef4444' : '#0f172a';
+
+            tr.innerHTML = `
+                <td><b>${r.mes}</b> <span style="color:#94a3b8;">(${mesToSunat(r.mes)})</span></td>
+                <td style="text-align:right">S/. ${fmtNum(r.ventas_total)}</td>
+                <td style="text-align:right">${fmtNum(r.ventas_base)}</td>
+                <td style="text-align:right">${fmtNum(r.ventas_igv)}</td>
+                <td style="text-align:right">S/. ${fmtNum(r.compras_total)}</td>
+                <td style="text-align:right">${fmtNum(r.compras_base)}</td>
+                <td style="text-align:right">${fmtNum(r.compras_igv)}</td>
+                <td style="text-align:right; color:${igvColor}; font-weight:900;">${fmtNum(r.igv_pagar)}</td>
+                <td style="text-align:right">${fmtNum(r.renta_pagar)}</td>
+                <td style="text-align:right; color:${tribColor}; font-weight:900;">${fmtNum(r.tributos_est)}</td>
+                <td style="text-align:right">${fmtNum(r.costo_ventas)}</td>
+                <td style="text-align:right"><b>${fmtNum(r.ganancia)}</b></td>
+                <td style="text-align:right">${fmtNum(r.margen,2)}</td>
+                <td style="text-align:right">${fmtInt(r.transacciones)}</td>
+                <td style="text-align:right">${fmtNum(r.unidades,0)}</td>
+                <td style="text-align:right">${fmtNum(r.ticket)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        tfoot.innerHTML = `
+            <tr>
+                <td style="padding:10px 8px; font-weight:900; border-top:2px solid #e2e8f0;">TOTALES</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.ventas_total)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ventas_base)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ventas_igv)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.compras_total)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.compras_base)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.compras_igv)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.igv_pagar)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.renta_pagar)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.tributos_est)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.costo_ventas)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ganancia)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(totMargen,2)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtInt(tot.transacciones)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.unidades,0)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ticket)}</td>
+            </tr>
+        `;
+
+        renderizarDetalleSunatMes(filtroMes);
+    }
+
+    function renderizarReporteSunatRUS(filtroMes='') {
+        const tbody = document.getElementById('tabla-sunat-rus');
+        const tfoot = document.getElementById('tabla-sunat-rus-foot');
+        if(!tbody || !tfoot) return;
+
+        cacheReporteSunatRUS = generarReporteSunatRUS(filtroMes);
+        tbody.innerHTML = '';
+        tfoot.innerHTML = '';
+
+        if(cacheReporteSunatRUS.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="12" style="color:#64748b;">Sin datos para el periodo seleccionado.</td></tr>`;
+            renderizarDetalleSunatMes(filtroMes);
+            return;
+        }
+
+        const tot = { ventas_total:0, compras_total:0, rus_cuota:0, costo_ventas:0, ganancia:0, transacciones:0, unidades:0, ticket:0 };
+        cacheReporteSunatRUS.forEach(r => {
+            tot.ventas_total += r.ventas_total;
+            tot.compras_total += r.compras_total;
+            tot.rus_cuota += r.rus_cuota;
+            tot.costo_ventas += r.costo_ventas;
+            tot.ganancia += r.ganancia;
+            tot.transacciones += r.transacciones;
+            tot.unidades += r.unidades;
+        });
+        tot.ticket = tot.transacciones > 0 ? (tot.ventas_total / tot.transacciones) : 0;
+        const totMargen = tot.ventas_total > 0 ? (tot.ganancia / tot.ventas_total) * 100 : 0;
+
+        cacheReporteSunatRUS.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.title = 'Clic para filtrar este mes y ver detalle';
+            tr.onclick = () => { 
+                const f = document.getElementById('filtroMesSunat');
+                if(f) { f.value = r.mes; renderizarReporteSunat(); }
+            };
+
+            const estadoColor = (r.rus_estado || '').startsWith('OK') ? '#10b981' : '#ef4444';
+
+            tr.innerHTML = `
+                <td><b>${r.mes}</b> <span style="color:#94a3b8;">(${mesToSunat(r.mes)})</span></td>
+                <td style="text-align:right">S/. ${fmtNum(r.ventas_total)}</td>
+                <td style="text-align:right">S/. ${fmtNum(r.compras_total)}</td>
+                <td style="text-align:center; font-weight:900;">${r.rus_cat}</td>
+                <td style="text-align:right; font-weight:900;">S/. ${fmtNum(r.rus_cuota,2)}</td>
+                <td style="text-align:right">${fmtNum(r.costo_ventas)}</td>
+                <td style="text-align:right"><b>${fmtNum(r.ganancia)}</b></td>
+                <td style="text-align:right">${fmtNum(r.margen,2)}</td>
+                <td style="text-align:right">${fmtInt(r.transacciones)}</td>
+                <td style="text-align:right">${fmtNum(r.unidades,0)}</td>
+                <td style="text-align:right">${fmtNum(r.ticket)}</td>
+                <td style="font-weight:900; color:${estadoColor};">${r.rus_estado}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        tfoot.innerHTML = `
+            <tr>
+                <td style="padding:10px 8px; font-weight:900; border-top:2px solid #e2e8f0;">TOTALES</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.ventas_total)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.compras_total)}</td>
+                <td style="text-align:center; font-weight:900; border-top:2px solid #e2e8f0;">—</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.rus_cuota,2)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.costo_ventas)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ganancia)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(totMargen,2)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtInt(tot.transacciones)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.unidades,0)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ticket)}</td>
+                <td style="font-weight:900; border-top:2px solid #e2e8f0; color:#94a3b8;">—</td>
+            </tr>
+        `;
+
+        renderizarDetalleSunatMes(filtroMes);
+    }
+
+    function exportarReporteSunatCSV() {
+        const filtroEl = document.getElementById('filtroMesSunat');
+        const filtroMes = filtroEl ? filtroEl.value : '';
+
+        if(sunatModo === 'RUS') {
+            const rows = (cacheReporteSunatRUS && cacheReporteSunatRUS.length) ? cacheReporteSunatRUS : generarReporteSunatRUS(filtroMes);
+            exportarReporteSunatRUSCSV(filtroMes, rows);
+        } else {
+            const rows = (cacheReporteSunatRER && cacheReporteSunatRER.length) ? cacheReporteSunatRER : generarReporteSunatRER(filtroMes);
+            exportarReporteSunatRERCSV(filtroMes, rows);
+        }
+    }
+
+    function exportarReporteSunatRERCSV(filtroMes, rows) {
+        let csv = "\ufeff" + [
+            "Mes","PeriodoSUNAT",
+            "VentasTotal","VentasBase","IGVVentas",
+            "ComprasTotal","ComprasBase","IGVCompras",
+            "IGVPorPagar","Renta1_5","TributosEstimados",
+            "CostoVentas","Ganancia","MargenPct",
+            "Transacciones","Unidades","TicketPromedio"
+        ].join(";") + "\n";
+
+        rows.forEach(r => {
+            csv += [
+                r.mes,
+                mesToSunat(r.mes),
+                fmtNum(r.ventas_total), fmtNum(r.ventas_base), fmtNum(r.ventas_igv),
+                fmtNum(r.compras_total), fmtNum(r.compras_base), fmtNum(r.compras_igv),
+                fmtNum(r.igv_pagar), fmtNum(r.renta_pagar), fmtNum(r.tributos_est),
+                fmtNum(r.costo_ventas), fmtNum(r.ganancia), fmtNum(r.margen,2),
+                fmtInt(r.transacciones), fmtNum(r.unidades,0), fmtNum(r.ticket)
+            ].map(x => `"${x}"`).join(";") + "\n";
+        });
+
+        const a = document.createElement("a");
+        a.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        a.download = filtroMes ? `SUNAT_RER_${mesToSunat(filtroMes)}.csv` : "SUNAT_RER_Mensual.csv";
+        a.click();
+    }
+
+    function exportarReporteSunatRUSCSV(filtroMes, rows) {
+        let csv = "\ufeff" + [
+            "Mes","PeriodoSUNAT",
+            "VentasTotal","ComprasTotal","Categoria","CuotaRUS",
+            "CostoVentas","Ganancia","MargenPct",
+            "Transacciones","Unidades","TicketPromedio","Estado"
+        ].join(";") + "\n";
+
+        rows.forEach(r => {
+            csv += [
+                r.mes,
+                mesToSunat(r.mes),
+                fmtNum(r.ventas_total), fmtNum(r.compras_total),
+                r.rus_cat, fmtNum(r.rus_cuota,2),
+                fmtNum(r.costo_ventas), fmtNum(r.ganancia), fmtNum(r.margen,2),
+                fmtInt(r.transacciones), fmtNum(r.unidades,0), fmtNum(r.ticket),
+                r.rus_estado
+            ].map(x => `"${x}"`).join(";") + "\n";
+        });
+
+        const a = document.createElement("a");
+        a.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        a.download = filtroMes ? `SUNAT_RUS_${mesToSunat(filtroMes)}.csv` : "SUNAT_RUS_Mensual.csv";
+        a.click();
+    }
+
+
+    function renderizarReporteSunatMensual() {
+        const filtroEl = document.getElementById('filtroMesSunat');
+        const filtroMes = filtroEl ? filtroEl.value : '';
+        const tbody = document.getElementById('tabla-sunat-mensual');
+        const tfoot = document.getElementById('tabla-sunat-mensual-foot');
+        if(!tbody || !tfoot) return;
+
+        cacheReporteSunatMensual = generarReporteSunatMensual(filtroMes);
+        tbody.innerHTML = '';
+        tfoot.innerHTML = '';
+
+        if(cacheReporteSunatMensual.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="14" style="color:#64748b;">Sin datos para el periodo seleccionado.</td></tr>`;
+            renderizarDetalleSunatMes(filtroMes);
+            return;
+        }
+
+        // Totales
+        const tot = {
+            ventas_total:0, ventas_base:0, ventas_igv:0, costo_ventas:0, ganancia:0,
+            compras_total:0, compras_base:0, compras_igv:0, igv_pagar:0,
+            transacciones:0, unidades:0, ticket:0
+        };
+
+        cacheReporteSunatMensual.forEach(r => {
+            tot.ventas_total += r.ventas_total;
+            tot.ventas_base  += r.ventas_base;
+            tot.ventas_igv   += r.ventas_igv;
+            tot.costo_ventas += r.costo_ventas;
+            tot.ganancia     += r.ganancia;
+            tot.compras_total += r.compras_total;
+            tot.compras_base  += r.compras_base;
+            tot.compras_igv   += r.compras_igv;
+            tot.igv_pagar    += r.igv_pagar;
+            tot.transacciones += r.transacciones;
+            tot.unidades += r.unidades;
+        });
+        tot.ticket = tot.transacciones > 0 ? (tot.ventas_total / tot.transacciones) : 0;
+        const totMargen = tot.ventas_total > 0 ? (tot.ganancia / tot.ventas_total) * 100 : 0;
+
+        cacheReporteSunatMensual.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.title = 'Clic para filtrar este mes y ver detalle';
+            tr.onclick = () => { 
+                if(document.getElementById('filtroMesSunat')) {
+                    document.getElementById('filtroMesSunat').value = r.mes; 
+                    renderizarReporteSunatMensual();
+                }
+            };
+
+            tr.innerHTML = `
+                <td><b>${r.mes}</b> <span style="color:#94a3b8;">(${mesToSunat(r.mes)})</span></td>
+                <td style="text-align:right">S/. ${fmtNum(r.ventas_total)}</td>
+                <td style="text-align:right">${fmtNum(r.ventas_base)}</td>
+                <td style="text-align:right">${fmtNum(r.ventas_igv)}</td>
+                <td style="text-align:right">${fmtNum(r.costo_ventas)}</td>
+                <td style="text-align:right"><b>${fmtNum(r.ganancia)}</b></td>
+                <td style="text-align:right">${fmtNum(r.margen,2)}</td>
+                <td style="text-align:right">S/. ${fmtNum(r.compras_total)}</td>
+                <td style="text-align:right">${fmtNum(r.compras_base)}</td>
+                <td style="text-align:right">${fmtNum(r.compras_igv)}</td>
+                <td style="text-align:right"><b>${fmtNum(r.igv_pagar)}</b></td>
+                <td style="text-align:right">${fmtInt(r.transacciones)}</td>
+                <td style="text-align:right">${fmtNum(r.unidades,0)}</td>
+                <td style="text-align:right">${fmtNum(r.ticket)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        tfoot.innerHTML = `
+            <tr>
+                <td style="padding:10px 8px; font-weight:900; border-top:2px solid #e2e8f0;">TOTALES</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.ventas_total)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ventas_base)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ventas_igv)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.costo_ventas)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ganancia)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(totMargen,2)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">S/. ${fmtNum(tot.compras_total)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.compras_base)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.compras_igv)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.igv_pagar)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtInt(tot.transacciones)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.unidades,0)}</td>
+                <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ticket)}</td>
+            </tr>
+        `;
+
+        renderizarDetalleSunatMes(filtroMes);
+    }
+
+    function renderizarDetalleSunatMes(mes='') {
+        const ayuda = document.getElementById('sunat-ayuda');
+        const boxV = document.getElementById('sunat-detalle-ventas-box');
+        const boxC = document.getElementById('sunat-detalle-compras-box');
+
+        const tbV = document.getElementById('tabla-sunat-detalle-ventas');
+        const tfV = document.getElementById('tabla-sunat-detalle-ventas-foot');
+
+        const tbC = document.getElementById('tabla-sunat-detalle-compras');
+        const tfC = document.getElementById('tabla-sunat-detalle-compras-foot');
+
+        if(!ayuda || !tbV || !tbC) return;
+
+        tbV.innerHTML = '';
+        tbC.innerHTML = '';
+        if(tfV) tfV.innerHTML = '';
+        if(tfC) tfC.innerHTML = '';
+
+        if(!mes) {
+            if(boxV) boxV.open = false;
+            if(boxC) boxC.open = false;
+            ayuda.innerHTML = 'Tip: selecciona un mes (o haz clic en una fila) para ver el detalle y exportar.';
+            return;
+        }
+
+        if(boxV) boxV.open = true;
+        if(boxC) boxC.open = true;
+
+        ayuda.innerHTML = `Detalle del periodo <b>${mes}</b> (SUNAT: <b>${mesToSunat(mes)}</b>) — modo: <b>${sunatModo}</b>.`;
+
+        // Ventas detalle
+        const ventasMes = db.ventas.filter(v => v.vendido && (v.fecha_venta || '').startsWith(mes));
+        if(ventasMes.length === 0) {
+            tbV.innerHTML = `<tr><td colspan="10" style="color:#64748b;">Sin ventas en este mes.</td></tr>`;
+        } else {
+            let tot = { cant:0, total:0, base:0, igv:0, costo:0, ganancia:0 };
+            ventasMes.forEach(v => {
+                const cant = _n(v.cantidad);
+                const total = _n(v.total_venta);
+                const split = igvSplit(total);
+
+                let costo = parseFloat(v.costo_historico);
+                if (isNaN(costo) || costo === 0) {
+                    let costoUnit = obtenerCostoEstimado(v.minicod_venta);
+                    costo = costoUnit * cant;
+                }
+                const gan = split.total - costo;
+
+                tot.cant += cant;
+                tot.total += split.total;
+                tot.base += split.base;
+                tot.igv += split.igv;
+                tot.costo += costo;
+                tot.ganancia += gan;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${v.fecha_venta || ''}</td>
+                    <td>${(v.producto_venta || '').toString()}</td>
+                    <td><span class="mini-code">${(v.minicod_venta || '')}</span></td>
+                    <td style="text-align:right">${fmtNum(cant,0)}</td>
+                    <td style="text-align:right">${fmtNum(_n(v.precio_unitario))}</td>
+                    <td style="text-align:right">${fmtNum(split.total)}</td>
+                    <td style="text-align:right">${fmtNum(split.base)}</td>
+                    <td style="text-align:right">${fmtNum(split.igv)}</td>
+                    <td style="text-align:right">${fmtNum(costo)}</td>
+                    <td style="text-align:right"><b>${fmtNum(gan)}</b></td>
+                `;
+                tbV.appendChild(tr);
+            });
+
+            if(tfV) {
+                tfV.innerHTML = `
+                    <tr>
+                        <td style="padding:10px 8px; font-weight:900; border-top:2px solid #e2e8f0;">TOTALES</td>
+                        <td colspan="2" style="border-top:2px solid #e2e8f0; color:#94a3b8;">—</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.cant,0)}</td>
+                        <td style="border-top:2px solid #e2e8f0; color:#94a3b8;">—</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.total)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.base)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.igv)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.costo)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.ganancia)}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Compras detalle
+        const comprasMes = db.compras.filter(c => (c.fecha || '').startsWith(mes));
+        if(comprasMes.length === 0) {
+            tbC.innerHTML = `<tr><td colspan="8" style="color:#64748b;">Sin compras en este mes.</td></tr>`;
+        } else {
+            let tot = { total_sol:0, base:0, igv:0, total_usd:0 };
+            comprasMes.forEach(c => {
+                const totalSol = _n(c.total_sol);
+                const split = igvSplit(totalSol);
+                const totalUsd = _n(c.total_dolares);
+
+                tot.total_sol += split.total;
+                tot.base += split.base;
+                tot.igv += split.igv;
+                tot.total_usd += totalUsd;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${c.fecha || ''}</td>
+                    <td>${c.numero_orden || ''}</td>
+                    <td>${c.comprobante || ''}</td>
+                    <td style="text-align:right">${fmtNum(split.total)}</td>
+                    <td style="text-align:right">${fmtNum(split.base)}</td>
+                    <td style="text-align:right">${fmtNum(split.igv)}</td>
+                    <td style="text-align:right">${fmtNum(totalUsd)}</td>
+                    <td style="text-align:right">${fmtNum(_n(c.tipo_cambio),4)}</td>
+                `;
+                tbC.appendChild(tr);
+            });
+
+            if(tfC) {
+                tfC.innerHTML = `
+                    <tr>
+                        <td style="padding:10px 8px; font-weight:900; border-top:2px solid #e2e8f0;">TOTALES</td>
+                        <td colspan="2" style="border-top:2px solid #e2e8f0; color:#94a3b8;">—</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.total_sol)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.base)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.igv)}</td>
+                        <td style="text-align:right; font-weight:900; border-top:2px solid #e2e8f0;">${fmtNum(tot.total_usd)}</td>
+                        <td style="border-top:2px solid #e2e8f0; color:#94a3b8;">—</td>
+                    </tr>
+                `;
+            }
+        }
+    }
+
+
+    function exportarReporteSunatMensualCSV() {
+        const filtroEl = document.getElementById('filtroMesSunat');
+        const filtroMes = filtroEl ? filtroEl.value : '';
+        const rows = cacheReporteSunatMensual && cacheReporteSunatMensual.length ? cacheReporteSunatMensual : generarReporteSunatMensual(filtroMes);
+
+        let csv = "﻿" + [
+            "Mes","PeriodoSUNAT",
+            "VentasTotal","VentasBase","IGVVentas",
+            "CostoVentas","Ganancia","MargenPct",
+            "ComprasTotal","ComprasBase","IGVCompras","IGVPorPagar",
+            "Transacciones","Unidades","TicketPromedio"
+        ].join(";") + "\n";
+
+        rows.forEach(r => {
+            csv += [
+                r.mes,
+                mesToSunat(r.mes),
+                fmtNum(r.ventas_total), fmtNum(r.ventas_base), fmtNum(r.ventas_igv),
+                fmtNum(r.costo_ventas), fmtNum(r.ganancia), fmtNum(r.margen,2),
+                fmtNum(r.compras_total), fmtNum(r.compras_base), fmtNum(r.compras_igv),
+                fmtNum(r.igv_pagar),
+                fmtInt(r.transacciones), fmtNum(r.unidades,0), fmtNum(r.ticket)
+            ].map(x => `"${x}"`).join(";") + "\n";
+        });
+
+        const a = document.createElement("a");
+        a.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        a.download = filtroMes ? `SUNAT_${mesToSunat(filtroMes)}.csv` : "SUNAT_Mensual.csv";
+        a.click();
     }
 
     // --- FUNCIONES LOGICAS (Igual v14) ---
@@ -415,7 +1237,16 @@
         }
     }
 
-    function cambiarTab(t) { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); event.target.classList.add('active'); tabActual = t; renderizar(); }
+    function cambiarTab(t) { 
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        if (typeof event !== 'undefined' && event && event.target) event.target.classList.add('active');
+        tabActual = t;
+
+        // Para que el reporte no se vea apretado, bajamos la columna derecha (full width al reporte)
+        document.body.classList.toggle('reporte-fullwidth', t === 'reporte');
+
+        renderizar(); 
+    }
     function guardar(i,k,v) { db[tabActual][i][k]=v; guardarDB(); }
     function agregarFila() { db[tabActual].unshift({}); guardarDB(); renderizar(); }
     function agregarFilaVenta() { db.ventas.unshift({cantidad:'1', fecha_venta: new Date().toISOString().split('T')[0], vendido:false}); guardarDB(); renderizar(); }
@@ -434,6 +1265,7 @@
     function exportarExcel() { let csv="﻿"+esquemas[tabActual].map(c=>c.label).join(";")+"\n"; db[tabActual].forEach(r=>csv+=esquemas[tabActual].map(c=>`"${r[c.key]||''}"`).join(";")+"\n"); const a=document.createElement("a"); a.href="data:text/csv;charset=utf-8,"+encodeURI(csv); a.download=`Reporte_${tabActual}.csv`; a.click(); }
 
     init();
+
 </script>
 </body>
 </html>
