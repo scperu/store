@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Léxico 0→1000 | Sinónimos y antónimos (Espasa)</title>
+  <style>
+    :root{
+      --bg:#070b16;
+      --card: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.14);
+      --text:#ffffff;
+      --soft: rgba(255,255,255,.92);
+      --soft2: rgba(255,255,255,.78);
+      --ok: rgba(67,245,154,.85);
+      --bad: rgba(255,84,112,.85);
+      --warn: rgba(255,209,102,.90);
+      --r:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 700px at 10% 0%, rgba(80,120,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(200,80,255,.18), transparent 55%),
+        linear-gradient(180deg, #050814, var(--bg));
+      color:var(--text);
+    }
+    .wrap{max-width:1020px; margin:0 auto; padding:18px 14px 60px}
+    .top{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:12px}
+    .title{display:flex; flex-direction:column; gap:4px}
+    .title .h{font-size:18px; letter-spacing:.2px}
+    .title .s{font-size:12.5px; color:var(--soft2)}
+    .pills{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      padding:8px 10px; border-radius:999px;
+      font-size:12.5px; color:var(--soft);
+      white-space:nowrap;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--r);
+      padding:14px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .grid{display:grid; gap:14px; grid-template-columns: 1.2fr .8fr}
+    @media (max-width:920px){ .grid{grid-template-columns: 1fr} }
+
+    .progress{width:100%; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background: rgba(255,255,255,.05)}
+    .bar{height:100%; width:0%; background: linear-gradient(90deg, rgba(67,245,154,.95), rgba(255,209,102,.95)); transition: width .25s ease}
+
+    .btn{
+      cursor:pointer; user-select:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px; border-radius: 14px;
+      font-size:13.5px;
+      transition: transform .08s ease;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn.primary{border-color: rgba(67,245,154,.45); background: rgba(67,245,154,.10)}
+    .btn.danger{border-color: rgba(255,84,112,.45); background: rgba(255,84,112,.10)}
+    .btn.ghost{background:transparent}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .hr{height:1px; background: rgba(255,255,255,.12); margin:12px 0}
+    .tag{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.05); font-size:12px; color:var(--soft)}
+    .big{font-size:28px; letter-spacing:.2px}
+    .soft{color:var(--soft)}
+    .soft2{color:var(--soft2)}
+    .q{margin:10px 0 10px; font-size:14px}
+    .opts{display:grid; gap:10px}
+    .opt{
+      text-align:left;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      color:var(--text);
+    }
+    .opt:hover{border-color: rgba(255,255,255,.22)}
+    .opt:disabled{opacity:.7; cursor:not-allowed}
+    .ok{border-color: rgba(67,245,154,.70)!important; background: rgba(67,245,154,.10)!important}
+    .bad{border-color: rgba(255,84,112,.70)!important; background: rgba(255,84,112,.10)!important}
+
+    .msg{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      color:var(--soft);
+      white-space:pre-wrap;
+    }
+    .msg.ok{border-color: rgba(67,245,154,.55); background: rgba(67,245,154,.08); color:var(--text)}
+    .msg.bad{border-color: rgba(255,84,112,.55); background: rgba(255,84,112,.08); color:var(--text)}
+    textarea, input{
+      width:100%;
+      background: rgba(0,0,0,.18);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      color:var(--text);
+      outline:none;
+      font-size:13.5px;
+      line-height:1.4;
+    }
+    textarea{min-height:110px; resize:vertical}
+    .kpi{display:flex; gap:10px; flex-wrap:wrap}
+    .kpi .box{flex:1 1 140px; border:1px solid var(--line); background: rgba(255,255,255,.05); border-radius:14px; padding:10px 12px}
+    .kpi .n{font-size:18px}
+    .tiny{font-size:12px; color:var(--soft2)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .pairs{display:grid; gap:10px; grid-template-columns: 1fr 1fr}
+    @media (max-width:620px){ .pairs{grid-template-columns:1fr} }
+    .pairCol{border:1px solid var(--line); background: rgba(255,255,255,.05); border-radius:14px; padding:10px}
+    .pairItem{border:1px solid var(--line); background: rgba(0,0,0,.12); border-radius:12px; padding:10px; cursor:pointer; margin-bottom:8px}
+    .pairItem.sel{border-color: rgba(255,209,102,.70)!important; background: rgba(255,209,102,.12)!important}
+    .pairItem.done{opacity:.62; cursor:not-allowed}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="title">
+        <div class="h">🧠 Léxico 0→1000 (Espasa)</div>
+        <div class="s">Progresión real: básico → intermedio → avanzado → culto → arcaico. Guarda progreso. Texto blanco.</div>
+      </div>
+      <div class="pills">
+        <div class="pill" id="pillLex">Diccionario: no cargado</div>
+        <div class="pill" id="pillLevel">Nivel: 1/1000</div>
+        <div class="pill" id="pillStreak">Racha: 0</div>
+        <div class="pill" id="pillMistakes">Errores: 0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div style="min-width:280px;">
+          <div class="tiny">Progreso total</div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="btnPlay">▶️ Jugar / Continuar</button>
+          <button class="btn ghost" id="btnDiagnostic">🧪 Diagnóstico</button>
+          <button class="btn ghost" id="btnExport">⬇️ Exportar progreso</button>
+          <button class="btn ghost" id="btnImport">⬆️ Importar progreso</button>
+          <button class="btn danger" id="btnReset">♻️ Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row" style="justify-content:space-between; align-items:flex-end;">
+        <div>
+          <div class="tiny">Cargar diccionario (JSON o TSV)</div>
+          <div class="row" style="margin-top:8px;">
+            <input id="fileLex" type="file" accept=".json,.tsv,.txt" />
+            <button class="btn ghost" id="btnLoadLex">📚 Cargar</button>
+            <button class="btn ghost" id="btnTryFetch">🔄 Intentar cargar del directorio</button>
+          </div>
+          <div class="tiny" style="margin-top:8px;">
+            Si lo pones en la misma carpeta del HTML, usa “Intentar cargar del directorio”.
+            Si no carga (por abrir con file://), usa el botón “Cargar” o abre con un servidor local.
+          </div>
+        </div>
+        <div style="min-width:260px;">
+          <div id="lexStatus" class="msg" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:14px;">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <div>🎮 Juego</div>
+          <div class="tag" id="modeTag">Modo: —</div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="tiny">Palabra del nivel</div>
+          <div class="big" id="wWord">—</div>
+          <div class="soft" id="wMeta" style="margin-top:6px;">—</div>
+          <div class="soft2" id="wTip" style="margin-top:6px;">—</div>
+          <div class="row" style="margin-top:8px;">
+            <div class="tag" id="tierTag">Etapa: —</div>
+            <div class="tag" id="avoidTag">Evita: muletillas</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div id="mcBlock">
+          <div class="q" id="qText">Primero carga el diccionario. Luego presiona “Jugar / Continuar”.</div>
+          <div class="opts" id="opts"></div>
+          <div id="msg" class="msg" style="display:none; margin-top:10px;"></div>
+
+          <div class="row" style="margin-top:12px; justify-content:space-between;">
+            <div class="row">
+              <button class="btn ghost" id="btnHint">💡 Pista</button>
+              <button class="btn ghost" id="btnSkip" style="display:none;">⏭️ Saltar (diagnóstico)</button>
+            </div>
+            <div class="row">
+              <button class="btn" id="btnNext" disabled>✅ Siguiente nivel</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="matchBlock" style="display:none;">
+          <div class="q" id="matchTitle">Correlación: une palabra ↔ sinónimo</div>
+          <div class="pairs">
+            <div class="pairCol">
+              <div class="tiny" style="margin-bottom:8px;">Palabras</div>
+              <div id="matchWords"></div>
+            </div>
+            <div class="pairCol">
+              <div class="tiny" style="margin-bottom:8px;">Sinónimos</div>
+              <div id="matchSyns"></div>
+            </div>
+          </div>
+          <div id="matchMsg" class="msg" style="display:none; margin-top:10px;"></div>
+          <div class="row" style="margin-top:12px; justify-content:flex-end;">
+            <button class="btn" id="btnMatchReset">🔁 Reintentar</button>
+          </div>
+        </div>
+
+        <div id="writeBlock" style="display:none;">
+          <div class="q" id="writeTitle">Reto de escritura: usa la palabra en una frase</div>
+          <div class="tiny" id="writeRules">Regla: tu frase debe contener la palabra y tener al menos 25 caracteres.</div>
+          <textarea id="writeText" placeholder="Escribe tu frase aquí..."></textarea>
+          <div id="writeMsg" class="msg" style="display:none; margin-top:10px;"></div>
+          <div class="row" style="margin-top:12px; justify-content:space-between;">
+            <button class="btn ghost" id="btnWriteHint">💡 Pista</button>
+            <button class="btn" id="btnWriteCheck">✅ Validar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>📊 Tablero</div>
+        <div class="kpi" style="margin-top:10px;">
+          <div class="box"><div class="n" id="kLearned">0</div><div class="tiny">Aprendidas</div></div>
+          <div class="box"><div class="n" id="kLevel">1</div><div class="tiny">Nivel</div></div>
+          <div class="box"><div class="n" id="kBest">0</div><div class="tiny">Mejor racha</div></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div>🧹 Detector de muletillas</div>
+        <div class="tiny" style="margin-top:6px;">Pega texto: te marco comodines y te sugiero reemplazos.</div>
+        <textarea id="userText" placeholder="Ejemplo: hice una cosa muy buena..."></textarea>
+        <div class="row" style="margin-top:10px; justify-content:space-between;">
+          <button class="btn primary" id="btnAnalyze">🔎 Analizar</button>
+          <button class="btn ghost" id="btnCopyClean">📋 Copiar versión mejorada</button>
+        </div>
+        <div id="anRes" class="msg mono" style="display:none; margin-top:10px;"></div>
+
+        <div class="hr"></div>
+
+        <div>📜 Últimas aprendidas</div>
+        <div class="tiny" style="margin-top:6px;">Se muestra un resumen para no llenar la pantalla.</div>
+        <div class="row" style="margin-top:10px;">
+          <input id="searchLearned" placeholder="Buscar (ej: empero, optimizar...)" />
+          <button class="btn ghost" id="btnCopyLearned">📋 Copiar lista</button>
+        </div>
+        <div id="learnedBox" class="msg mono" style="margin-top:10px; max-height:240px; overflow:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="./lexico_espasa.data.js"></script>
+<script>
+/* ==========================
+   CONFIG
+   ========================== */
+const LEVEL_TARGET = 1000;
+const LS_KEY = "lexico_espasa_game_v1";
+
+/* ==========================
+   ESTADO (progreso)
+   ========================== */
+const defaultState = {
+  level: 1,
+  streak: 0,
+  bestStreak: 0,
+  mistakes: 0,
+  learned: {},          // lemma -> true
+  seen: {},             // lemma -> true (evita repetición)
+  inDiagnostic: false,
+  diagStep: 0,
+  diagScore: 0,
+  diagLevel: 1,
+  modeCycle: 0
+};
+
+function safeParse(raw){ try { return JSON.parse(raw); } catch { return null; } }
+function loadState(){
+  const raw = localStorage.getItem(LS_KEY);
+  const obj = raw ? safeParse(raw) : null;
+  if(!obj) return structuredClone(defaultState);
+  return { ...structuredClone(defaultState), ...obj };
+}
+let state = loadState();
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+/* ==========================
+   LÉXICO (del diccionario)
+   JSON: [{lemma, syn:[], ant:[]}, ...]
+   TSV:  palabra<TAB>sin1,sin2<TAB>ant1,ant2
+   ========================== */
+let LEXICON = [];              // normalizado: {lemma, syn, ant, tier}
+let TIER_INDEXES = {1:[],2:[],3:[],4:[],5:[]};
+let LEX_READY = false;
+
+/* Sets de palabras para final (arcaico) y cultas */
+const ARCAIC = new Set([
+  "empero","allende","doquier","antaño","asaz","maguer","hogaño","menester","cuita",
+  "fementido","faz","antier","truán","alhóndiga","albéitar","cadalso","parvo"
+].map(x=>x.toLowerCase()));
+
+const CULTA = new Set([
+  "apodíctico","palimpsesto","ataraxia","inefable","inmarcesible","ubérrimo","inextricable",
+  "epítome","eufonía","sinecura","adlátere","panegírico","vituperio","protervo","felón","anodino",
+  "circunspecto","diáfano","lacónico","acerbo","baladí","ingente","perentorio","apremiante"
+].map(x=>x.toLowerCase()));
+
+function normalizeWord(s){
+  return String(s||"").trim();
+}
+function uniq(arr){
+  const out = [];
+  const seen = new Set();
+  for(const x of arr){
+    const k = String(x).toLowerCase();
+    if(!k || seen.has(k)) continue;
+    seen.add(k);
+    out.push(String(x));
+  }
+  return out;
+}
+
+/* Dificultad: 1 básico, 2 intermedio, 3 avanzado, 4 culto, 5 arcaico/en desuso */
+function tierOfLemma(w){
+  const k = normalizeWord(w).toLowerCase();
+  if(ARCAIC.has(k)) return 5;
+  if(CULTA.has(k)) return 4;
+
+  // Heurística básica: más corto y común antes; más largo después
+  if(k.includes(" ")) return 2;
+  if(k.length <= 6) return 1;
+  if(k.length <= 9) return 2;
+  if(k.length <= 12) return 3;
+  return 4;
+}
+
+function tierName(t){
+  if(t === 1) return "Básico";
+  if(t === 2) return "Intermedio";
+  if(t === 3) return "Avanzado";
+  if(t === 4) return "Culto";
+  return "Arcaico / en desuso";
+}
+
+function buildIndexes(){
+  TIER_INDEXES = {1:[],2:[],3:[],4:[],5:[]};
+  for(let i=0;i<LEXICON.length;i++){
+    const t = LEXICON[i].tier;
+    (TIER_INDEXES[t] || TIER_INDEXES[3]).push(i);
+  }
+  // mezclar para azar controlado dentro del tier
+  for(const t of [1,2,3,4,5]){
+    TIER_INDEXES[t] = shuffle(TIER_INDEXES[t]);
+  }
+}
+
+function parseTSV(text){
+  const lines = text.split(/\\r?\\n/).map(x=>x.trim()).filter(Boolean);
+  const out = [];
+  const seen = new Set();
+  for(const line of lines.slice(1)){ // salta header si existe
+    const parts = line.split("\\t");
+    if(parts.length < 2) continue;
+    const lemma = normalizeWord(parts[0]);
+    const syn = uniq((parts[1]||"").split(",").map(normalizeWord).filter(Boolean));
+    const ant = uniq((parts[2]||"").split(",").map(normalizeWord).filter(Boolean));
+    const k = lemma.toLowerCase();
+    if(!lemma || seen.has(k)) continue;
+    if(syn.length === 0 && ant.length === 0) continue;
+    seen.add(k);
+    out.push({ lemma, syn, ant, tier: tierOfLemma(lemma) });
+  }
+  return out;
+}
+
+function parseJSON(text){
+  const data = JSON.parse(text);
+  if(!Array.isArray(data)) throw new Error("JSON inválido: se esperaba un array");
+  const out = [];
+  const seen = new Set();
+  for(const item of data){
+    const lemma = normalizeWord(item.lemma || item.palabra || item.word || "");
+    const syn = uniq((item.syn || item.sinonimos || []).map(normalizeWord).filter(Boolean));
+    const ant = uniq((item.ant || item.antonimos || []).map(normalizeWord).filter(Boolean));
+    const k = lemma.toLowerCase();
+    if(!lemma || seen.has(k)) continue;
+    if(syn.length === 0 && ant.length === 0) continue;
+    seen.add(k);
+    out.push({ lemma, syn, ant, tier: tierOfLemma(lemma) });
+  }
+  return out;
+}
+
+/* ==========================
+   SELECCIÓN POR NIVEL (progresión)
+   ========================== */
+function tierForLevel(level){
+  // 1–200 básico, 201–450 intermedio, 451–700 avanzado, 701–900 culto, 901–1000 arcaico
+  if(level <= 200) return 1;
+  if(level <= 450) return 2;
+  if(level <= 700) return 3;
+  if(level <= 900) return 4;
+  return 5;
+}
+
+function pickEntry(tier, require){
+  // require: {synMin, antMin}
+  const idxs = TIER_INDEXES[tier] || [];
+  if(!idxs.length) return null;
+
+  for(let attempt=0; attempt<400; attempt++){
+    const idx = idxs[Math.floor(Math.random()*idxs.length)];
+    const it = LEXICON[idx];
+    if(!it) continue;
+
+    const key = it.lemma.toLowerCase();
+    if(state.seen[key]) continue;
+
+    if(require){
+      if(require.synMin && it.syn.length < require.synMin) continue;
+      if(require.antMin && it.ant.length < require.antMin) continue;
+    }
+
+    state.seen[key] = true;
+    return it;
+  }
+
+  // fallback: permite repetición si ya está agotado
+  for(let attempt=0; attempt<200; attempt++){
+    const idx = idxs[Math.floor(Math.random()*idxs.length)];
+    const it = LEXICON[idx];
+    if(!it) continue;
+    if(require){
+      if(require.synMin && it.syn.length < require.synMin) continue;
+      if(require.antMin && it.ant.length < require.antMin) continue;
+    }
+    return it;
+  }
+  return null;
+}
+
+/* ==========================
+   MODO DE JUEGO
+   - SynPick: elegir sinónimo
+   - AntPick: elegir antónimo
+   - Match: unir palabra ↔ sinónimo
+   - Write: escribir frase usando la palabra
+   ========================== */
+let current = null;
+let currentMode = null;
+let answeredCorrect = false;
+let lastHint = 0;
+
+/* UI refs */
+function $(id){ return document.getElementById(id); }
+const pillLex = $("pillLex");
+const pillLevel = $("pillLevel");
+const pillStreak = $("pillStreak");
+const pillMistakes = $("pillMistakes");
+const bar = $("bar");
+
+const modeTag = $("modeTag");
+const wWord = $("wWord");
+const wMeta = $("wMeta");
+const wTip = $("wTip");
+const tierTag = $("tierTag");
+const avoidTag = $("avoidTag");
+
+const mcBlock = $("mcBlock");
+const qText = $("qText");
+const opts = $("opts");
+const msg = $("msg");
+
+const matchBlock = $("matchBlock");
+const matchWords = $("matchWords");
+const matchSyns = $("matchSyns");
+const matchMsg = $("matchMsg");
+const btnMatchReset = $("btnMatchReset");
+
+const writeBlock = $("writeBlock");
+const writeText = $("writeText");
+const writeMsg = $("writeMsg");
+const btnWriteCheck = $("btnWriteCheck");
+const btnWriteHint = $("btnWriteHint");
+
+const lexStatus = $("lexStatus");
+const btnPlay = $("btnPlay");
+const btnDiagnostic = $("btnDiagnostic");
+const btnExport = $("btnExport");
+const btnImport = $("btnImport");
+const btnReset = $("btnReset");
+const btnHint = $("btnHint");
+const btnSkip = $("btnSkip");
+const btnNext = $("btnNext");
+
+const kLearned = $("kLearned");
+const kLevel = $("kLevel");
+const kBest = $("kBest");
+const userText = $("userText");
+const btnAnalyze = $("btnAnalyze");
+const btnCopyClean = $("btnCopyClean");
+const anRes = $("anRes");
+const learnedBox = $("learnedBox");
+const searchLearned = $("searchLearned");
+const btnCopyLearned = $("btnCopyLearned");
+
+const fileLex = $("fileLex");
+const btnLoadLex = $("btnLoadLex");
+const btnTryFetch = $("btnTryFetch");
+
+/* util */
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function showLexStatus(t, ok=true){
+  lexStatus.style.display = "block";
+  lexStatus.className = "msg " + (ok ? "ok" : "bad");
+  lexStatus.textContent = t;
+}
+function hideLexStatus(){
+  lexStatus.style.display = "none";
+  lexStatus.textContent = "";
+  lexStatus.className = "msg";
+}
+
+function showMsg(t, type){
+  msg.style.display = "block";
+  msg.className = "msg" + (type ? " " + type : "");
+  msg.textContent = t;
+}
+function hideMsg(){
+  msg.style.display = "none";
+  msg.textContent = "";
+  msg.className = "msg";
+}
+function lockNext(lock){
+  btnNext.disabled = lock;
+  answeredCorrect = !lock;
+}
+
+function updateHeader(){
+  pillLevel.textContent = `Nivel: ${state.level}/${LEVEL_TARGET}`;
+  pillStreak.textContent = `Racha: ${state.streak}`;
+  pillMistakes.textContent = `Errores: ${state.mistakes}`;
+
+  const pct = clamp(((state.level-1)/LEVEL_TARGET)*100, 0, 100);
+  bar.style.width = pct.toFixed(2) + "%";
+
+  const learnedCount = Object.keys(state.learned).length;
+  kLearned.textContent = learnedCount;
+  kLevel.textContent = state.level;
+  kBest.textContent = state.bestStreak;
+
+  renderLearnedList();
+}
+
+/* ==========================
+   MUETILLAS (detector)
+   ========================== */
+const COMMON_MAP = {
+  "hacer":["realizar","ejecutar","efectuar","concretar","elaborar"],
+  "muy":["sumamente","notablemente","considerablemente","asaz","enormemente"],
+  "cosa":["aspecto","elemento","factor","cuestión","punto"],
+  "bueno":["adecuado","óptimo","idóneo","favorable","sólido"],
+  "malo":["deficiente","nocivo","adverso","nefasto","pernicioso"],
+  "ver":["revisar","evaluar","examinar","constatar","analizar"],
+  "decir":["afirmar","señalar","mencionar","exponer","puntualizar"],
+  "tener":["poseer","disponer de","contar con","detentar","gozar de"],
+  "poner":["plantear","establecer","disponer","incorporar","ubicar"],
+  "usar":["utilizar","emplear","aplicar","servirse de","aprovechar"],
+  "problema":["inconveniente","contratiempo","conflicto","incidencia","escollo"]
+};
+const COMMON_REGEX = new RegExp("\\\\b(" + Object.keys(COMMON_MAP).join("|") + ")\\\\b","gi");
+let lastClean = "";
+
+function analyzeText(){
+  const text = userText.value || "";
+  if(!text.trim()){
+    anRes.style.display = "block";
+    anRes.className = "msg";
+    anRes.textContent = "Pega un texto primero.";
+    return;
+  }
+  const found = text.match(COMMON_REGEX) || [];
+  const counts = {};
+  found.forEach(w=>{
+    const k = w.toLowerCase();
+    counts[k] = (counts[k]||0)+1;
+  });
+  const keys = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  const lines = [];
+  keys.forEach(k=>{
+    const sug = (COMMON_MAP[k]||[]).slice(0,5).join(", ");
+    lines.push(`${k} × ${counts[k]}  →  ${sug}`);
+  });
+  lastClean = text.replace(COMMON_REGEX, (m)=>{
+    const k = m.toLowerCase();
+    const repl = (COMMON_MAP[k]||[])[0];
+    if(!repl) return m;
+    return (m[0] === m[0].toUpperCase()) ? (repl[0].toUpperCase()+repl.slice(1)) : repl;
+  });
+  anRes.style.display = "block";
+  anRes.className = "msg mono";
+  anRes.textContent =
+    `Muletillas detectadas: ${found.length}\\n\\n` +
+    (lines.length ? (lines.join("\\n") + "\\n\\n") : "No detecté muletillas del listado.\\n\\n") +
+    "Versión mejorada (básica):\\n" + lastClean;
+}
+async function copyClean(){
+  if(!lastClean){
+    analyzeText();
+    if(!lastClean) return;
+  }
+  try{
+    await navigator.clipboard.writeText(lastClean);
+    anRes.style.display = "block";
+    anRes.className = "msg ok";
+    anRes.textContent = "Copiado. Pégalo y ajústalo a tu estilo.";
+  }catch{
+    anRes.style.display = "block";
+    anRes.className = "msg";
+    anRes.textContent = "No pude copiar automático. Copia manualmente desde el cuadro.";
+  }
+}
+
+/* ==========================
+   LISTA aprendidas
+   ========================== */
+function renderLearnedList(){
+  const q = (searchLearned.value || "").toLowerCase().trim();
+  const learned = Object.keys(state.learned);
+
+  // últimas primero (por nivel aproximado: no guardamos el nivel, así que es simple)
+  learned.sort((a,b)=> b.localeCompare(a, "es"));
+
+  const filtered = q ? learned.filter(w=>w.toLowerCase().includes(q)) : learned;
+  const show = filtered.slice(0, 80);
+
+  if(!show.length){
+    learnedBox.textContent = "Aún no hay palabras aprendidas.";
+    return;
+  }
+  learnedBox.textContent = show.join("\\n") + (filtered.length > show.length ? `\\n...\\n(+${filtered.length - show.length} más)` : "");
+}
+async function copyLearned(){
+  const learned = Object.keys(state.learned).sort((a,b)=>a.localeCompare(b,"es"));
+  const text = learned.join("\\n");
+  try{
+    await navigator.clipboard.writeText(text);
+    showMsg("Lista copiada.", "ok");
+    setTimeout(hideMsg, 900);
+  }catch{
+    showMsg("No pude copiar automático. Copia desde el cuadro.", "");
+  }
+}
+
+/* ==========================
+   EXPORT / IMPORT progreso
+   ========================== */
+async function exportProgress(){
+  const data = JSON.stringify(state);
+  try{
+    await navigator.clipboard.writeText(data);
+    showMsg("Progreso exportado al portapapeles (JSON). Pégalo en un bloc para guardarlo.", "ok");
+    setTimeout(hideMsg, 1200);
+  }catch{
+    prompt("Copia este texto y guárdalo:", data);
+  }
+}
+function importProgress(){
+  const raw = prompt("Pega aquí el JSON exportado:");
+  if(!raw) return;
+  const obj = safeParse(raw);
+  if(!obj || typeof obj !== "object"){
+    showMsg("Importación fallida: JSON inválido.", "bad");
+    return;
+  }
+  state = { ...structuredClone(defaultState), ...obj };
+  // clamp
+  state.level = clamp(state.level, 1, LEVEL_TARGET);
+  saveState();
+  showMsg("Importación OK.", "ok");
+  setTimeout(()=>{ hideMsg(); updateHeader(); }, 700);
+}
+
+/* ==========================
+   LÓGICA DE PREGUNTAS
+   ========================== */
+function setCurrentUI(){
+  wWord.textContent = current ? current.lemma : "—";
+  const t = current ? current.tier : 0;
+  tierTag.textContent = `Etapa: ${tierName(t)}`;
+  avoidTag.textContent = "Evita: muletillas";
+
+  // Meta: mostrar listas rápidas
+  const synPreview = current && current.syn.length ? current.syn.slice(0,6).join(", ") : "—";
+  const antPreview = current && current.ant.length ? current.ant.slice(0,6).join(", ") : "—";
+  wMeta.textContent = `Sinónimos (muestra): ${synPreview}`;
+  wTip.textContent = `Antónimos (muestra): ${antPreview}`;
+}
+
+function decideMode(){
+  // Para hacerlo entretenido y con estructura:
+  // - Cada 10 niveles: Match
+  // - Cada 7 niveles: Write
+  // - Resto: sinónimo o antónimo (si hay antónimos disponibles)
+  const level = state.inDiagnostic ? state.diagLevel : state.level;
+
+  if(level % 10 === 0) return "MATCH";
+  if(level % 7 === 0) return "WRITE";
+
+  // alterna
+  return (state.modeCycle++ % 2 === 0) ? "SYN" : "ANT";
+}
+
+function pickCurrentForMode(mode){
+  const level = state.inDiagnostic ? state.diagLevel : state.level;
+  const tier = tierForLevel(level);
+
+  if(mode === "SYN") return pickEntry(tier, {synMin: 2, antMin: 0}) || pickEntry(tier, {synMin: 1}) || pickEntry(tier, null);
+  if(mode === "ANT") return pickEntry(tier, {antMin: 1}) || pickEntry(tier, {synMin: 2}) || pickEntry(tier, null);
+  if(mode === "MATCH") return pickEntry(tier, {synMin: 2}) || pickEntry(tier, null);
+  if(mode === "WRITE") return pickEntry(tier, null);
+  return pickEntry(tier, null);
+}
+
+function renderGame(){
+  updateHeader();
+
+  if(!LEX_READY){
+    showMsg("Primero carga el diccionario (JSON o TSV).", "");
+    return;
+  }
+
+  if(state.level > LEVEL_TARGET){
+    showMsg("Terminaste los 1000 niveles. Exporta tu progreso y empieza a escribir con tus palabras.", "ok");
+    btnNext.disabled = true;
+    return;
+  }
+
+  state.mistakes = 0;
+  lastHint = 0;
+  hideMsg();
+  lockNext(true);
+
+  btnSkip.style.display = state.inDiagnostic ? "" : "none";
+
+  currentMode = decideMode();
+  current = pickCurrentForMode(currentMode);
+
+  if(!current){
+    showMsg("No pude seleccionar una palabra. Revisa si el diccionario cargó bien.", "bad");
+    return;
+  }
+
+  // marcar aprendida cuando acierta
+  setCurrentUI();
+
+  // Mostrar el bloque correcto
+  mcBlock.style.display = "none";
+  matchBlock.style.display = "none";
+  writeBlock.style.display = "none";
+
+  if(currentMode === "SYN"){
+    modeTag.textContent = "Modo: elige un sinónimo";
+    renderSynMC();
+  } else if(currentMode === "ANT"){
+    modeTag.textContent = "Modo: elige un antónimo";
+    renderAntMC();
+  } else if(currentMode === "MATCH"){
+    modeTag.textContent = "Modo: correlación";
+    renderMatch();
+  } else {
+    modeTag.textContent = "Modo: escritura";
+    renderWrite();
+  }
+
+  saveState();
+}
+
+function buildDistractorsFromTier(tier, count, takeFrom){
+  // takeFrom: "syn" or "ant"
+  const idxs = TIER_INDEXES[tier] || [];
+  const out = [];
+  const seen = new Set();
+  for(let attempt=0; attempt<600 && out.length<count; attempt++){
+    const idx = idxs[Math.floor(Math.random()*idxs.length)];
+    const it = LEXICON[idx];
+    if(!it) continue;
+    const arr = takeFrom === "ant" ? it.ant : it.syn;
+    if(!arr || arr.length === 0) continue;
+    const candidate = arr[Math.floor(Math.random()*arr.length)];
+    const k = candidate.toLowerCase();
+    if(seen.has(k)) continue;
+    if(current && (k === current.lemma.toLowerCase())) continue;
+    seen.add(k);
+    out.push(candidate);
+  }
+  return out;
+}
+
+function renderSynMC(){
+  mcBlock.style.display = "";
+  qText.textContent = `Elige un sinónimo de: ${current.lemma}`;
+  opts.innerHTML = "";
+
+  const tier = current.tier;
+  const correct = current.syn[Math.floor(Math.random()*current.syn.length)];
+  const wrong = buildDistractorsFromTier(tier, 3, "syn");
+  const options = shuffle([correct, ...wrong].slice(0,4));
+
+  options.forEach(opt=>{
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = opt;
+    b.onclick = ()=> checkAnswer(opt === correct, b);
+    opts.appendChild(b);
+  });
+  mcBlock.appendChild(opts);
+}
+
+function renderAntMC(){
+  mcBlock.style.display = "";
+  qText.textContent = `Elige un antónimo de: ${current.lemma}`;
+  opts.innerHTML = "";
+
+  // si no tiene antónimos, cae a sinónimo (para no trabarse)
+  if(!current.ant || current.ant.length === 0){
+    qText.textContent = `No hay antónimos para esta entrada. Elige un sinónimo de: ${current.lemma}`;
+    return renderSynMC();
+  }
+
+  const tier = current.tier;
+  const correct = current.ant[Math.floor(Math.random()*current.ant.length)];
+  const wrong = buildDistractorsFromTier(tier, 3, "ant");
+  // si no hay suficientes antónimos en el tier, usa sinónimos como distractores
+  while(wrong.length < 3){
+    const extra = buildDistractorsFromTier(tier, 1, "syn");
+    if(!extra.length) break;
+    wrong.push(extra[0]);
+  }
+  const options = shuffle([correct, ...wrong].slice(0,4));
+
+  options.forEach(opt=>{
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = opt;
+    b.onclick = ()=> checkAnswer(opt === correct, b);
+    opts.appendChild(b);
+  });
+}
+
+function checkAnswer(ok, clickedBtn){
+  const buttons = [...opts.querySelectorAll(".opt")];
+  buttons.forEach(b=> b.disabled = true);
+
+  if(ok){
+    clickedBtn.classList.add("ok");
+    showMsg("Correcto. Ya puedes pasar al siguiente nivel.", "ok");
+    onCorrect();
+  }else{
+    clickedBtn.classList.add("bad");
+    state.mistakes++;
+    state.streak = 0;
+    showMsg("Incorrecto. No avanzas. Usa pista y reintenta.", "bad");
+    setTimeout(()=>{
+      buttons.forEach(b=>{
+        b.disabled = false;
+        b.classList.remove("bad");
+      });
+      hideMsg();
+    }, 750);
+    updateHeader();
+    saveState();
+  }
+}
+
+function onCorrect(){
+  state.learned[current.lemma] = true;
+  state.streak++;
+  state.bestStreak = Math.max(state.bestStreak, state.streak);
+
+  if(state.inDiagnostic){
+    state.diagScore++;
+  }
+
+  lockNext(false);
+  btnNext.disabled = false;
+  updateHeader();
+  saveState();
+}
+
+function nextLevel(){
+  if(state.inDiagnostic){
+    state.diagStep++;
+    if(state.diagStep >= 10){
+      // ubicar al usuario en una etapa
+      const score = state.diagScore;
+      // 0-10 → 1..450 aprox (arranca suave)
+      const suggested = clamp(1 + score * 40, 1, 450);
+      state.level = suggested;
+      state.inDiagnostic = false;
+      state.diagStep = 0;
+      state.diagScore = 0;
+      state.diagLevel = state.level;
+      showMsg(`Diagnóstico listo. Te ubico en nivel ${state.level}.`, "ok");
+      setTimeout(()=>{ hideMsg(); renderGame(); }, 900);
+      return;
+    }
+    // diagnóstico “salta” para tomar muestras
+    state.diagLevel = clamp(1 + state.diagStep * 70, 1, LEVEL_TARGET);
+    btnNext.disabled = true;
+    saveState();
+    renderGame();
+    return;
+  }
+
+  if(!answeredCorrect) return;
+  state.level++;
+  btnNext.disabled = true;
+  saveState();
+  renderGame();
+}
+
+function showHint(){
+  if(!current) return;
+  lastHint++;
+  if(currentMode === "SYN"){
+    const s = current.syn.slice(0,5).join(", ");
+    showMsg(`Pista: mira sinónimos: ${s || "—"}`, "");
+  }else if(currentMode === "ANT"){
+    const a = current.ant.slice(0,5).join(", ");
+    showMsg(`Pista: mira antónimos: ${a || "—"}`, "");
+  }else if(currentMode === "MATCH"){
+    showMsg("Pista: primero empareja los más obvios (los que te suenan más comunes).", "");
+  }else{
+    showMsg("Pista: escribe una frase real, no una lista. Usa contexto: sujeto + verbo + complemento.", "");
+  }
+}
+
+/* ==========================
+   MATCH MODE (4 parejas)
+   ========================== */
+let matchState = null;
+
+function renderMatch(){
+  matchBlock.style.display = "";
+  matchMsg.style.display = "none";
+  matchMsg.textContent = "";
+  matchMsg.className = "msg";
+
+  // Selecciona 4 palabras del mismo tier con al menos 2 sinónimos
+  const tier = current.tier;
+  const set = [];
+  // asegúrate que la primera sea current
+  if(current.syn.length >= 1) set.push(current);
+
+  for(let i=0; i<2000 && set.length<4; i++){
+    const it = pickEntry(tier, {synMin: 1});
+    if(!it) break;
+    if(set.find(x=>x.lemma.toLowerCase()===it.lemma.toLowerCase())) continue;
+    set.push(it);
+  }
+  if(set.length < 4){
+    // fallback: usa lo que hay
+    showMsg("No encontré suficientes entradas para correlación. Pasé a modo sinónimo.", "");
+    currentMode = "SYN";
+    modeTag.textContent = "Modo: elige un sinónimo";
+    return renderSynMC();
+  }
+
+  const words = shuffle(set.map(x=>({id:x.lemma, text:x.lemma})));
+  const syns  = shuffle(set.map(x=>({id:x.lemma, text:x.syn[Math.floor(Math.random()*x.syn.length)]})));
+
+  matchState = {
+    set,
+    words,
+    syns,
+    selWord: null,
+    selSyn: null,
+    locked: new Set()
+  };
+
+  matchWords.innerHTML = "";
+  matchSyns.innerHTML = "";
+
+  words.forEach(w=>{
+    const div = document.createElement("div");
+    div.className = "pairItem";
+    div.textContent = w.text;
+    div.dataset.id = w.id;
+    div.onclick = ()=>{
+      if(matchState.locked.has(w.id)) return;
+      matchState.selWord = w.id;
+      paintMatch();
+    };
+    matchWords.appendChild(div);
+  });
+
+  syns.forEach(s=>{
+    const div = document.createElement("div");
+    div.className = "pairItem";
+    div.textContent = s.text;
+    div.dataset.id = s.id;
+    div.onclick = ()=>{
+      if(matchState.locked.has(s.id)) return;
+      matchState.selSyn = s.id;
+      paintMatch();
+      tryMatchPair();
+    };
+    matchSyns.appendChild(div);
+  });
+
+  lockNext(true);
+  btnNext.disabled = true;
+}
+
+function paintMatch(){
+  [...matchWords.children].forEach(el=>{
+    el.classList.toggle("sel", el.dataset.id === matchState.selWord);
+    el.classList.toggle("done", matchState.locked.has(el.dataset.id));
+  });
+  [...matchSyns.children].forEach(el=>{
+    el.classList.toggle("sel", el.dataset.id === matchState.selSyn);
+    el.classList.toggle("done", matchState.locked.has(el.dataset.id));
+  });
+}
+
+function tryMatchPair(){
+  if(!matchState.selWord || !matchState.selSyn) return;
+
+  const ok = matchState.selWord === matchState.selSyn;
+  if(ok){
+    matchState.locked.add(matchState.selWord);
+    matchState.locked.add(matchState.selSyn);
+    matchMsg.style.display = "block";
+    matchMsg.className = "msg ok";
+    matchMsg.textContent = "Pareja correcta. Sigue.";
+  }else{
+    state.mistakes++;
+    state.streak = 0;
+    matchMsg.style.display = "block";
+    matchMsg.className = "msg bad";
+    matchMsg.textContent = "No coincide. Intenta otra vez.";
+    updateHeader();
+    saveState();
+  }
+  matchState.selWord = null;
+  matchState.selSyn = null;
+  paintMatch();
+
+  if(matchState.locked.size >= 8){
+    // 4 parejas completas (word+syn) = 8 locked
+    matchMsg.style.display = "block";
+    matchMsg.className = "msg ok";
+    matchMsg.textContent = "Correlación completa. Ya puedes pasar al siguiente nivel.";
+    onCorrect();
+  }
+}
+
+function resetMatch(){
+  if(!matchState) return;
+  // re-render match con el mismo nivel
+  renderMatch();
+}
+
+/* ==========================
+   WRITE MODE
+   ========================== */
+function renderWrite(){
+  writeBlock.style.display = "";
+  writeMsg.style.display = "none";
+  writeMsg.textContent = "";
+  writeMsg.className = "msg";
+  writeText.value = "";
+  lockNext(true);
+  btnNext.disabled = true;
+}
+function writeHint(){
+  const syn = current.syn.slice(0,3).join(", ");
+  const ant = current.ant.slice(0,3).join(", ");
+  const hint = `Sinónimos: ${syn || "—"}\nAntónimos: ${ant || "—"}\nEjemplo rápido: "En este contexto, ${current.lemma} significa ...".`;
+  writeMsg.style.display = "block";
+  writeMsg.className = "msg";
+  writeMsg.textContent = hint;
+}
+function writeCheck(){
+  const t = (writeText.value || "").trim();
+  const w = current.lemma.toLowerCase();
+  if(t.length < 25){
+    writeMsg.style.display = "block";
+    writeMsg.className = "msg bad";
+    writeMsg.textContent = "Tu frase es muy corta. Mínimo 25 caracteres.";
+    return;
+  }
+  if(!t.toLowerCase().includes(w)){
+    writeMsg.style.display = "block";
+    writeMsg.className = "msg bad";
+    writeMsg.textContent = "Tu frase no contiene la palabra del nivel. Intenta otra vez.";
+    return;
+  }
+  writeMsg.style.display = "block";
+  writeMsg.className = "msg ok";
+  writeMsg.textContent = "Validado. Ya puedes pasar al siguiente nivel.";
+  onCorrect();
+}
+
+/* ==========================
+   CARGA DE DICCIONARIO
+   ========================== */
+function setLexReadyInfo(){
+  const n = LEXICON.length;
+  pillLex.textContent = `Diccionario: ${n} entradas`;
+  showLexStatus(`Diccionario listo: ${n} entradas. Progresión activada.`, true);
+  LEX_READY = true;
+  updateHeader();
+  saveState();
+}
+
+async function loadFromFile(){
+  const f = fileLex.files && fileLex.files[0];
+  if(!f){
+    showLexStatus("Selecciona un archivo .json o .tsv primero.", false);
+    return;
+  }
+  try{
+    const text = await f.text();
+    let parsed = [];
+    if(f.name.toLowerCase().endsWith(".json")){
+      parsed = parseJSON(text);
+    }else{
+      parsed = parseTSV(text);
+    }
+    if(parsed.length < 1000){
+      showLexStatus("Muy pocas entradas detectadas. Revisa si el archivo es correcto.", false);
+      return;
+    }
+    LEXICON = parsed;
+    buildIndexes();
+    setLexReadyInfo();
+  }catch(e){
+    showLexStatus("No pude cargar ese archivo: " + (e && e.message ? e.message : "error"), false);
+  }
+}
+
+// Intenta cargar del directorio (misma carpeta) con fetch.
+// Si estás en file:// puede fallar; por eso el botón de archivo.
+async function tryFetchFromDir(){
+  const candidates = ["./lexico_espasa.json", "./lexico_espasa.tsv"];
+  for(const url of candidates){
+    try{
+      const res = await fetch(url, {cache:"no-store"});
+      if(!res.ok) continue;
+      const text = await res.text();
+      let parsed = [];
+      if(url.endsWith(".json")){
+        parsed = parseJSON(text);
+      }else{
+        parsed = parseTSV(text);
+      }
+      if(parsed.length < 1000) continue;
+      LEXICON = parsed;
+      buildIndexes();
+      setLexReadyInfo();
+      return;
+    }catch(e){
+      // sigue probando
+    }
+  }
+  showLexStatus("No pude cargar del directorio. Usa el botón “Cargar” o abre con servidor local.", false);
+}
+
+/* ==========================
+   DIAGNÓSTICO
+   ========================== */
+function startDiagnostic(){
+  state.inDiagnostic = true;
+  state.diagStep = 0;
+  state.diagScore = 0;
+  state.diagLevel = 1;
+  showMsg("Diagnóstico: 10 preguntas. Al final te ubico en un nivel.", "");
+  setTimeout(()=>{ hideMsg(); renderGame(); }, 700);
+}
+
+/* ==========================
+   EVENTOS
+   ========================== */
+btnPlay.onclick = ()=> renderGame();
+btnHint.onclick = ()=> showHint();
+btnNext.onclick = ()=> nextLevel();
+btnSkip.onclick = ()=>{
+  if(!state.inDiagnostic) return;
+  state.diagStep++;
+  state.diagLevel = clamp(1 + state.diagStep * 70, 1, LEVEL_TARGET);
+  saveState();
+  renderGame();
+};
+btnDiagnostic.onclick = ()=> startDiagnostic();
+btnExport.onclick = ()=> exportProgress();
+btnImport.onclick = ()=> importProgress();
+
+btnReset.onclick = ()=>{
+  if(confirm("¿Seguro? Se borrará tu progreso.")){
+    localStorage.removeItem(LS_KEY);
+    state = structuredClone(defaultState);
+    saveState();
+    updateHeader();
+    showMsg("Progreso reiniciado.", "");
+  }
+};
+
+btnLoadLex.onclick = ()=> loadFromFile();
+btnTryFetch.onclick = ()=> tryFetchFromDir();
+
+btnAnalyze.onclick = ()=> analyzeText();
+btnCopyClean.onclick = ()=> copyClean();
+searchLearned.oninput = ()=> renderLearnedList();
+btnCopyLearned.onclick = ()=> copyLearned();
+
+btnMatchReset.onclick = ()=> resetMatch();
+btnWriteHint.onclick = ()=> writeHint();
+btnWriteCheck.onclick = ()=> writeCheck();
+
+/* ==========================
+   INIT
+   ========================== */
+(function init(){
+  // clamp nivel
+  state.level = clamp(state.level, 1, LEVEL_TARGET);
+  saveState();
+  updateHeader();
+
+  pillLex.textContent = "Diccionario: no cargado";
+
+  // 1) Autocarga offline (funciona incluso abriendo el HTML con file://)
+  // Si el archivo lexico_espasa.data.js está en el mismo directorio, se cargará solo.
+  if(window.__LEXICON_DATA__ && Array.isArray(window.__LEXICON_DATA__) && window.__LEXICON_DATA__.length){
+    try{
+      // __LEXICON_DATA__ ya es un array de objetos (lemma/syn/ant)
+      const parsed = window.__LEXICON_DATA__.map(x=>({
+        lemma: normalizeWord(x.lemma || x.palabra || x.word || ""),
+        syn: uniq((x.syn || x.sinonimos || []).map(normalizeWord).filter(Boolean)),
+        ant: uniq((x.ant || x.antonimos || []).map(normalizeWord).filter(Boolean)),
+      })).filter(x=>x.lemma && (x.syn.length || x.ant.length))
+        .map(x=>({ ...x, tier: tierOfLemma(x.lemma) }));
+
+      if(parsed.length >= 1000){
+        LEXICON = parsed;
+        buildIndexes();
+        setLexReadyInfo();
+        showMsg("Diccionario cargado automáticamente (modo offline). Presiona “Jugar / Continuar”.", "ok");
+        setTimeout(hideMsg, 1200);
+        return;
+      }
+    }catch(e){
+      // si falla, sigue con fetch
+    }
+  }
+
+  // 2) Autocarga por fetch (funciona si abres con servidor local o hosting)
+  // Si estás en file:// puede fallar; en ese caso usa el botón “Cargar”.
+  tryFetchFromDir();
+})();
+</script>
+</body>
+</html>
