@@ -2,1298 +2,1258 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Léxico 0→1000 | Sinónimos y antónimos (Espasa)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LexiPlay — Juegos para mejorar tu léxico (offline)</title>
+  <meta name="description" content="Juegos didácticos para mejorar el léxico: sinónimos, antónimos, parejas y retos, con niveles del 0 al 100." />
   <style>
     :root{
-      --bg:#070b16;
-      --card: rgba(255,255,255,.06);
-      --line: rgba(255,255,255,.14);
-      --text:#ffffff;
-      --soft: rgba(255,255,255,.92);
-      --soft2: rgba(255,255,255,.78);
-      --ok: rgba(67,245,154,.85);
-      --bad: rgba(255,84,112,.85);
-      --warn: rgba(255,209,102,.90);
-      --r:16px;
+      --bg:#0b1220; --card:#101a33; --muted:#c2d0f2; --text:#f7f9ff;
+      --accent:#6ee7ff; --accent2:#a78bfa; --good:#34d399; --bad:#fb7185;
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --radius: 18px;
     }
     *{box-sizing:border-box}
     body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background:
-        radial-gradient(1200px 700px at 10% 0%, rgba(80,120,255,.25), transparent 60%),
-        radial-gradient(900px 600px at 90% 10%, rgba(200,80,255,.18), transparent 55%),
-        linear-gradient(180deg, #050814, var(--bg));
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(110,231,255,.18), transparent 60%),
+                  radial-gradient(900px 500px at 80% 20%, rgba(167,139,250,.16), transparent 55%),
+                  radial-gradient(900px 700px at 50% 90%, rgba(52,211,153,.10), transparent 60%),
+                  var(--bg);
       color:var(--text);
+      min-height:100svh;
     }
-    .wrap{max-width:1020px; margin:0 auto; padding:18px 14px 60px}
-    .top{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:12px}
-    .title{display:flex; flex-direction:column; gap:4px}
-    .title .h{font-size:18px; letter-spacing:.2px}
-    .title .s{font-size:12.5px; color:var(--soft2)}
-    .pills{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .pill{
+    a{color:var(--accent)}
+    b,strong{color:#ffffff; font-weight: 900}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px}
+    header{
+      display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      margin:10px 0 16px;
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(110,231,255,.9), rgba(167,139,250,.9));
+      box-shadow: var(--shadow);
+      display:grid; place-items:center; font-weight:900; letter-spacing:.5px;
+      color:#061028;
+    }
+    .title h1{margin:0; font-size:18px}
+    .title p{margin:2px 0 0; color:var(--muted); font-size:13px}
+    .grid{
+      display:grid; grid-template-columns: 1.15fr .85fr; gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      padding:8px 10px; border-radius:999px;
-      font-size:12.5px; color:var(--soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      border-bottom:1px solid var(--line);
+    }
+    .card .hd h2{margin:0; font-size:15px}
+    .card .bd{padding:14px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color: var(--text);
+      font-size: 12px;
+      user-select:none;
       white-space:nowrap;
     }
-
-    .card{
-      border:1px solid var(--line);
-      background: var(--card);
-      border-radius: var(--r);
-      padding:14px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.35);
-    }
     .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .grid{display:grid; gap:14px; grid-template-columns: 1.2fr .8fr}
-    @media (max-width:920px){ .grid{grid-template-columns: 1fr} }
-
-    .progress{width:100%; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background: rgba(255,255,255,.05)}
-    .bar{height:100%; width:0%; background: linear-gradient(90deg, rgba(67,245,154,.95), rgba(255,209,102,.95)); transition: width .25s ease}
-
     .btn{
-      cursor:pointer; user-select:none;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color:var(--text);
-      padding:10px 12px; border-radius: 14px;
-      font-size:13.5px;
-      transition: transform .08s ease;
+      border:none; border-radius: 14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border: 1px solid var(--line);
+      cursor:pointer;
+      transition: transform .08s ease, background .08s ease, border-color .08s ease;
+      font-weight: 650;
     }
-    .btn:active{transform:scale(.98)}
-    .btn.primary{border-color: rgba(67,245,154,.45); background: rgba(67,245,154,.10)}
-    .btn.danger{border-color: rgba(255,84,112,.45); background: rgba(255,84,112,.10)}
-    .btn.ghost{background:transparent}
-    .btn:disabled{opacity:.55; cursor:not-allowed}
-
-    .hr{height:1px; background: rgba(255,255,255,.12); margin:12px 0}
-    .tag{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.05); font-size:12px; color:var(--soft)}
-    .big{font-size:28px; letter-spacing:.2px}
-    .soft{color:var(--soft)}
-    .soft2{color:var(--soft2)}
-    .q{margin:10px 0 10px; font-size:14px}
-    .opts{display:grid; gap:10px}
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(110,231,255,.92), rgba(167,139,250,.92));
+      color:#071022;
+      border: none;
+    }
+    .btn.good{background: rgba(52,211,153,.16); border-color: rgba(52,211,153,.35)}
+    .btn.bad{background: rgba(251,113,133,.14); border-color: rgba(251,113,133,.35)}
+    .btn.small{padding:8px 10px; border-radius: 12px; font-size: 12px; font-weight: 650}
+    .btn.ghost{background: transparent}
+    .btn[disabled]{opacity:.55; cursor:not-allowed}
+    .stat{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .stat .pill strong{font-weight:900}
+    .split{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    @media (max-width: 520px){
+      .split{grid-template-columns:1fr}
+    }
+    .muted{color:var(--muted)}
+    .bigWord{
+      font-size: 28px; font-weight: 900; letter-spacing: .2px; margin: 8px 0;
+    }
+    .prompt{
+      color: var(--muted);
+      font-weight: 650; font-size: 13px; margin-top: 2px;
+    }
+    .options{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 12px;
+    }
+    @media (max-width: 520px){
+      .options{grid-template-columns:1fr}
+    }
     .opt{
       text-align:left;
+      color: var(--text);
+      padding: 12px 12px;
+      border-radius: 16px;
       border:1px solid var(--line);
-      background: rgba(0,0,0,.12);
-      padding:10px 12px;
-      border-radius:14px;
+      background: rgba(255,255,255,.06);
       cursor:pointer;
-      color:var(--text);
+      transition: transform .08s ease, background .08s ease, border-color .08s ease;
+      min-height: 52px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .opt:hover{border-color: rgba(255,255,255,.22)}
-    .opt:disabled{opacity:.7; cursor:not-allowed}
-    .ok{border-color: rgba(67,245,154,.70)!important; background: rgba(67,245,154,.10)!important}
-    .bad{border-color: rgba(255,84,112,.70)!important; background: rgba(255,84,112,.10)!important}
-
-    .msg{
+    .opt:hover{transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18)}
+    .opt.correct{background: rgba(52,211,153,.18); border-color: rgba(52,211,153,.45)}
+    .opt.wrong{background: rgba(251,113,133,.16); border-color: rgba(251,113,133,.45)}
+    .kbd{
+      font-size: 12px; color: rgba(255,255,255,.92);
+      padding: 3px 7px; border:1px solid rgba(255,255,255,.22);
+      border-bottom-width: 2px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
       border:1px solid var(--line);
+      overflow:hidden;
+    }
+    .bar > div{
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(110,231,255,.95), rgba(167,139,250,.95));
+      transition: width .2s ease;
+    }
+    .hr{height:1px; background: var(--line); margin: 12px 0}
+    .note{
+      font-size: 12px; color: var(--muted); line-height: 1.4;
+      font-weight: 650;
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 8px; border-radius: 999px;
+      font-size: 12px; border:1px solid var(--line);
       background: rgba(255,255,255,.05);
-      border-radius:14px;
-      padding:10px 12px;
-      font-size:13px;
-      color:var(--soft);
-      white-space:pre-wrap;
     }
-    .msg.ok{border-color: rgba(67,245,154,.55); background: rgba(67,245,154,.08); color:var(--text)}
-    .msg.bad{border-color: rgba(255,84,112,.55); background: rgba(255,84,112,.08); color:var(--text)}
-    textarea, input{
-      width:100%;
-      background: rgba(0,0,0,.18);
+    .toast{
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 16px;
+      background: rgba(16,26,51,.92);
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      display:none;
+      max-width: min(560px, 92vw);
+      z-index: 50;
+    }
+    .toast.show{display:block}
+    .mini{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+    .pairGrid{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+      margin-top: 12px;
+    }
+    .pairCol{
       border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 12px;
-      color:var(--text);
-      outline:none;
-      font-size:13.5px;
-      line-height:1.4;
+      border-radius: 16px;
+      padding:10px;
+      background: rgba(255,255,255,.04);
     }
-    textarea{min-height:110px; resize:vertical}
-    .kpi{display:flex; gap:10px; flex-wrap:wrap}
-    .kpi .box{flex:1 1 140px; border:1px solid var(--line); background: rgba(255,255,255,.05); border-radius:14px; padding:10px 12px}
-    .kpi .n{font-size:18px}
-    .tiny{font-size:12px; color:var(--soft2)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-    .pairs{display:grid; gap:10px; grid-template-columns: 1fr 1fr}
-    @media (max-width:620px){ .pairs{grid-template-columns:1fr} }
-    .pairCol{border:1px solid var(--line); background: rgba(255,255,255,.05); border-radius:14px; padding:10px}
-    .pairItem{border:1px solid var(--line); background: rgba(0,0,0,.12); border-radius:12px; padding:10px; cursor:pointer; margin-bottom:8px}
-    .pairItem.sel{border-color: rgba(255,209,102,.70)!important; background: rgba(255,209,102,.12)!important}
-    .pairItem.done{opacity:.62; cursor:not-allowed}
+    .pairItem{
+      padding: 10px 10px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      margin-bottom: 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .pairItem:last-child{margin-bottom:0}
+    .pairItem.sel{outline: 2px solid rgba(110,231,255,.65); background: rgba(110,231,255,.09)}
+    .pairItem.ok{background: rgba(52,211,153,.18); border-color: rgba(52,211,153,.45); cursor: default}
+    .pairItem.no{background: rgba(251,113,133,.16); border-color: rgba(251,113,133,.45)}
+    .toggle{
+      display:flex; align-items:center; gap:8px; cursor:pointer;
+      user-select:none; font-size: 12px; color: var(--muted);
+    }
+    input[type="checkbox"]{width: 16px; height: 16px}
+    input[type="range"]{width: 220px; max-width: 100%}
+    .footer{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .warn{
+      padding: 10px 12px;
+      background: rgba(251,113,133,.12);
+      border: 1px solid rgba(251,113,133,.35);
+      border-radius: 14px;
+      margin-bottom: 10px;
+    }
+    .okbox{
+      padding: 10px 12px;
+      background: rgba(52,211,153,.12);
+      border: 1px solid rgba(52,211,153,.35);
+      border-radius: 14px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="top">
-      <div class="title">
-        <div class="h">🧠 Léxico 0→1000 (Espasa)</div>
-        <div class="s">Progresión real: básico → intermedio → avanzado → culto → arcaico. Guarda progreso. Texto blanco.</div>
-      </div>
-      <div class="pills">
-        <div class="pill" id="pillLex">Diccionario: no cargado</div>
-        <div class="pill" id="pillLevel">Nivel: 1/1000</div>
-        <div class="pill" id="pillStreak">Racha: 0</div>
-        <div class="pill" id="pillMistakes">Errores: 0</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="row" style="justify-content:space-between;">
-        <div style="min-width:280px;">
-          <div class="tiny">Progreso total</div>
-          <div class="progress"><div class="bar" id="bar"></div></div>
-        </div>
-        <div class="row">
-          <button class="btn primary" id="btnPlay">▶️ Jugar / Continuar</button>
-          <button class="btn ghost" id="btnDiagnostic">🧪 Diagnóstico</button>
-          <button class="btn ghost" id="btnExport">⬇️ Exportar progreso</button>
-          <button class="btn ghost" id="btnImport">⬆️ Importar progreso</button>
-          <button class="btn danger" id="btnReset">♻️ Reiniciar</button>
+    <header>
+      <div class="brand">
+        <div class="logo">Lx</div>
+        <div class="title">
+          <h1>LexiPlay</h1>
+          <p>Juegos didácticos para mejorar tu léxico — del nivel <b>0</b> al <b>100</b> (offline)</p>
         </div>
       </div>
 
-      <div class="hr"></div>
+      <div class="row">
+        <span class="pill" title="Tu racha actual (aciertos seguidos).">🔥 <span>Racha:</span> <strong id="streak">0</strong></span>
+        <span class="pill" title="Tu experiencia acumulada.">✨ <span>XP:</span> <strong id="xp">0</strong></span>
+        <span class="pill" title="Precisión total (aciertos / intentos).">🎯 <span>Precisión:</span> <strong id="acc">0%</strong></span>
+      </div>
+    </header>
 
-      <div class="row" style="justify-content:space-between; align-items:flex-end;">
-        <div>
-          <div class="tiny">Cargar diccionario (JSON o TSV)</div>
-          <div class="row" style="margin-top:8px;">
-            <input id="fileLex" type="file" accept=".json,.tsv,.txt" />
-            <button class="btn ghost" id="btnLoadLex">📚 Cargar</button>
-            <button class="btn ghost" id="btnTryFetch">🔄 Intentar cargar del directorio</button>
+    <div class="grid">
+
+      <!-- MAIN -->
+      <section class="card" aria-label="Juego">
+        <div class="hd">
+          <div>
+            <h2>🎮 Partida</h2>
+            <div class="mini" id="subtitle">Cargando diccionario…</div>
           </div>
-          <div class="tiny" style="margin-top:8px;">
-            Si lo pones en la misma carpeta del HTML, usa “Intentar cargar del directorio”.
-            Si no carga (por abrir con file://), usa el botón “Cargar” o abre con un servidor local.
-          </div>
-        </div>
-        <div style="min-width:260px;">
-          <div id="lexStatus" class="msg" style="display:none;"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid" style="margin-top:14px;">
-      <div class="card">
-        <div class="row" style="justify-content:space-between;">
-          <div>🎮 Juego</div>
-          <div class="tag" id="modeTag">Modo: —</div>
-        </div>
-
-        <div style="margin-top:12px;">
-          <div class="tiny">Palabra del nivel</div>
-          <div class="big" id="wWord">—</div>
-          <div class="soft" id="wMeta" style="margin-top:6px;">—</div>
-          <div class="soft2" id="wTip" style="margin-top:6px;">—</div>
-          <div class="row" style="margin-top:8px;">
-            <div class="tag" id="tierTag">Etapa: —</div>
-            <div class="tag" id="avoidTag">Evita: muletillas</div>
+          <div class="row">
+            <button class="btn small ghost" id="btnReset">Reset</button>
+            <button class="btn small" id="btnHint" disabled>💡 Pista</button>
+            <button class="btn small primary" id="btnNext" disabled>Siguiente ▶</button>
           </div>
         </div>
 
-        <div class="hr"></div>
+        <div class="bd">
+          <div id="loadStatus" class="warn" style="display:none">
+            <b>Ojo:</b> No se encontró <code>lexico_espasa.data.js</code> al lado del HTML. <br/>
+            El juego cargó un diccionario mini (de ejemplo), pero lo ideal es que pongas el archivo completo junto al HTML.
+          </div>
 
-        <div id="mcBlock">
-          <div class="q" id="qText">Primero carga el diccionario. Luego presiona “Jugar / Continuar”.</div>
-          <div class="opts" id="opts"></div>
-          <div id="msg" class="msg" style="display:none; margin-top:10px;"></div>
-
-          <div class="row" style="margin-top:12px; justify-content:space-between;">
-            <div class="row">
-              <button class="btn ghost" id="btnHint">💡 Pista</button>
-              <button class="btn ghost" id="btnSkip" style="display:none;">⏭️ Saltar (diagnóstico)</button>
+          <div class="row" style="justify-content:space-between; align-items:flex-end;">
+            <div>
+              <div class="tag" title="Nivel de dificultad (0 a 100).">🎚️ Nivel: <b id="levelLabel">0</b></div>
+              <div class="prompt" id="modeLabel">Modo: —</div>
             </div>
-            <div class="row">
-              <button class="btn" id="btnNext" disabled>✅ Siguiente nivel</button>
+            <div style="min-width: 260px;">
+              <div class="mini">Progreso del nivel (para subir)</div>
+              <div class="bar" aria-label="Barra de progreso"><div id="lvlBar"></div></div>
             </div>
           </div>
-        </div>
 
-        <div id="matchBlock" style="display:none;">
-          <div class="q" id="matchTitle">Correlación: une palabra ↔ sinónimo</div>
-          <div class="pairs">
-            <div class="pairCol">
-              <div class="tiny" style="margin-bottom:8px;">Palabras</div>
-              <div id="matchWords"></div>
+          <div class="hr"></div>
+
+          <div id="gameArea">
+            <div class="bigWord" id="word">—</div>
+            <div class="prompt" id="prompt">—</div>
+            <div class="options" id="options"></div>
+
+            <div id="pairsArea" style="display:none">
+              <div class="prompt">Empareja <b>lemas</b> con <b>sinónimos</b>. (No pasas si no aciertas 😉)</div>
+              <div class="pairGrid">
+                <div class="pairCol">
+                  <div class="mini">Lemas</div>
+                  <div id="leftCol"></div>
+                </div>
+                <div class="pairCol">
+                  <div class="mini">Sinónimos</div>
+                  <div id="rightCol"></div>
+                </div>
+              </div>
             </div>
-            <div class="pairCol">
-              <div class="tiny" style="margin-bottom:8px;">Sinónimos</div>
-              <div id="matchSyns"></div>
+
+            <div class="hr"></div>
+            <div class="note" id="feedback">Tip: puedes usar el teclado <b>1–4</b> para elegir opción cuando estén visibles.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIDE -->
+      <aside class="card" aria-label="Controles">
+        <div class="hd">
+          <h2>⚙️ Configuración</h2>
+          <span class="pill">🧠 Adaptativo <strong id="adaptOn">ON</strong></span>
+        </div>
+        <div class="bd">
+
+          <div class="split">
+            <div>
+              <div class="mini">Elegir modo</div>
+              <div class="row" style="margin-top:8px;">
+                <button class="btn small" data-mode="syn">Sinónimos</button>
+                <button class="btn small" data-mode="ant">Antónimos</button>
+                <button class="btn small" data-mode="odd">Intruso</button>
+                <button class="btn small" data-mode="pairs">Parejas</button>
+                <button class="btn small" data-mode="mix">Mix</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="mini">Nivel (0–100)</div>
+              <div class="row" style="margin-top:8px;">
+                <input id="levelRange" type="range" min="0" max="100" value="0" />
+                <span class="pill">📶 <strong id="levelPill">0</strong></span>
+              </div>
             </div>
           </div>
-          <div id="matchMsg" class="msg" style="display:none; margin-top:10px;"></div>
-          <div class="row" style="margin-top:12px; justify-content:flex-end;">
-            <button class="btn" id="btnMatchReset">🔁 Reintentar</button>
+
+          <div class="hr"></div>
+
+          <label class="toggle" title="Si está activado, el juego ajusta el nivel según tu rendimiento.">
+            <input type="checkbox" id="adaptive" checked />
+            Ajuste automático de nivel (recomendado)
+          </label>
+
+          <label class="toggle" title="Si activas sonido, el navegador puede pedir permiso.">
+            <input type="checkbox" id="sound" />
+            Sonido suave (opcional)
+          </label>
+
+          <div class="hr"></div>
+
+          <div class="row">
+            <button class="btn" id="btnPlacement">🧪 Auto-detectar nivel</button>
+            <button class="btn" id="btnExport">⬇ Exportar progreso</button>
+            <button class="btn" id="btnImport">⬆ Importar</button>
+            <input id="fileImport" type="file" accept="application/json" style="display:none"/>
+          </div>
+
+          <div class="footer">
+            <div class="okbox">
+              <b>Regla del juego:</b> no pasas a la siguiente pregunta si no marcas la correcta.
+            </div>
+            <div>
+              <b>Tips:</b> haz 10–15 minutos al día. Cuando tu racha sea alta, sube el nivel (o déjalo en adaptativo).
+            </div>
+            <div style="margin-top:8px">
+              <b>Privacidad:</b> todo se guarda en tu navegador (localStorage). No se envía nada a internet.
+            </div>
           </div>
         </div>
-
-        <div id="writeBlock" style="display:none;">
-          <div class="q" id="writeTitle">Reto de escritura: usa la palabra en una frase</div>
-          <div class="tiny" id="writeRules">Regla: tu frase debe contener la palabra y tener al menos 25 caracteres.</div>
-          <textarea id="writeText" placeholder="Escribe tu frase aquí..."></textarea>
-          <div id="writeMsg" class="msg" style="display:none; margin-top:10px;"></div>
-          <div class="row" style="margin-top:12px; justify-content:space-between;">
-            <button class="btn ghost" id="btnWriteHint">💡 Pista</button>
-            <button class="btn" id="btnWriteCheck">✅ Validar</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div>📊 Tablero</div>
-        <div class="kpi" style="margin-top:10px;">
-          <div class="box"><div class="n" id="kLearned">0</div><div class="tiny">Aprendidas</div></div>
-          <div class="box"><div class="n" id="kLevel">1</div><div class="tiny">Nivel</div></div>
-          <div class="box"><div class="n" id="kBest">0</div><div class="tiny">Mejor racha</div></div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div>🧹 Detector de muletillas</div>
-        <div class="tiny" style="margin-top:6px;">Pega texto: te marco comodines y te sugiero reemplazos.</div>
-        <textarea id="userText" placeholder="Ejemplo: hice una cosa muy buena..."></textarea>
-        <div class="row" style="margin-top:10px; justify-content:space-between;">
-          <button class="btn primary" id="btnAnalyze">🔎 Analizar</button>
-          <button class="btn ghost" id="btnCopyClean">📋 Copiar versión mejorada</button>
-        </div>
-        <div id="anRes" class="msg mono" style="display:none; margin-top:10px;"></div>
-
-        <div class="hr"></div>
-
-        <div>📜 Últimas aprendidas</div>
-        <div class="tiny" style="margin-top:6px;">Se muestra un resumen para no llenar la pantalla.</div>
-        <div class="row" style="margin-top:10px;">
-          <input id="searchLearned" placeholder="Buscar (ej: empero, optimizar...)" />
-          <button class="btn ghost" id="btnCopyLearned">📋 Copiar lista</button>
-        </div>
-        <div id="learnedBox" class="msg mono" style="margin-top:10px; max-height:240px; overflow:auto;"></div>
-      </div>
+      </aside>
     </div>
   </div>
 
-<script src="./lexico_espasa.data.js"></script>
-<script>
-/* ==========================
-   CONFIG
-   ========================== */
-const LEVEL_TARGET = 1000;
-const LS_KEY = "lexico_espasa_game_v1";
+  <div class="toast" id="toast"></div>
 
-/* ==========================
-   ESTADO (progreso)
-   ========================== */
-const defaultState = {
-  level: 1,
-  streak: 0,
-  bestStreak: 0,
-  mistakes: 0,
-  learned: {},          // lemma -> true
-  seen: {},             // lemma -> true (evita repetición)
-  inDiagnostic: false,
-  diagStep: 0,
-  diagScore: 0,
-  diagLevel: 1,
-  modeCycle: 0
-};
+  <!-- Load dictionary file (place lexico_espasa.data.js next to this HTML) -->
+  <script src="lexico_espasa.data.js"></script>
 
-function safeParse(raw){ try { return JSON.parse(raw); } catch { return null; } }
-function loadState(){
-  const raw = localStorage.getItem(LS_KEY);
-  const obj = raw ? safeParse(raw) : null;
-  if(!obj) return structuredClone(defaultState);
-  return { ...structuredClone(defaultState), ...obj };
-}
-let state = loadState();
-function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  <script>
+    /**********************
+     * LexiPlay — Offline lexicon games
+     * Data expected: window.__LEXICON_DATA__ = [{ lemma: string, syn: string[], ant: string[] }, ...]
+     **********************/
 
-/* ==========================
-   LÉXICO (del diccionario)
-   JSON: [{lemma, syn:[], ant:[]}, ...]
-   TSV:  palabra<TAB>sin1,sin2<TAB>ant1,ant2
-   ========================== */
-let LEXICON = [];              // normalizado: {lemma, syn, ant, tier}
-let TIER_INDEXES = {1:[],2:[],3:[],4:[],5:[]};
-let LEX_READY = false;
+    // Mini fallback dataset if the big file isn't present
+    const MINI = [
+      { lemma: "rápido", syn: ["veloz","ligero","presto"], ant: ["lento"] },
+      { lemma: "feliz", syn: ["contento","alegre","satisfecho"], ant: ["triste"] },
+      { lemma: "valiente", syn: ["osado","intrépido","corajudo"], ant: ["cobarde"] },
+      { lemma: "abrumar", syn: ["agobiar","fatigar","saturar"], ant: ["aliviar"] },
+      { lemma: "absurdo", syn: ["ilógico","disparatado","descabellado"], ant: ["lógico","racional"] },
+      { lemma: "frugal", syn: ["sobrio","parco","moderado"], ant: ["excesivo"] },
+      { lemma: "cauto", syn: ["prudente","precavido","cauteloso"], ant: ["imprudente"] },
+      { lemma: "tenaz", syn: ["persistente","constante","porfiado"], ant: ["inconstante"] },
+      { lemma: "abundancia", syn: ["profusión","opulencia","plétora"], ant: ["escasez"] },
+      { lemma: "abstruso", syn: ["oscuro","difícil","incomprensible"], ant: ["claro","comprensible"] }
+    ];
 
-/* Sets de palabras para final (arcaico) y cultas */
-const ARCAIC = new Set([
-  "empero","allende","doquier","antaño","asaz","maguer","hogaño","menester","cuita",
-  "fementido","faz","antier","truán","alhóndiga","albéitar","cadalso","parvo"
-].map(x=>x.toLowerCase()));
+    // UI elements
+    const $ = (id)=>document.getElementById(id);
+    const elWord = $("word");
+    const elPrompt = $("prompt");
+    const elOptions = $("options");
+    const elFeedback = $("feedback");
+    const elPairsArea = $("pairsArea");
+    const elLeft = $("leftCol");
+    const elRight = $("rightCol");
 
-const CULTA = new Set([
-  "apodíctico","palimpsesto","ataraxia","inefable","inmarcesible","ubérrimo","inextricable",
-  "epítome","eufonía","sinecura","adlátere","panegírico","vituperio","protervo","felón","anodino",
-  "circunspecto","diáfano","lacónico","acerbo","baladí","ingente","perentorio","apremiante"
-].map(x=>x.toLowerCase()));
+    const elStreak = $("streak");
+    const elXP = $("xp");
+    const elAcc = $("acc");
 
-function normalizeWord(s){
-  return String(s||"").trim();
-}
-function uniq(arr){
-  const out = [];
-  const seen = new Set();
-  for(const x of arr){
-    const k = String(x).toLowerCase();
-    if(!k || seen.has(k)) continue;
-    seen.add(k);
-    out.push(String(x));
-  }
-  return out;
-}
+    const elLevelLabel = $("levelLabel");
+    const elLevelPill = $("levelPill");
+    const elLevelRange = $("levelRange");
+    const elLvlBar = $("lvlBar");
 
-/* Dificultad: 1 básico, 2 intermedio, 3 avanzado, 4 culto, 5 arcaico/en desuso */
-function tierOfLemma(w){
-  const k = normalizeWord(w).toLowerCase();
-  if(ARCAIC.has(k)) return 5;
-  if(CULTA.has(k)) return 4;
+    const elSubtitle = $("subtitle");
+    const elModeLabel = $("modeLabel");
+    const elAdapt = $("adaptive");
+    const elAdaptOn = $("adaptOn");
+    const elSound = $("sound");
 
-  // Heurística básica: más corto y común antes; más largo después
-  if(k.includes(" ")) return 2;
-  if(k.length <= 6) return 1;
-  if(k.length <= 9) return 2;
-  if(k.length <= 12) return 3;
-  return 4;
-}
+    const btnNext = $("btnNext");
+    const btnHint = $("btnHint");
+    const btnReset = $("btnReset");
+    const btnPlacement = $("btnPlacement");
+    const btnExport = $("btnExport");
+    const btnImport = $("btnImport");
+    const fileImport = $("fileImport");
+    const loadStatus = $("loadStatus");
 
-function tierName(t){
-  if(t === 1) return "Básico";
-  if(t === 2) return "Intermedio";
-  if(t === 3) return "Avanzado";
-  if(t === 4) return "Culto";
-  return "Arcaico / en desuso";
-}
+    // Storage keys
+    const KEY = "lexiplay_state_v1";
 
-function buildIndexes(){
-  TIER_INDEXES = {1:[],2:[],3:[],4:[],5:[]};
-  for(let i=0;i<LEXICON.length;i++){
-    const t = LEXICON[i].tier;
-    (TIER_INDEXES[t] || TIER_INDEXES[3]).push(i);
-  }
-  // mezclar para azar controlado dentro del tier
-  for(const t of [1,2,3,4,5]){
-    TIER_INDEXES[t] = shuffle(TIER_INDEXES[t]);
-  }
-}
-
-function parseTSV(text){
-  const lines = text.split(/\\r?\\n/).map(x=>x.trim()).filter(Boolean);
-  const out = [];
-  const seen = new Set();
-  for(const line of lines.slice(1)){ // salta header si existe
-    const parts = line.split("\\t");
-    if(parts.length < 2) continue;
-    const lemma = normalizeWord(parts[0]);
-    const syn = uniq((parts[1]||"").split(",").map(normalizeWord).filter(Boolean));
-    const ant = uniq((parts[2]||"").split(",").map(normalizeWord).filter(Boolean));
-    const k = lemma.toLowerCase();
-    if(!lemma || seen.has(k)) continue;
-    if(syn.length === 0 && ant.length === 0) continue;
-    seen.add(k);
-    out.push({ lemma, syn, ant, tier: tierOfLemma(lemma) });
-  }
-  return out;
-}
-
-function parseJSON(text){
-  const data = JSON.parse(text);
-  if(!Array.isArray(data)) throw new Error("JSON inválido: se esperaba un array");
-  const out = [];
-  const seen = new Set();
-  for(const item of data){
-    const lemma = normalizeWord(item.lemma || item.palabra || item.word || "");
-    const syn = uniq((item.syn || item.sinonimos || []).map(normalizeWord).filter(Boolean));
-    const ant = uniq((item.ant || item.antonimos || []).map(normalizeWord).filter(Boolean));
-    const k = lemma.toLowerCase();
-    if(!lemma || seen.has(k)) continue;
-    if(syn.length === 0 && ant.length === 0) continue;
-    seen.add(k);
-    out.push({ lemma, syn, ant, tier: tierOfLemma(lemma) });
-  }
-  return out;
-}
-
-/* ==========================
-   SELECCIÓN POR NIVEL (progresión)
-   ========================== */
-function tierForLevel(level){
-  // 1–200 básico, 201–450 intermedio, 451–700 avanzado, 701–900 culto, 901–1000 arcaico
-  if(level <= 200) return 1;
-  if(level <= 450) return 2;
-  if(level <= 700) return 3;
-  if(level <= 900) return 4;
-  return 5;
-}
-
-function pickEntry(tier, require){
-  // require: {synMin, antMin}
-  const idxs = TIER_INDEXES[tier] || [];
-  if(!idxs.length) return null;
-
-  for(let attempt=0; attempt<400; attempt++){
-    const idx = idxs[Math.floor(Math.random()*idxs.length)];
-    const it = LEXICON[idx];
-    if(!it) continue;
-
-    const key = it.lemma.toLowerCase();
-    if(state.seen[key]) continue;
-
-    if(require){
-      if(require.synMin && it.syn.length < require.synMin) continue;
-      if(require.antMin && it.ant.length < require.antMin) continue;
+    // Sound (very simple)
+    let audioCtx = null;
+    function beep(freq=520, dur=0.06){
+      if(!elSound.checked) return;
+      try{
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        g.gain.value = 0.04;
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start();
+        setTimeout(()=>{ o.stop(); }, dur*1000);
+      }catch(e){}
     }
 
-    state.seen[key] = true;
-    return it;
-  }
-
-  // fallback: permite repetición si ya está agotado
-  for(let attempt=0; attempt<200; attempt++){
-    const idx = idxs[Math.floor(Math.random()*idxs.length)];
-    const it = LEXICON[idx];
-    if(!it) continue;
-    if(require){
-      if(require.synMin && it.syn.length < require.synMin) continue;
-      if(require.antMin && it.ant.length < require.antMin) continue;
+    // Toast
+    const toast = $("toast");
+    let toastT = null;
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastT);
+      toastT = setTimeout(()=>toast.classList.remove("show"), 2400);
     }
-    return it;
-  }
-  return null;
-}
 
-/* ==========================
-   MODO DE JUEGO
-   - SynPick: elegir sinónimo
-   - AntPick: elegir antónimo
-   - Match: unir palabra ↔ sinónimo
-   - Write: escribir frase usando la palabra
-   ========================== */
-let current = null;
-let currentMode = null;
-let answeredCorrect = false;
-let lastHint = 0;
-
-/* UI refs */
-function $(id){ return document.getElementById(id); }
-const pillLex = $("pillLex");
-const pillLevel = $("pillLevel");
-const pillStreak = $("pillStreak");
-const pillMistakes = $("pillMistakes");
-const bar = $("bar");
-
-const modeTag = $("modeTag");
-const wWord = $("wWord");
-const wMeta = $("wMeta");
-const wTip = $("wTip");
-const tierTag = $("tierTag");
-const avoidTag = $("avoidTag");
-
-const mcBlock = $("mcBlock");
-const qText = $("qText");
-const opts = $("opts");
-const msg = $("msg");
-
-const matchBlock = $("matchBlock");
-const matchWords = $("matchWords");
-const matchSyns = $("matchSyns");
-const matchMsg = $("matchMsg");
-const btnMatchReset = $("btnMatchReset");
-
-const writeBlock = $("writeBlock");
-const writeText = $("writeText");
-const writeMsg = $("writeMsg");
-const btnWriteCheck = $("btnWriteCheck");
-const btnWriteHint = $("btnWriteHint");
-
-const lexStatus = $("lexStatus");
-const btnPlay = $("btnPlay");
-const btnDiagnostic = $("btnDiagnostic");
-const btnExport = $("btnExport");
-const btnImport = $("btnImport");
-const btnReset = $("btnReset");
-const btnHint = $("btnHint");
-const btnSkip = $("btnSkip");
-const btnNext = $("btnNext");
-
-const kLearned = $("kLearned");
-const kLevel = $("kLevel");
-const kBest = $("kBest");
-const userText = $("userText");
-const btnAnalyze = $("btnAnalyze");
-const btnCopyClean = $("btnCopyClean");
-const anRes = $("anRes");
-const learnedBox = $("learnedBox");
-const searchLearned = $("searchLearned");
-const btnCopyLearned = $("btnCopyLearned");
-
-const fileLex = $("fileLex");
-const btnLoadLex = $("btnLoadLex");
-const btnTryFetch = $("btnTryFetch");
-
-/* util */
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-function showLexStatus(t, ok=true){
-  lexStatus.style.display = "block";
-  lexStatus.className = "msg " + (ok ? "ok" : "bad");
-  lexStatus.textContent = t;
-}
-function hideLexStatus(){
-  lexStatus.style.display = "none";
-  lexStatus.textContent = "";
-  lexStatus.className = "msg";
-}
-
-function showMsg(t, type){
-  msg.style.display = "block";
-  msg.className = "msg" + (type ? " " + type : "");
-  msg.textContent = t;
-}
-function hideMsg(){
-  msg.style.display = "none";
-  msg.textContent = "";
-  msg.className = "msg";
-}
-function lockNext(lock){
-  btnNext.disabled = lock;
-  answeredCorrect = !lock;
-}
-
-function updateHeader(){
-  pillLevel.textContent = `Nivel: ${state.level}/${LEVEL_TARGET}`;
-  pillStreak.textContent = `Racha: ${state.streak}`;
-  pillMistakes.textContent = `Errores: ${state.mistakes}`;
-
-  const pct = clamp(((state.level-1)/LEVEL_TARGET)*100, 0, 100);
-  bar.style.width = pct.toFixed(2) + "%";
-
-  const learnedCount = Object.keys(state.learned).length;
-  kLearned.textContent = learnedCount;
-  kLevel.textContent = state.level;
-  kBest.textContent = state.bestStreak;
-
-  renderLearnedList();
-}
-
-/* ==========================
-   MUETILLAS (detector)
-   ========================== */
-const COMMON_MAP = {
-  "hacer":["realizar","ejecutar","efectuar","concretar","elaborar"],
-  "muy":["sumamente","notablemente","considerablemente","asaz","enormemente"],
-  "cosa":["aspecto","elemento","factor","cuestión","punto"],
-  "bueno":["adecuado","óptimo","idóneo","favorable","sólido"],
-  "malo":["deficiente","nocivo","adverso","nefasto","pernicioso"],
-  "ver":["revisar","evaluar","examinar","constatar","analizar"],
-  "decir":["afirmar","señalar","mencionar","exponer","puntualizar"],
-  "tener":["poseer","disponer de","contar con","detentar","gozar de"],
-  "poner":["plantear","establecer","disponer","incorporar","ubicar"],
-  "usar":["utilizar","emplear","aplicar","servirse de","aprovechar"],
-  "problema":["inconveniente","contratiempo","conflicto","incidencia","escollo"]
-};
-const COMMON_REGEX = new RegExp("\\\\b(" + Object.keys(COMMON_MAP).join("|") + ")\\\\b","gi");
-let lastClean = "";
-
-function analyzeText(){
-  const text = userText.value || "";
-  if(!text.trim()){
-    anRes.style.display = "block";
-    anRes.className = "msg";
-    anRes.textContent = "Pega un texto primero.";
-    return;
-  }
-  const found = text.match(COMMON_REGEX) || [];
-  const counts = {};
-  found.forEach(w=>{
-    const k = w.toLowerCase();
-    counts[k] = (counts[k]||0)+1;
-  });
-  const keys = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
-  const lines = [];
-  keys.forEach(k=>{
-    const sug = (COMMON_MAP[k]||[]).slice(0,5).join(", ");
-    lines.push(`${k} × ${counts[k]}  →  ${sug}`);
-  });
-  lastClean = text.replace(COMMON_REGEX, (m)=>{
-    const k = m.toLowerCase();
-    const repl = (COMMON_MAP[k]||[])[0];
-    if(!repl) return m;
-    return (m[0] === m[0].toUpperCase()) ? (repl[0].toUpperCase()+repl.slice(1)) : repl;
-  });
-  anRes.style.display = "block";
-  anRes.className = "msg mono";
-  anRes.textContent =
-    `Muletillas detectadas: ${found.length}\\n\\n` +
-    (lines.length ? (lines.join("\\n") + "\\n\\n") : "No detecté muletillas del listado.\\n\\n") +
-    "Versión mejorada (básica):\\n" + lastClean;
-}
-async function copyClean(){
-  if(!lastClean){
-    analyzeText();
-    if(!lastClean) return;
-  }
-  try{
-    await navigator.clipboard.writeText(lastClean);
-    anRes.style.display = "block";
-    anRes.className = "msg ok";
-    anRes.textContent = "Copiado. Pégalo y ajústalo a tu estilo.";
-  }catch{
-    anRes.style.display = "block";
-    anRes.className = "msg";
-    anRes.textContent = "No pude copiar automático. Copia manualmente desde el cuadro.";
-  }
-}
-
-/* ==========================
-   LISTA aprendidas
-   ========================== */
-function renderLearnedList(){
-  const q = (searchLearned.value || "").toLowerCase().trim();
-  const learned = Object.keys(state.learned);
-
-  // últimas primero (por nivel aproximado: no guardamos el nivel, así que es simple)
-  learned.sort((a,b)=> b.localeCompare(a, "es"));
-
-  const filtered = q ? learned.filter(w=>w.toLowerCase().includes(q)) : learned;
-  const show = filtered.slice(0, 80);
-
-  if(!show.length){
-    learnedBox.textContent = "Aún no hay palabras aprendidas.";
-    return;
-  }
-  learnedBox.textContent = show.join("\\n") + (filtered.length > show.length ? `\\n...\\n(+${filtered.length - show.length} más)` : "");
-}
-async function copyLearned(){
-  const learned = Object.keys(state.learned).sort((a,b)=>a.localeCompare(b,"es"));
-  const text = learned.join("\\n");
-  try{
-    await navigator.clipboard.writeText(text);
-    showMsg("Lista copiada.", "ok");
-    setTimeout(hideMsg, 900);
-  }catch{
-    showMsg("No pude copiar automático. Copia desde el cuadro.", "");
-  }
-}
-
-/* ==========================
-   EXPORT / IMPORT progreso
-   ========================== */
-async function exportProgress(){
-  const data = JSON.stringify(state);
-  try{
-    await navigator.clipboard.writeText(data);
-    showMsg("Progreso exportado al portapapeles (JSON). Pégalo en un bloc para guardarlo.", "ok");
-    setTimeout(hideMsg, 1200);
-  }catch{
-    prompt("Copia este texto y guárdalo:", data);
-  }
-}
-function importProgress(){
-  const raw = prompt("Pega aquí el JSON exportado:");
-  if(!raw) return;
-  const obj = safeParse(raw);
-  if(!obj || typeof obj !== "object"){
-    showMsg("Importación fallida: JSON inválido.", "bad");
-    return;
-  }
-  state = { ...structuredClone(defaultState), ...obj };
-  // clamp
-  state.level = clamp(state.level, 1, LEVEL_TARGET);
-  saveState();
-  showMsg("Importación OK.", "ok");
-  setTimeout(()=>{ hideMsg(); updateHeader(); }, 700);
-}
-
-/* ==========================
-   LÓGICA DE PREGUNTAS
-   ========================== */
-function setCurrentUI(){
-  wWord.textContent = current ? current.lemma : "—";
-  const t = current ? current.tier : 0;
-  tierTag.textContent = `Etapa: ${tierName(t)}`;
-  avoidTag.textContent = "Evita: muletillas";
-
-  // Meta: mostrar listas rápidas
-  const synPreview = current && current.syn.length ? current.syn.slice(0,6).join(", ") : "—";
-  const antPreview = current && current.ant.length ? current.ant.slice(0,6).join(", ") : "—";
-  wMeta.textContent = `Sinónimos (muestra): ${synPreview}`;
-  wTip.textContent = `Antónimos (muestra): ${antPreview}`;
-}
-
-function decideMode(){
-  // Para hacerlo entretenido y con estructura:
-  // - Cada 10 niveles: Match
-  // - Cada 7 niveles: Write
-  // - Resto: sinónimo o antónimo (si hay antónimos disponibles)
-  const level = state.inDiagnostic ? state.diagLevel : state.level;
-
-  if(level % 10 === 0) return "MATCH";
-  if(level % 7 === 0) return "WRITE";
-
-  // alterna
-  return (state.modeCycle++ % 2 === 0) ? "SYN" : "ANT";
-}
-
-function pickCurrentForMode(mode){
-  const level = state.inDiagnostic ? state.diagLevel : state.level;
-  const tier = tierForLevel(level);
-
-  if(mode === "SYN") return pickEntry(tier, {synMin: 2, antMin: 0}) || pickEntry(tier, {synMin: 1}) || pickEntry(tier, null);
-  if(mode === "ANT") return pickEntry(tier, {antMin: 1}) || pickEntry(tier, {synMin: 2}) || pickEntry(tier, null);
-  if(mode === "MATCH") return pickEntry(tier, {synMin: 2}) || pickEntry(tier, null);
-  if(mode === "WRITE") return pickEntry(tier, null);
-  return pickEntry(tier, null);
-}
-
-function renderGame(){
-  updateHeader();
-
-  if(!LEX_READY){
-    showMsg("Primero carga el diccionario (JSON o TSV).", "");
-    return;
-  }
-
-  if(state.level > LEVEL_TARGET){
-    showMsg("Terminaste los 1000 niveles. Exporta tu progreso y empieza a escribir con tus palabras.", "ok");
-    btnNext.disabled = true;
-    return;
-  }
-
-  state.mistakes = 0;
-  lastHint = 0;
-  hideMsg();
-  lockNext(true);
-
-  btnSkip.style.display = state.inDiagnostic ? "" : "none";
-
-  currentMode = decideMode();
-  current = pickCurrentForMode(currentMode);
-
-  if(!current){
-    showMsg("No pude seleccionar una palabra. Revisa si el diccionario cargó bien.", "bad");
-    return;
-  }
-
-  // marcar aprendida cuando acierta
-  setCurrentUI();
-
-  // Mostrar el bloque correcto
-  mcBlock.style.display = "none";
-  matchBlock.style.display = "none";
-  writeBlock.style.display = "none";
-
-  if(currentMode === "SYN"){
-    modeTag.textContent = "Modo: elige un sinónimo";
-    renderSynMC();
-  } else if(currentMode === "ANT"){
-    modeTag.textContent = "Modo: elige un antónimo";
-    renderAntMC();
-  } else if(currentMode === "MATCH"){
-    modeTag.textContent = "Modo: correlación";
-    renderMatch();
-  } else {
-    modeTag.textContent = "Modo: escritura";
-    renderWrite();
-  }
-
-  saveState();
-}
-
-function buildDistractorsFromTier(tier, count, takeFrom){
-  // takeFrom: "syn" or "ant"
-  const idxs = TIER_INDEXES[tier] || [];
-  const out = [];
-  const seen = new Set();
-  for(let attempt=0; attempt<600 && out.length<count; attempt++){
-    const idx = idxs[Math.floor(Math.random()*idxs.length)];
-    const it = LEXICON[idx];
-    if(!it) continue;
-    const arr = takeFrom === "ant" ? it.ant : it.syn;
-    if(!arr || arr.length === 0) continue;
-    const candidate = arr[Math.floor(Math.random()*arr.length)];
-    const k = candidate.toLowerCase();
-    if(seen.has(k)) continue;
-    if(current && (k === current.lemma.toLowerCase())) continue;
-    seen.add(k);
-    out.push(candidate);
-  }
-  return out;
-}
-
-function renderSynMC(){
-  mcBlock.style.display = "";
-  qText.textContent = `Elige un sinónimo de: ${current.lemma}`;
-  opts.innerHTML = "";
-
-  const tier = current.tier;
-  const correct = current.syn[Math.floor(Math.random()*current.syn.length)];
-  const wrong = buildDistractorsFromTier(tier, 3, "syn");
-  const options = shuffle([correct, ...wrong].slice(0,4));
-
-  options.forEach(opt=>{
-    const b = document.createElement("button");
-    b.className = "opt";
-    b.textContent = opt;
-    b.onclick = ()=> checkAnswer(opt === correct, b);
-    opts.appendChild(b);
-  });
-  mcBlock.appendChild(opts);
-}
-
-function renderAntMC(){
-  mcBlock.style.display = "";
-  qText.textContent = `Elige un antónimo de: ${current.lemma}`;
-  opts.innerHTML = "";
-
-  // si no tiene antónimos, cae a sinónimo (para no trabarse)
-  if(!current.ant || current.ant.length === 0){
-    qText.textContent = `No hay antónimos para esta entrada. Elige un sinónimo de: ${current.lemma}`;
-    return renderSynMC();
-  }
-
-  const tier = current.tier;
-  const correct = current.ant[Math.floor(Math.random()*current.ant.length)];
-  const wrong = buildDistractorsFromTier(tier, 3, "ant");
-  // si no hay suficientes antónimos en el tier, usa sinónimos como distractores
-  while(wrong.length < 3){
-    const extra = buildDistractorsFromTier(tier, 1, "syn");
-    if(!extra.length) break;
-    wrong.push(extra[0]);
-  }
-  const options = shuffle([correct, ...wrong].slice(0,4));
-
-  options.forEach(opt=>{
-    const b = document.createElement("button");
-    b.className = "opt";
-    b.textContent = opt;
-    b.onclick = ()=> checkAnswer(opt === correct, b);
-    opts.appendChild(b);
-  });
-}
-
-function checkAnswer(ok, clickedBtn){
-  const buttons = [...opts.querySelectorAll(".opt")];
-  buttons.forEach(b=> b.disabled = true);
-
-  if(ok){
-    clickedBtn.classList.add("ok");
-    showMsg("Correcto. Ya puedes pasar al siguiente nivel.", "ok");
-    onCorrect();
-  }else{
-    clickedBtn.classList.add("bad");
-    state.mistakes++;
-    state.streak = 0;
-    showMsg("Incorrecto. No avanzas. Usa pista y reintenta.", "bad");
-    setTimeout(()=>{
-      buttons.forEach(b=>{
-        b.disabled = false;
-        b.classList.remove("bad");
-      });
-      hideMsg();
-    }, 750);
-    updateHeader();
-    saveState();
-  }
-}
-
-function onCorrect(){
-  state.learned[current.lemma] = true;
-  state.streak++;
-  state.bestStreak = Math.max(state.bestStreak, state.streak);
-
-  if(state.inDiagnostic){
-    state.diagScore++;
-  }
-
-  lockNext(false);
-  btnNext.disabled = false;
-  updateHeader();
-  saveState();
-}
-
-function nextLevel(){
-  if(state.inDiagnostic){
-    state.diagStep++;
-    if(state.diagStep >= 10){
-      // ubicar al usuario en una etapa
-      const score = state.diagScore;
-      // 0-10 → 1..450 aprox (arranca suave)
-      const suggested = clamp(1 + score * 40, 1, 450);
-      state.level = suggested;
-      state.inDiagnostic = false;
-      state.diagStep = 0;
-      state.diagScore = 0;
-      state.diagLevel = state.level;
-      showMsg(`Diagnóstico listo. Te ubico en nivel ${state.level}.`, "ok");
-      setTimeout(()=>{ hideMsg(); renderGame(); }, 900);
-      return;
-    }
-    // diagnóstico “salta” para tomar muestras
-    state.diagLevel = clamp(1 + state.diagStep * 70, 1, LEVEL_TARGET);
-    btnNext.disabled = true;
-    saveState();
-    renderGame();
-    return;
-  }
-
-  if(!answeredCorrect) return;
-  state.level++;
-  btnNext.disabled = true;
-  saveState();
-  renderGame();
-}
-
-function showHint(){
-  if(!current) return;
-  lastHint++;
-  if(currentMode === "SYN"){
-    const s = current.syn.slice(0,5).join(", ");
-    showMsg(`Pista: mira sinónimos: ${s || "—"}`, "");
-  }else if(currentMode === "ANT"){
-    const a = current.ant.slice(0,5).join(", ");
-    showMsg(`Pista: mira antónimos: ${a || "—"}`, "");
-  }else if(currentMode === "MATCH"){
-    showMsg("Pista: primero empareja los más obvios (los que te suenan más comunes).", "");
-  }else{
-    showMsg("Pista: escribe una frase real, no una lista. Usa contexto: sujeto + verbo + complemento.", "");
-  }
-}
-
-/* ==========================
-   MATCH MODE (4 parejas)
-   ========================== */
-let matchState = null;
-
-function renderMatch(){
-  matchBlock.style.display = "";
-  matchMsg.style.display = "none";
-  matchMsg.textContent = "";
-  matchMsg.className = "msg";
-
-  // Selecciona 4 palabras del mismo tier con al menos 2 sinónimos
-  const tier = current.tier;
-  const set = [];
-  // asegúrate que la primera sea current
-  if(current.syn.length >= 1) set.push(current);
-
-  for(let i=0; i<2000 && set.length<4; i++){
-    const it = pickEntry(tier, {synMin: 1});
-    if(!it) break;
-    if(set.find(x=>x.lemma.toLowerCase()===it.lemma.toLowerCase())) continue;
-    set.push(it);
-  }
-  if(set.length < 4){
-    // fallback: usa lo que hay
-    showMsg("No encontré suficientes entradas para correlación. Pasé a modo sinónimo.", "");
-    currentMode = "SYN";
-    modeTag.textContent = "Modo: elige un sinónimo";
-    return renderSynMC();
-  }
-
-  const words = shuffle(set.map(x=>({id:x.lemma, text:x.lemma})));
-  const syns  = shuffle(set.map(x=>({id:x.lemma, text:x.syn[Math.floor(Math.random()*x.syn.length)]})));
-
-  matchState = {
-    set,
-    words,
-    syns,
-    selWord: null,
-    selSyn: null,
-    locked: new Set()
-  };
-
-  matchWords.innerHTML = "";
-  matchSyns.innerHTML = "";
-
-  words.forEach(w=>{
-    const div = document.createElement("div");
-    div.className = "pairItem";
-    div.textContent = w.text;
-    div.dataset.id = w.id;
-    div.onclick = ()=>{
-      if(matchState.locked.has(w.id)) return;
-      matchState.selWord = w.id;
-      paintMatch();
-    };
-    matchWords.appendChild(div);
-  });
-
-  syns.forEach(s=>{
-    const div = document.createElement("div");
-    div.className = "pairItem";
-    div.textContent = s.text;
-    div.dataset.id = s.id;
-    div.onclick = ()=>{
-      if(matchState.locked.has(s.id)) return;
-      matchState.selSyn = s.id;
-      paintMatch();
-      tryMatchPair();
-    };
-    matchSyns.appendChild(div);
-  });
-
-  lockNext(true);
-  btnNext.disabled = true;
-}
-
-function paintMatch(){
-  [...matchWords.children].forEach(el=>{
-    el.classList.toggle("sel", el.dataset.id === matchState.selWord);
-    el.classList.toggle("done", matchState.locked.has(el.dataset.id));
-  });
-  [...matchSyns.children].forEach(el=>{
-    el.classList.toggle("sel", el.dataset.id === matchState.selSyn);
-    el.classList.toggle("done", matchState.locked.has(el.dataset.id));
-  });
-}
-
-function tryMatchPair(){
-  if(!matchState.selWord || !matchState.selSyn) return;
-
-  const ok = matchState.selWord === matchState.selSyn;
-  if(ok){
-    matchState.locked.add(matchState.selWord);
-    matchState.locked.add(matchState.selSyn);
-    matchMsg.style.display = "block";
-    matchMsg.className = "msg ok";
-    matchMsg.textContent = "Pareja correcta. Sigue.";
-  }else{
-    state.mistakes++;
-    state.streak = 0;
-    matchMsg.style.display = "block";
-    matchMsg.className = "msg bad";
-    matchMsg.textContent = "No coincide. Intenta otra vez.";
-    updateHeader();
-    saveState();
-  }
-  matchState.selWord = null;
-  matchState.selSyn = null;
-  paintMatch();
-
-  if(matchState.locked.size >= 8){
-    // 4 parejas completas (word+syn) = 8 locked
-    matchMsg.style.display = "block";
-    matchMsg.className = "msg ok";
-    matchMsg.textContent = "Correlación completa. Ya puedes pasar al siguiente nivel.";
-    onCorrect();
-  }
-}
-
-function resetMatch(){
-  if(!matchState) return;
-  // re-render match con el mismo nivel
-  renderMatch();
-}
-
-/* ==========================
-   WRITE MODE
-   ========================== */
-function renderWrite(){
-  writeBlock.style.display = "";
-  writeMsg.style.display = "none";
-  writeMsg.textContent = "";
-  writeMsg.className = "msg";
-  writeText.value = "";
-  lockNext(true);
-  btnNext.disabled = true;
-}
-function writeHint(){
-  const syn = current.syn.slice(0,3).join(", ");
-  const ant = current.ant.slice(0,3).join(", ");
-  const hint = `Sinónimos: ${syn || "—"}\nAntónimos: ${ant || "—"}\nEjemplo rápido: "En este contexto, ${current.lemma} significa ...".`;
-  writeMsg.style.display = "block";
-  writeMsg.className = "msg";
-  writeMsg.textContent = hint;
-}
-function writeCheck(){
-  const t = (writeText.value || "").trim();
-  const w = current.lemma.toLowerCase();
-  if(t.length < 25){
-    writeMsg.style.display = "block";
-    writeMsg.className = "msg bad";
-    writeMsg.textContent = "Tu frase es muy corta. Mínimo 25 caracteres.";
-    return;
-  }
-  if(!t.toLowerCase().includes(w)){
-    writeMsg.style.display = "block";
-    writeMsg.className = "msg bad";
-    writeMsg.textContent = "Tu frase no contiene la palabra del nivel. Intenta otra vez.";
-    return;
-  }
-  writeMsg.style.display = "block";
-  writeMsg.className = "msg ok";
-  writeMsg.textContent = "Validado. Ya puedes pasar al siguiente nivel.";
-  onCorrect();
-}
-
-/* ==========================
-   CARGA DE DICCIONARIO
-   ========================== */
-function setLexReadyInfo(){
-  const n = LEXICON.length;
-  pillLex.textContent = `Diccionario: ${n} entradas`;
-  showLexStatus(`Diccionario listo: ${n} entradas. Progresión activada.`, true);
-  LEX_READY = true;
-  updateHeader();
-  saveState();
-}
-
-async function loadFromFile(){
-  const f = fileLex.files && fileLex.files[0];
-  if(!f){
-    showLexStatus("Selecciona un archivo .json o .tsv primero.", false);
-    return;
-  }
-  try{
-    const text = await f.text();
-    let parsed = [];
-    if(f.name.toLowerCase().endsWith(".json")){
-      parsed = parseJSON(text);
-    }else{
-      parsed = parseTSV(text);
-    }
-    if(parsed.length < 1000){
-      showLexStatus("Muy pocas entradas detectadas. Revisa si el archivo es correcto.", false);
-      return;
-    }
-    LEXICON = parsed;
-    buildIndexes();
-    setLexReadyInfo();
-  }catch(e){
-    showLexStatus("No pude cargar ese archivo: " + (e && e.message ? e.message : "error"), false);
-  }
-}
-
-// Intenta cargar del directorio (misma carpeta) con fetch.
-// Si estás en file:// puede fallar; por eso el botón de archivo.
-async function tryFetchFromDir(){
-  const candidates = ["./lexico_espasa.json", "./lexico_espasa.tsv"];
-  for(const url of candidates){
-    try{
-      const res = await fetch(url, {cache:"no-store"});
-      if(!res.ok) continue;
-      const text = await res.text();
-      let parsed = [];
-      if(url.endsWith(".json")){
-        parsed = parseJSON(text);
-      }else{
-        parsed = parseTSV(text);
+    // Utilities
+    const rand = (n)=>Math.floor(Math.random()*n);
+    const choice = (arr)=>arr[rand(arr.length)];
+    const shuffle = (a)=>{
+      const b = a.slice();
+      for(let i=b.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [b[i],b[j]]=[b[j],b[i]];
       }
-      if(parsed.length < 1000) continue;
-      LEXICON = parsed;
-      buildIndexes();
-      setLexReadyInfo();
-      return;
-    }catch(e){
-      // sigue probando
+      return b;
+    };
+
+    function normalize(w){
+      return String(w||"").trim();
     }
-  }
-  showLexStatus("No pude cargar del directorio. Usa el botón “Cargar” o abre con servidor local.", false);
-}
 
-/* ==========================
-   DIAGNÓSTICO
-   ========================== */
-function startDiagnostic(){
-  state.inDiagnostic = true;
-  state.diagStep = 0;
-  state.diagScore = 0;
-  state.diagLevel = 1;
-  showMsg("Diagnóstico: 10 preguntas. Al final te ubico en un nivel.", "");
-  setTimeout(()=>{ hideMsg(); renderGame(); }, 700);
-}
+    function isCleanWord(w){
+      // Filter out artifacts like "(amer.)" or "Книги ..." etc.
+      if(!w) return false;
+      w = w.trim();
+      if(!w) return false;
+      if(w.startsWith("(")) return false;
+      if(w.includes("Книги")) return false;
+      if(w.includes("http")) return false;
+      // allow spanish letters + spaces + hyphen
+      return /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\- ]+$/.test(w);
+    }
 
-/* ==========================
-   EVENTOS
-   ========================== */
-btnPlay.onclick = ()=> renderGame();
-btnHint.onclick = ()=> showHint();
-btnNext.onclick = ()=> nextLevel();
-btnSkip.onclick = ()=>{
-  if(!state.inDiagnostic) return;
-  state.diagStep++;
-  state.diagLevel = clamp(1 + state.diagStep * 70, 1, LEVEL_TARGET);
-  saveState();
-  renderGame();
-};
-btnDiagnostic.onclick = ()=> startDiagnostic();
-btnExport.onclick = ()=> exportProgress();
-btnImport.onclick = ()=> importProgress();
+    function cleanList(list){
+      return (list||[]).map(normalize).filter(isCleanWord);
+    }
 
-btnReset.onclick = ()=>{
-  if(confirm("¿Seguro? Se borrará tu progreso.")){
-    localStorage.removeItem(LS_KEY);
-    state = structuredClone(defaultState);
-    saveState();
-    updateHeader();
-    showMsg("Progreso reiniciado.", "");
-  }
-};
+    function scoreEntry(e){
+      // Heurística simple para "dificultad" (no es perfecta, pero funciona bien para progresión).
+      const lemma = e.lemma || "";
+      const syn = cleanList(e.syn);
+      const ant = cleanList(e.ant);
 
-btnLoadLex.onclick = ()=> loadFromFile();
-btnTryFetch.onclick = ()=> tryFetchFromDir();
+      const accentBonus = /[áéíóúüñÁÉÍÓÚÜÑ]/.test(lemma) ? 1.2 : 0;
+      const len = lemma.length;
 
-btnAnalyze.onclick = ()=> analyzeText();
-btnCopyClean.onclick = ()=> copyClean();
-searchLearned.oninput = ()=> renderLearnedList();
-btnCopyLearned.onclick = ()=> copyLearned();
+      const synAvg = syn.length ? syn.reduce((s,x)=>s+x.length,0)/syn.length : 0;
+      const antBonus = ant.length ? 0.9 : 0;
+      const multiSynBonus = syn.length >= 4 ? 0.7 : syn.length >= 2 ? 0.3 : 0;
 
-btnMatchReset.onclick = ()=> resetMatch();
-btnWriteHint.onclick = ()=> writeHint();
-btnWriteCheck.onclick = ()=> writeCheck();
+      return (len*0.9) + (synAvg*0.25) + accentBonus + antBonus + multiSynBonus;
+    }
 
-/* ==========================
-   INIT
-   ========================== */
-(function init(){
-  // clamp nivel
-  state.level = clamp(state.level, 1, LEVEL_TARGET);
-  saveState();
-  updateHeader();
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
 
-  pillLex.textContent = "Diccionario: no cargado";
+    // State
+    let DATA = [];
+    let DATA_SORTED = [];
+    let state = {
+      level: 0, // 0..100
+      mode: "mix",
+      xp: 0,
+      streak: 0,
+      correct: 0,
+      attempts: 0,
+      // leveling
+      lvlXP: 0, // within level progress
+      lvlNeed: 60,
+      adaptive: true,
+    };
 
-  // 1) Autocarga offline (funciona incluso abriendo el HTML con file://)
-  // Si el archivo lexico_espasa.data.js está en el mismo directorio, se cargará solo.
-  if(window.__LEXICON_DATA__ && Array.isArray(window.__LEXICON_DATA__) && window.__LEXICON_DATA__.length){
-    try{
-      // __LEXICON_DATA__ ya es un array de objetos (lemma/syn/ant)
-      const parsed = window.__LEXICON_DATA__.map(x=>({
-        lemma: normalizeWord(x.lemma || x.palabra || x.word || ""),
-        syn: uniq((x.syn || x.sinonimos || []).map(normalizeWord).filter(Boolean)),
-        ant: uniq((x.ant || x.antonimos || []).map(normalizeWord).filter(Boolean)),
-      })).filter(x=>x.lemma && (x.syn.length || x.ant.length))
-        .map(x=>({ ...x, tier: tierOfLemma(x.lemma) }));
+    let current = null;   // current question object
+    let locked = false;   // prevent multiple clicks during feedback
+    let wrongCount = 0;   // wrong attempts on the same question
 
-      if(parsed.length >= 1000){
-        LEXICON = parsed;
-        buildIndexes();
-        setLexReadyInfo();
-        showMsg("Diccionario cargado automáticamente (modo offline). Presiona “Jugar / Continuar”.", "ok");
-        setTimeout(hideMsg, 1200);
+    // Load state
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        if(!raw) return;
+        const s = JSON.parse(raw);
+        if(typeof s.level === "number") state.level = clamp(Math.round(s.level),0,100);
+        if(typeof s.mode === "string") state.mode = s.mode;
+        state.xp = s.xp|0;
+        state.streak = s.streak|0;
+        state.correct = s.correct|0;
+        state.attempts = s.attempts|0;
+        state.lvlXP = s.lvlXP|0;
+        state.lvlNeed = s.lvlNeed|0 || 60;
+        state.adaptive = (s.adaptive !== false);
+      }catch(e){}
+    }
+
+    function saveState(){
+      const s = {...state};
+      localStorage.setItem(KEY, JSON.stringify(s));
+    }
+
+    function resetState(){
+      state = { level: 0, mode: "mix", xp: 0, streak: 0, correct: 0, attempts: 0, lvlXP: 0, lvlNeed: 60, adaptive: true };
+      saveState();
+      syncUI();
+      start();
+      showToast("Progreso reseteado ✅");
+    }
+
+    function syncUI(){
+      elStreak.textContent = state.streak;
+      elXP.textContent = state.xp;
+
+      const acc = state.attempts ? Math.round((state.correct/state.attempts)*100) : 0;
+      elAcc.textContent = acc + "%";
+
+      elLevelLabel.textContent = state.level;
+      elLevelPill.textContent = state.level;
+      elLevelRange.value = state.level;
+
+      elAdapt.checked = !!state.adaptive;
+      elAdaptOn.textContent = state.adaptive ? "ON" : "OFF";
+
+      const pct = clamp(Math.round((state.lvlXP/state.lvlNeed)*100),0,100);
+      elLvlBar.style.width = pct + "%";
+
+      const modeName = ({
+        syn:"Sinónimos",
+        ant:"Antónimos",
+        odd:"Intruso",
+        pairs:"Parejas",
+        mix:"Mix",
+      })[state.mode] || "Mix";
+
+      elModeLabel.textContent = "Modo: " + modeName;
+    }
+
+    // Pick pool by level
+    function poolForLevel(level, want){
+      // Use a window around a quantile to keep variety
+      if(!DATA_SORTED.length) return [];
+      const n = DATA_SORTED.length;
+      const q = clamp(level/100, 0, 1);
+      const center = Math.floor(q*(n-1));
+
+      const span = Math.max(150, Math.floor(n*0.03)); // 3% window or at least 150
+      const start = clamp(center - Math.floor(span/2), 0, n-1);
+      const end = clamp(center + Math.floor(span/2), 0, n-1);
+
+      const slice = DATA_SORTED.slice(start, end+1);
+      if(want){
+        // try to filter by capability
+        return slice.filter(want);
+      }
+      return slice;
+    }
+
+    // Question generators
+    function genSynQuestion(){
+      const pool = poolForLevel(state.level, e => cleanList(e.syn).length >= 3);
+      if(!pool.length) return null;
+
+      const e = choice(pool);
+      const syn = shuffle(cleanList(e.syn)).slice(0,3);
+      if(syn.length < 3) return null;
+      // One distractor: take a synonym from another entry far-ish
+      const far = poolForLevel(clamp(state.level+25,0,100), x => cleanList(x.syn).length >= 1);
+      let distract = null;
+      for(let i=0;i<12;i++){
+        const d = choice(far.length?far:DATA_SORTED);
+        const s = choice(cleanList(d.syn));
+        if(s && !syn.includes(s) && s !== e.lemma){ distract = s; break; }
+      }
+      if(!distract) distract = choice(["casa","perro","manzana","nube"].filter(x=>!syn.includes(x)));
+      const options = shuffle([...syn, distract]);
+
+      return {
+        type:"mcq",
+        mode:"syn",
+        lemma: e.lemma,
+        prompt: "Elige el sinónimo correcto de:",
+        options,
+        answer: options.indexOf(choice(syn)), // any of the shown synonyms is valid; but we pick one as correct to keep rule strict
+        valid: new Set(syn),
+      };
+    }
+
+    function genAntQuestion(){
+      // Need at least 1 antonym
+      const pool = poolForLevel(state.level, e => cleanList(e.ant).length >= 1);
+      if(!pool.length) return null;
+
+      const e = choice(pool);
+      const ants = cleanList(e.ant);
+      const correct = choice(ants);
+
+      // Distractors: antonyms from other entries or random words
+      const opts = [correct];
+      for(let i=0;i<20 && opts.length<4;i++){
+        const d = choice(DATA_SORTED);
+        const a = choice(cleanList(d.ant));
+        if(a && isCleanWord(a) && !opts.includes(a) && a !== e.lemma) opts.push(a);
+      }
+      while(opts.length<4){
+        const r = choice(["claro","bajo","dulce","amable","fuerte","tranquilo","corto","grande","limpio","nuevo"]);
+        if(!opts.includes(r) && r !== e.lemma) opts.push(r);
+      }
+      const options = shuffle(opts).slice(0,4);
+      return {
+        type:"mcq",
+        mode:"ant",
+        lemma: e.lemma,
+        prompt: "Elige el antónimo correcto de:",
+        options,
+        answer: options.indexOf(correct),
+        valid: new Set([correct]),
+      };
+    }
+
+    function genOddQuestion(){
+      // "Intruso": 3 sinónimos + 1 intruso
+      const pool = poolForLevel(state.level, e => cleanList(e.syn).length >= 4);
+      if(!pool.length) return null;
+
+      const e = choice(pool);
+      const syn = shuffle(cleanList(e.syn)).slice(0,3);
+      if(syn.length<3) return null;
+
+      // intruder word
+      let intr = null;
+      for(let i=0;i<18;i++){
+        const d = choice(poolForLevel(clamp(state.level+20,0,100), x=>cleanList(x.syn).length >=1));
+        const s = choice(cleanList(d.syn));
+        if(s && !syn.includes(s) && s !== e.lemma){ intr = s; break; }
+      }
+      if(!intr) intr = choice(["hielo","tornillo","arena","cálculo"].filter(x=>!syn.includes(x)));
+
+      const options = shuffle([...syn, intr]);
+      return {
+        type:"mcq",
+        mode:"odd",
+        lemma: e.lemma,
+        prompt: "Tres opciones son sinónimos de “" + e.lemma + "”. Marca el intruso:",
+        options,
+        answer: options.indexOf(intr),
+        valid: new Set([intr]),
+      };
+    }
+
+    function genPairsQuestion(){
+      const pool = poolForLevel(state.level, e => cleanList(e.syn).length >= 2);
+      if(!pool.length) return null;
+
+      // pick 4 distinct entries
+      const picks = [];
+      const used = new Set();
+      for(let i=0;i<200 && picks.length<4;i++){
+        const e = choice(pool);
+        if(used.has(e.lemma)) continue;
+        const syn = cleanList(e.syn);
+        if(syn.length<2) continue;
+        used.add(e.lemma);
+        picks.push({
+          lemma: e.lemma,
+          syn: choice(syn)
+        });
+      }
+      if(picks.length<4) return null;
+
+      const left = shuffle(picks.map(x=>x.lemma));
+      const right = shuffle(picks.map(x=>x.syn));
+      const map = new Map(picks.map(x=>[x.lemma, x.syn]));
+
+      return { type:"pairs", mode:"pairs", left, right, map };
+    }
+
+    function pickMode(){
+      if(state.mode !== "mix") return state.mode;
+      const modes = ["syn","ant","odd","pairs"];
+      // weighted: more mcq than pairs
+      const bag = ["syn","syn","ant","odd","pairs"];
+      return choice(bag);
+    }
+
+    function genQuestion(){
+      const mode = pickMode();
+      const gens = { syn: genSynQuestion, ant: genAntQuestion, odd: genOddQuestion, pairs: genPairsQuestion };
+      for(let i=0;i<10;i++){
+        const q = gens[mode]();
+        if(q) return q;
+      }
+      // fallback to any
+      for(let i=0;i<10;i++){
+        const q = choice([genSynQuestion, genAntQuestion, genOddQuestion, genPairsQuestion])();
+        if(q) return q;
+      }
+      return null;
+    }
+
+    // Rendering
+    function setFeedback(msg, kind="muted"){
+      elFeedback.className = "note";
+      if(kind === "good") elFeedback.style.color = "rgba(52,211,153,.95)";
+      else if(kind === "bad") elFeedback.style.color = "rgba(251,113,133,.95)";
+      else elFeedback.style.color = "";
+      elFeedback.innerHTML = msg;
+    }
+
+    function renderQuestion(q){
+      current = q;
+      wrongCount = 0;
+      locked = false;
+
+      btnNext.disabled = true;
+      btnHint.disabled = false;
+
+      elPairsArea.style.display = "none";
+      elOptions.style.display = "grid";
+      elOptions.innerHTML = "";
+      elLeft.innerHTML = "";
+      elRight.innerHTML = "";
+
+      if(q.type === "mcq"){
+        elWord.textContent = q.lemma;
+        elPrompt.textContent = q.prompt;
+
+        q.options.forEach((opt, idx)=>{
+          const b = document.createElement("button");
+          b.className = "opt";
+          b.type = "button";
+          b.innerHTML = `<span>${opt}</span><span class="kbd">${idx+1}</span>`;
+          b.addEventListener("click", ()=>chooseOption(idx, b));
+          elOptions.appendChild(b);
+        });
+
+        setFeedback("Elige la opción correcta. No avanzas si fallas 😉", "muted");
+      }
+
+      if(q.type === "pairs"){
+        elWord.textContent = "Parejas";
+        elPrompt.textContent = "Empareja cada lema con su sinónimo.";
+        elOptions.style.display = "none";
+        elPairsArea.style.display = "block";
+        renderPairs(q);
+        setFeedback("Tip: selecciona un lema (izquierda) y luego su sinónimo (derecha).", "muted");
+      }
+
+      const modeName = ({syn:"Sinónimos",ant:"Antónimos",odd:"Intruso",pairs:"Parejas",mix:"Mix"})[q.mode] || q.mode;
+      elSubtitle.textContent = "Listo. " + modeName + " en nivel " + state.level + ".";
+      syncUI();
+    }
+
+    // MCQ interaction
+    function chooseOption(idx, btn){
+      if(locked) return;
+      if(!current || current.type !== "mcq") return;
+
+      state.attempts += 1;
+
+      const opts = Array.from(elOptions.querySelectorAll(".opt"));
+
+      const isCorrect = (current.mode === "syn")
+        ? current.valid.has(current.options[idx])
+        : (idx === current.answer);
+
+      if(isCorrect){
+        locked = true;
+        state.correct += 1;
+        state.streak += 1;
+        state.xp += 10;
+        state.lvlXP += 12;
+
+        opts.forEach(o=>o.disabled=true);
+        btn.classList.add("correct");
+        beep(720, 0.07);
+
+        setFeedback("✅ Correcto. Ahora sí puedes pasar a la siguiente.", "good");
+        btnNext.disabled = false;
+        btnHint.disabled = true;
+
+        // Adaptive: increase level slowly on good streak
+        if(state.adaptive){
+          if(state.streak > 0 && state.streak % 6 === 0) state.level = clamp(state.level + 1, 0, 100);
+        }
+
+        // Level up progress
+        if(state.lvlXP >= state.lvlNeed){
+          state.lvlXP = state.lvlXP - state.lvlNeed;
+          state.level = clamp(state.level + 1, 0, 100);
+          state.lvlNeed = clamp(Math.round(state.lvlNeed * 1.06), 60, 160);
+          showToast("Subiste a nivel " + state.level + " 🔥");
+        }
+
+        saveState();
+        syncUI();
+      } else {
+        wrongCount += 1;
+        state.streak = 0;
+        state.xp = Math.max(0, state.xp - 1);
+        beep(220, 0.08);
+
+        btn.classList.add("wrong");
+        setTimeout(()=>btn.classList.remove("wrong"), 450);
+
+        setFeedback("❌ Incorrecto. Intenta otra vez (misma pregunta).", "bad");
+
+        // Adaptive: drop level a bit if struggling
+        if(state.adaptive && wrongCount >= 2){
+          state.level = clamp(state.level - 1, 0, 100);
+        }
+        saveState();
+        syncUI();
+      }
+    }
+
+    // Hints
+    function applyHint(){
+      if(!current) return;
+
+      if(current.type === "mcq"){
+        // Remove one wrong option if possible
+        const opts = Array.from(elOptions.querySelectorAll(".opt"));
+        const wrongIdxs = [];
+        for(let i=0;i<current.options.length;i++){
+          const w = current.options[i];
+          const isCorrect = (current.mode === "syn") ? current.valid.has(w) : (i === current.answer);
+          if(!isCorrect) wrongIdxs.push(i);
+        }
+        if(wrongIdxs.length){
+          const rm = choice(wrongIdxs);
+          opts[rm].disabled = true;
+          opts[rm].style.opacity = .45;
+          showToast("Pista: eliminé 1 opción ❄️");
+          beep(520, 0.04);
+        } else {
+          showToast("No hay más pistas para esta pregunta.");
+        }
+      }
+
+      if(current.type === "pairs"){
+        // Highlight one correct pair
+        const lemma = current.left.find(l => !matchedPairs.has(l));
+        if(!lemma) { showToast("Ya resolviste todo ✅"); return; }
+        showToast("Pista: busca el par de “" + lemma + "”.");
+        beep(520, 0.04);
+      }
+    }
+
+    // Pairs mode
+    let leftSel = null;
+    let rightSel = null;
+    let matchedPairs = new Set();
+
+    function renderPairs(q){
+      leftSel = null; rightSel = null; matchedPairs = new Set();
+
+      const leftButtons = q.left.map(l=>{
+        const d = document.createElement("div");
+        d.className = "pairItem";
+        d.textContent = l;
+        d.addEventListener("click", ()=>selectLeft(l, d));
+        elLeft.appendChild(d);
+        return d;
+      });
+
+      const rightButtons = q.right.map(r=>{
+        const d = document.createElement("div");
+        d.className = "pairItem";
+        d.textContent = r;
+        d.addEventListener("click", ()=>selectRight(r, d));
+        elRight.appendChild(d);
+        return d;
+      });
+
+      function clearSel(){
+        leftButtons.forEach(b=>b.classList.remove("sel"));
+        rightButtons.forEach(b=>b.classList.remove("sel"));
+      }
+
+      function selectLeft(val, node){
+        if(locked) return;
+        if(matchedPairs.has(val)) return;
+        clearSel();
+        leftSel = { val, node };
+        node.classList.add("sel");
+        if(rightSel) tryMatch();
+      }
+
+      function selectRight(val, node){
+        if(locked) return;
+        if([...matchedPairs].some(l=>q.map.get(l) === val)) return;
+        clearSel();
+        rightSel = { val, node };
+        node.classList.add("sel");
+        if(leftSel) tryMatch();
+      }
+
+      function tryMatch(){
+        state.attempts += 1;
+
+        const correctSyn = q.map.get(leftSel.val);
+        const ok = (rightSel.val === correctSyn);
+
+        if(ok){
+          state.correct += 1;
+          state.streak += 1;
+          state.xp += 12;
+          state.lvlXP += 14;
+
+          leftSel.node.classList.remove("sel");
+          rightSel.node.classList.remove("sel");
+          leftSel.node.classList.add("ok");
+          rightSel.node.classList.add("ok");
+          matchedPairs.add(leftSel.val);
+
+          beep(740, 0.07);
+          showToast("Par correcto ✅");
+
+          leftSel = null; rightSel = null;
+
+          // Adaptive & level up
+          if(state.adaptive){
+            if(state.streak > 0 && state.streak % 5 === 0) state.level = clamp(state.level + 1, 0, 100);
+          }
+          if(state.lvlXP >= state.lvlNeed){
+            state.lvlXP = state.lvlXP - state.lvlNeed;
+            state.level = clamp(state.level + 1, 0, 100);
+            state.lvlNeed = clamp(Math.round(state.lvlNeed * 1.06), 60, 160);
+            showToast("Subiste a nivel " + state.level + " 🔥");
+          }
+
+          // Finish when all matched
+          if(matchedPairs.size === q.left.length){
+            locked = true;
+            setFeedback("✅ Perfecto. Ya puedes pasar a la siguiente.", "good");
+            btnNext.disabled = false;
+            btnHint.disabled = true;
+          } else {
+            setFeedback("Bien. Te faltan " + (q.left.length - matchedPairs.size) + " pares.", "muted");
+          }
+
+          saveState();
+          syncUI();
+        } else {
+          wrongCount += 1;
+          state.streak = 0;
+          state.xp = Math.max(0, state.xp - 1);
+          beep(220, 0.08);
+
+          leftSel.node.classList.add("no");
+          rightSel.node.classList.add("no");
+          setTimeout(()=>{
+            leftSel?.node.classList.remove("no","sel");
+            rightSel?.node.classList.remove("no","sel");
+          }, 420);
+
+          setFeedback("❌ No coincide. Intenta otra vez (no avanzas).", "bad");
+
+          // Adaptive: reduce a bit if struggling
+          if(state.adaptive && wrongCount >= 2){
+            state.level = clamp(state.level - 1, 0, 100);
+          }
+
+          leftSel = null; rightSel = null;
+          saveState();
+          syncUI();
+        }
+      }
+    }
+
+    // Main loop
+    function start(){
+      const q = genQuestion();
+      if(!q){
+        elSubtitle.textContent = "No pude generar pregunta. Revisa tu diccionario.";
+        setFeedback("No hay suficientes datos válidos. Intenta con el archivo completo.", "bad");
+        btnNext.disabled = true;
+        btnHint.disabled = true;
         return;
       }
-    }catch(e){
-      // si falla, sigue con fetch
+      renderQuestion(q);
     }
-  }
 
-  // 2) Autocarga por fetch (funciona si abres con servidor local o hosting)
-  // Si estás en file:// puede fallar; en ese caso usa el botón “Cargar”.
-  tryFetchFromDir();
-})();
-</script>
+    function next(){
+      locked = false;
+      start();
+    }
+
+    // Placement test (auto detect)
+    async function placementTest(){
+      showToast("Iniciando auto-detección…");
+      // Sample 10 questions across the spectrum
+      const levels = [5,15,25,35,45,55,65,75,85,95];
+      let score = 0;
+      let i = 0;
+
+      // Modal-ish loop via confirm/prompt is ugly. We'll do an in-app quick test:
+      // Temporarily disable adaptive and run 10 MCQ with forced progression when correct OR after 2 wrong (we'll accept)
+      const old = {...state};
+      state.adaptive = false;
+      state.mode = "syn";
+
+      const results = [];
+      for(const lv of levels){
+        state.level = lv;
+        syncUI();
+
+        const q = genSynQuestion() || genOddQuestion() || genAntQuestion();
+        if(!q){ continue; }
+
+        // Render question and wait user to answer correctly (up to 2 wrong; then reveal)
+        await new Promise((resolve)=>{
+          current = q;
+          wrongCount = 0;
+          locked = false;
+
+          btnNext.disabled = true;
+          btnHint.disabled = true;
+
+          elPairsArea.style.display = "none";
+          elOptions.style.display = "grid";
+          elOptions.innerHTML = "";
+          elWord.textContent = q.lemma;
+          elPrompt.textContent = "🧪 Test (" + (i+1) + "/10): " + (q.mode==="syn"?"Elige un sinónimo":"Elige la opción correcta");
+          elSubtitle.textContent = "Auto-detección en curso…";
+          setFeedback("Responde. Si fallas 2 veces, te muestro la correcta y sigo.", "muted");
+
+          q.options.forEach((opt, idx)=>{
+            const b = document.createElement("button");
+            b.className = "opt";
+            b.type = "button";
+            b.innerHTML = `<span>${opt}</span><span class="kbd">${idx+1}</span>`;
+            b.addEventListener("click", ()=>{
+              if(locked) return;
+              state.attempts += 1;
+              const isCorrect = (q.mode === "syn") ? q.valid.has(q.options[idx]) : (idx === q.answer);
+              if(isCorrect){
+                locked = true;
+                b.classList.add("correct");
+                beep(720, 0.07);
+                score += 1;
+                results.push({lv, ok:true});
+                setTimeout(resolve, 350);
+              } else {
+                wrongCount += 1;
+                beep(220, 0.08);
+                b.classList.add("wrong");
+                setTimeout(()=>b.classList.remove("wrong"), 350);
+                if(wrongCount >= 2){
+                  // reveal
+                  const opts = Array.from(elOptions.querySelectorAll(".opt"));
+                  const idxOk = q.mode==="syn" ? q.options.findIndex(x=>q.valid.has(x)) : q.answer;
+                  if(idxOk>=0) opts[idxOk].classList.add("correct");
+                  results.push({lv, ok:false});
+                  locked = true;
+                  setTimeout(resolve, 550);
+                }
+              }
+            });
+            elOptions.appendChild(b);
+          });
+        });
+
+        i += 1;
+      }
+
+      // Estimate level: weighted average of attempted levels based on correctness
+      const okLevels = results.filter(r=>r.ok).map(r=>r.lv);
+      const est = okLevels.length ? Math.round(okLevels.reduce((a,b)=>a+b,0)/okLevels.length) : 0;
+
+      // Restore, set estimated
+      Object.assign(state, old);
+      state.level = clamp(est, 0, 100);
+      state.mode = "mix";
+      state.adaptive = true;
+      saveState();
+      syncUI();
+      showToast("Nivel recomendado: " + state.level + " ✅");
+      start();
+    }
+
+    // Import/Export progress
+    function exportProgress(){
+      const blob = new Blob([JSON.stringify({ ...state, exported_at: new Date().toISOString() }, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "lexiplay_progreso.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importProgress(file){
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        try{
+          const s = JSON.parse(reader.result);
+          if(typeof s.level === "number") state.level = clamp(Math.round(s.level),0,100);
+          if(typeof s.mode === "string") state.mode = s.mode;
+          if(typeof s.xp === "number") state.xp = s.xp|0;
+          if(typeof s.streak === "number") state.streak = s.streak|0;
+          if(typeof s.correct === "number") state.correct = s.correct|0;
+          if(typeof s.attempts === "number") state.attempts = s.attempts|0;
+          if(typeof s.lvlXP === "number") state.lvlXP = s.lvlXP|0;
+          if(typeof s.lvlNeed === "number") state.lvlNeed = s.lvlNeed|0 || 60;
+          if(typeof s.adaptive === "boolean") state.adaptive = s.adaptive;
+          saveState();
+          syncUI();
+          showToast("Progreso importado ✅");
+          start();
+        }catch(e){
+          showToast("Archivo inválido ❌");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Bind UI
+    document.querySelectorAll("[data-mode]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        state.mode = btn.getAttribute("data-mode");
+        saveState();
+        syncUI();
+        start();
+        showToast("Modo: " + elModeLabel.textContent.replace("Modo: ",""));
+      });
+    });
+
+    elLevelRange.addEventListener("input", ()=>{
+      const v = clamp(parseInt(elLevelRange.value,10)||0,0,100);
+      state.level = v;
+      // If user touches the slider, adapt is still okay, but we keep it
+      saveState();
+      syncUI();
+    });
+
+    elAdapt.addEventListener("change", ()=>{
+      state.adaptive = elAdapt.checked;
+      saveState();
+      syncUI();
+      showToast(state.adaptive ? "Adaptativo ON" : "Adaptativo OFF");
+    });
+
+    btnNext.addEventListener("click", next);
+    btnHint.addEventListener("click", applyHint);
+    btnReset.addEventListener("click", resetState);
+    btnPlacement.addEventListener("click", placementTest);
+    btnExport.addEventListener("click", exportProgress);
+    btnImport.addEventListener("click", ()=>fileImport.click());
+    fileImport.addEventListener("change", ()=>{
+      const f = fileImport.files && fileImport.files[0];
+      if(f) importProgress(f);
+      fileImport.value = "";
+    });
+
+    // Keyboard shortcuts for MCQ (1-4)
+    document.addEventListener("keydown", (e)=>{
+      if(!current) return;
+      if(current.type !== "mcq") return;
+      const k = e.key;
+      if(k >= "1" && k <= "4"){
+        const idx = parseInt(k,10)-1;
+        const btn = elOptions.querySelectorAll(".opt")[idx];
+        if(btn && !btn.disabled) btn.click();
+      }
+      if(k === "Enter" && !btnNext.disabled) btnNext.click();
+      if((k === "h" || k === "H") && !btnHint.disabled) btnHint.click();
+    });
+
+    // Load dictionary & init
+    function boot(){
+      loadState();
+
+      const raw = window.__LEXICON_DATA__;
+      if(Array.isArray(raw) && raw.length > 1000){
+        DATA = raw.map(e=>({
+          lemma: normalize(e.lemma),
+          syn: cleanList(e.syn),
+          ant: cleanList(e.ant),
+        })).filter(e=>isCleanWord(e.lemma) && (e.syn.length || e.ant.length));
+        elSubtitle.textContent = "Diccionario cargado: " + DATA.length.toLocaleString("es-PE") + " entradas ✅";
+      } else {
+        DATA = MINI;
+        loadStatus.style.display = "block";
+        elSubtitle.textContent = "Modo demo (diccionario mini).";
+      }
+
+      // Pre-sort by difficulty score
+      DATA_SORTED = DATA.slice().sort((a,b)=>scoreEntry(a)-scoreEntry(b));
+
+      // If user has a saved level, keep it; else start at 0.
+      syncUI();
+      start();
+    }
+
+    boot();
+  </script>
 </body>
 </html>
