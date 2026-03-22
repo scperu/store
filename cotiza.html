@@ -354,7 +354,16 @@
                                 </div>
                         <div class="flex-grow min-w-0">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[10px] font-black tracking-wider bg-slate-800 text-white px-1.5 py-0.5 rounded uppercase">${p.mini}</span>
+                                <div class="flex items-center bg-slate-800 text-white rounded overflow-hidden">
+    <span onclick="copiarMiniCodigo('${p.mini}', this.nextElementSibling)"
+          class="text-[10px] font-black tracking-wider px-2 py-0.5 uppercase cursor-pointer">
+        ${p.mini}
+    </span>
+    <button onclick="copiarMiniCodigo('${p.mini}', this)" 
+            class="bg-slate-700 hover:bg-blue-600 px-2 py-0.5 text-[10px] transition">
+        <i class="fa-regular fa-copy"></i>
+    </button>
+</div>
                                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">${p.marca}</span>
                             </div>
                             <h4 class="text-sm font-bold text-slate-800 leading-snug mb-1 pr-2">${p.desc}</h4>
@@ -385,6 +394,26 @@
             document.getElementById('shippingVal').textContent = formatMoney(shipping);
             document.getElementById('totalVal').textContent = formatMoney(total);
         }
+
+
+/* --- COPIAR MINICÓDIGO --- */
+function copiarMiniCodigo(texto, btn) {
+    navigator.clipboard.writeText(texto).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = "✔";
+        btn.classList.add("text-green-400");
+
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+            btn.classList.remove("text-green-400");
+        }, 1000);
+    });
+}
+
+
+
+
+
     </script>
 </body>
 </html>
