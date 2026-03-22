@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador Histórico de Inventario</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #e2e8f0;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    input, button {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 8px;
+        border: none;
+    }
+
+    button {
+        background: #38bdf8;
+        color: #0f172a;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0ea5e9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #334155;
+        text-align: left;
+    }
+
+    th {
+        background: #020617;
+        position: sticky;
+        top: 0;
+    }
+
+    .summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .summary div {
+        background: #020617;
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .top-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #search {
+        width: 300px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Comparador Histórico de Inventario</h1>
+
+    <div class="card">
+        <div class="top-bar">
+            <div>
+                Excel Anterior: <input type="file" id="oldFile" accept=".xlsx">
+                Excel Nuevo: <input type="file" id="newFile" accept=".xlsx">
+                <button onclick="generarInforme()">Generar Informe</button>
+                <button onclick="backupJSON()">Backup JSON</button>
+                <button onclick="document.getElementById('restoreInput').click()">Restaurar JSON</button>
+                <input type="file" id="restoreInput" style="display:none" accept=".json" onchange="restoreJSON(event)">
+            </div>
+            <div>
+                <input type="text" id="search" placeholder="Buscar..." onkeyup="renderTabla()">
+            </div>
+        </div>
+        <div>Fecha informe actual: <span id="fechaActual"></span></div>
+    </div>
+
+    <div class="card">
+        <h3>Resumen Histórico</h3>
+        <div class="summary" id="summary"></div>
+    </div>
+
+    <div class="card">
+        <h3>Historial</h3>
+        <div style="max-height:500px; overflow:auto;">
+            <table id="tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Mini código</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Marca</th>
+                        <th>Evento</th>
+                        <th>Antes</th>
+                        <th>Ahora</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+let historial = JSON.parse(localStorage.getItem('historialInventario')) || [];
+
+document.getElementById('fechaActual').innerText = new Date().toLocaleDateString();
+
+function leerExcel(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            resolve(json);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+function mapearDatos(rows) {
+    const map = {};
+    for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0]) continue;
+        map[r[0]] = {
+            codigo: r[0],
+            descripcion: r[1],
+            stock: Number(r[2]) || 0,
+            precio: Number(r[3]) || 0,
+            marca: r[4],
+            mini: r[5],
+            detalles: r[6]
+        };
+    }
+    return map;
+}
+
+function formatoPrecio(n) {
+    return "$" + n.toFixed(2);
+}
+
+function generarInforme() {
+    const oldFile = document.getElementById('oldFile').files[0];
+    const newFile = document.getElementById('newFile').files[0];
+    if (!oldFile || !newFile) return alert("Sube ambos archivos");
+
+    Promise.all([leerExcel(oldFile), leerExcel(newFile)]).then(([oldRows, newRows]) => {
+        const oldMap = mapearDatos(oldRows);
+        const newMap = mapearDatos(newRows);
+        const fecha = new Date().toLocaleDateString();
+
+        const codigos = new Set([...Object.keys(oldMap), ...Object.keys(newMap)]);
+
+        codigos.forEach(codigo => {
+            const oldP = oldMap[codigo];
+            const newP = newMap[codigo];
+
+            if (!oldP && newP) {
+                pushEvento(fecha, newP, 'PRODUCTO NUEVO', '-', '-');
+                return;
+            }
+
+            if (oldP && !newP) {
+                pushEvento(fecha, oldP, 'DESCONTINUADO', '-', '-');
+                return;
+            }
+
+            if (!oldP || !newP) return;
+
+            // Precio
+            if (oldP.precio === 0 && newP.precio > 0)
+                pushEvento(fecha, newP, 'PRECIO NUEVO', formatoPrecio(oldP.precio), formatoPrecio(newP.precio));
+            else if (newP.precio > oldP.precio)
+                pushEvento(fecha, newP, 'SUBIÓ PRECIO', formatoPrecio(oldP.precio), formatoPrecio(newP.precio));
+            else if (newP.precio < oldP.precio)
+                pushEvento(fecha, newP, 'BAJÓ PRECIO', formatoPrecio(oldP.precio), formatoPrecio(newP.precio));
+
+            // Stock
+            if (newP.stock === 0 && oldP.stock > 0)
+                pushEvento(fecha, newP, 'AGOTADO', oldP.stock, newP.stock);
+            else if (oldP.stock === 0 && newP.stock > 0)
+                pushEvento(fecha, newP, 'REPUESTO', oldP.stock, newP.stock);
+            else if (newP.stock > oldP.stock)
+                pushEvento(fecha, newP, 'INGRESO STOCK', oldP.stock, newP.stock);
+            else if (newP.stock < oldP.stock)
+                pushEvento(fecha, newP, 'SALIDA STOCK', oldP.stock, newP.stock);
+
+            if (oldP.stock > 999999 && newP.stock < 999999)
+                pushEvento(fecha, newP, 'STOCK CORREGIDO', oldP.stock, newP.stock);
+        });
+
+        guardarHistorial();
+        renderTabla();
+        renderResumen();
+    });
+}
+
+function pushEvento(fecha, p, evento, antes, ahora) {
+    historial.push({
+        fecha,
+        mini: p.mini,
+        codigo: p.codigo,
+        descripcion: p.descripcion,
+        marca: p.marca,
+        evento,
+        antes,
+        ahora
+    });
+}
+
+function guardarHistorial() {
+    localStorage.setItem('historialInventario', JSON.stringify(historial));
+}
+
+function renderTabla() {
+    const tbody = document.querySelector('#tabla tbody');
+    const search = document.getElementById('search').value.toLowerCase();
+    tbody.innerHTML = '';
+
+    historial
+        .filter(r => Object.values(r).join(' ').toLowerCase().includes(search))
+        .forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${r.fecha}</td>
+                <td>${r.mini}</td>
+                <td>${r.codigo}</td>
+                <td>${r.descripcion}</td>
+                <td>${r.marca}</td>
+                <td>${r.evento}</td>
+                <td>${r.antes}</td>
+                <td>${r.ahora}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+}
+
+function renderResumen() {
+    const summary = document.getElementById('summary');
+    summary.innerHTML = '';
+    const conteo = {};
+
+    historial.forEach(r => {
+        conteo[r.evento] = (conteo[r.evento] || 0) + 1;
+    });
+
+    for (let e in conteo) {
+        const div = document.createElement('div');
+        div.innerText = e + ': ' + conteo[e];
+        summary.appendChild(div);
+    }
+}
+
+function backupJSON() {
+    const blob = new Blob([JSON.stringify(historial)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'backup_historial.json';
+    a.click();
+}
+
+function restoreJSON(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        historial = JSON.parse(e.target.result);
+        guardarHistorial();
+        renderTabla();
+        renderResumen();
+    };
+    reader.readAsText(file);
+}
+
+renderTabla();
+renderResumen();
+</script>
+
+</body>
+</html>
