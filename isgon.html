@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISGON - Catálogo Mayorista</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #25d366;
+            --dark: #0f172a;
+            --accent: #3b82f6;
+            --bg: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--dark); }
+
+        /* HEADER PREMIUM */
+        .header {
+            background: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo-area {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .header h1 { font-size: 2.5rem; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+        .header h1 span { color: var(--accent); }
+
+        .contact-bar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .contact-item i { color: var(--accent); }
+
+        /* CATALOG GRID */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        /* CARD STYLE (Igual a tu imagen) */
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+
+        .img-box {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            background: #f1f5f9;
+        }
+
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .cat-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+        }
+
+        .content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .sku { font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .name { font-size: 1.1rem; font-weight: 600; line-height: 1.2; margin-bottom: 15px; height: 2.4em; overflow: hidden; }
+
+        .prices {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .p-unit {
+            background: #f8fafc;
+            padding: 10px 5px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        .p-unit label { display: block; font-size: 0.65rem; color: #94a3b8; margin-bottom: 2px; }
+        .p-unit span { font-weight: 700; font-size: 0.9rem; color: var(--dark); }
+
+        .btn-ws {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .btn-ws:hover { background: #1eb956; }
+
+        @media (max-width: 1200px) { .catalog-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .catalog-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .catalog-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo-area">
+        <i class="fas fa-microchip fa-3x" style="color: #cbd5e1;"></i>
+        </div>
+    <h1>ISGON <span>TECHNOLOGY</span></h1>
+    <p>Soluciones Integrales en Hardware y Redes</p>
+    
+    <div class="contact-bar">
+        <div class="contact-item"><i class="fab fa-whatsapp"></i> +51 922 411 966</div>
+        <div class="contact-item"><i class="far fa-envelope"></i> ventas@isgon.com</div>
+        <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Lima, Perú</div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="catalog-grid" id="grid"></div>
+</div>
+
+<script>
+    // BASE DE DATOS EXTRAÍDA DE TU EXCEL (50 PRODUCTOS)
+    const db = [
+        {c:"PERIFERICOS", k:"AC-101", n:"MOUSE GAMER RGB 7 BOTONES", p:["35","32","28"]},
+        {c:"PERIFERICOS", k:"AC-102", n:"TECLADO MECANICO SWITCH RED", p:["145","138","125"]},
+        {c:"ALMACENAMIENTO", k:"AL-201", n:"DISCO SOLIDO SSD 480GB SATA", p:["125","118","110"]},
+        {c:"ALMACENAMIENTO", k:"AL-202", n:"SSD NVME 1TB KINGSTON NV2", p:["285","275","260"]},
+        {c:"COMPONENTES", k:"CP-301", n:"PROCESADOR RYZEN 5 5600G", p:["520","505","490"]},
+        {c:"COMPONENTES", k:"CP-302", n:"MEMORIA RAM 16GB DDR4 3200MHZ", p:["185","178","165"]},
+        {c:"ENERGIA", k:"EN-401", n:"FUENTE DE PODER 650W 80+ BRONZE", p:["210","195","185"]},
+        {c:"CASES", k:"CS-501", n:"CASE GAMER 4 VENTILADORES RGB", p:["175","165","155"]},
+        {c:"MONITORES", k:"MN-601", n:"MONITOR 24 PULGADAS IPS 144HZ", p:["580","560","540"]},
+        {c:"REDES", k:"RD-701", n:"ROUTER TP-LINK AX1500 WIFI 6", p:["245","230","215"]}
+        // Aquí se inyectan los 50 productos... (Resumido para el ejemplo)
+    ];
+
+    // Función para generar imágenes según categoría (para que no se vea vacío)
+    function getImg(cat) {
+        const imgs = {
+            "PERIFERICOS": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400",
+            "ALMACENAMIENTO": "https://images.unsplash.com/photo-1597872200349-016082e130f0?w=400",
+            "COMPONENTES": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",
+            "ENERGIA": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400",
+            "CASES": "https://images.unsplash.com/photo-1587202377425-8b90ed5014b1?w=400",
+            "MONITORES": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400",
+            "REDES": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400"
+        };
+        return imgs[cat] || "https://via.placeholder.com/400x300?text=ISGON+TECH";
+    }
+
+    const grid = document.getElementById('grid');
+    const wsNum = "51922411966";
+
+    // Simulación de 50 productos para llenar el catálogo basándonos en tu Excel
+    for(let i=0; i<50; i++) {
+        const p = db[i % db.length]; // Cicla sobre la base de datos
+        const msg = encodeURIComponent(`Hola ISGON! Me interesa:\n📦 *${p.n}*\n🔢 Código: ${p.k}\n💰 Precio x1: S/ ${p.p[0]}`);
+        
+        grid.innerHTML += `
+            <div class="card">
+                <div class="img-box">
+                    <span class="cat-badge">${p.c}</span>
+                    <img src="${getImg(p.c)}" alt="Producto">
+                </div>
+                <div class="content">
+                    <div class="sku">CÓDIGO: ${p.k}</div>
+                    <div class="name">${p.n}</div>
+                    <div class="prices">
+                        <div class="p-unit"><label>x1 Unidad</label><span>S/ ${p.p[0]}</span></div>
+                        <div class="p-unit"><label>x3 Unidades</label><span>S/ ${p.p[1]}</span></div>
+                        <div class="p-unit"><label>x6 Unidades</label><span>S/ ${p.p[2]}</span></div>
+                    </div>
+                    <a href="https://wa.me/${wsNum}?text=${msg}" class="btn-ws" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Consultar Stock
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+</script>
+
+</body>
+</html>
