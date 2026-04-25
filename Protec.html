@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protector de HTML</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent-2: #16a34a;
+      --border: #334155;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+
+    .head {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .body {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    input[type="file"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      outline: none;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.1);
+      accent-color: var(--accent);
+    }
+
+    .checks {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 400;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease, background .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .primary {
+      background: var(--accent);
+      color: #052e16;
+    }
+
+    .primary:hover { background: var(--accent-2); }
+
+    .secondary {
+      background: #334155;
+      color: var(--text);
+    }
+
+    .ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .status {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status.ok { color: #86efac; }
+    .status.err { color: #fca5a5; }
+
+    .preview {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0b1220;
+    }
+
+    .preview-head {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    textarea {
+      min-height: 280px;
+      resize: vertical;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1>Protector de HTML</h1>
+        <p class="sub">
+          Sube un archivo <code>.html</code>, genera una versión protegida y descárgala.
+          Esta versión prioriza mantener la funcionalidad original del HTML.
+        </p>
+      </div>
+
+      <div class="body">
+        <div class="row">
+          <label for="fileInput">Archivo HTML</label>
+          <input id="fileInput" type="file" accept=".html,text/html" />
+        </div>
+
+        <div class="row">
+          <label for="outputName">Nombre del archivo de salida</label>
+          <input id="outputName" type="text" value="protegido.html" />
+        </div>
+
+        <div class="row">
+          <label>Protecciones</label>
+          <div class="checks">
+            <label class="check"><input type="checkbox" id="optContext" checked /> Bloquear clic derecho</label>
+            <label class="check"><input type="checkbox" id="optSelect" checked /> Bloquear selección</label>
+            <label class="check"><input type="checkbox" id="optClipboard" checked /> Bloquear copiar y cortar</label>
+            <label class="check"><input type="checkbox" id="optDrag" checked /> Bloquear arrastrar</label>
+            <label class="check"><input type="checkbox" id="optKeys" checked /> Bloquear atajos comunes</label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="generateBtn" class="primary" disabled>Generar protegido</button>
+          <button id="downloadBtn" class="secondary" disabled>Descargar archivo</button>
+          <button id="clearBtn" class="ghost">Limpiar</button>
+        </div>
+
+        <div id="status" class="status">Selecciona un archivo para empezar.</div>
+
+        <div class="preview">
+          <div class="preview-head">Vista previa del HTML generado</div>
+          <textarea id="preview" spellcheck="false" readonly placeholder="Aquí aparecerá el resultado..."></textarea>
+        </div>
+
+        <div class="note">
+          Esta protección está pensada para usuario promedio. No es seguridad absoluta.
+          No se usa <code>iframe</code> ni <code>sandbox</code> para evitar romper scripts,
+          formularios, enlaces, popups o funciones del HTML original.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Consejo: si quieres más ocultación visual, después puedes ofuscar el JS del archivo generado.
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const outputName = document.getElementById("outputName");
+    const generateBtn = document.getElementById("generateBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const preview = document.getElementById("preview");
+    const statusEl = document.getElementById("status");
+
+    const optContext = document.getElementById("optContext");
+    const optSelect = document.getElementById("optSelect");
+    const optClipboard = document.getElementById("optClipboard");
+    const optDrag = document.getElementById("optDrag");
+    const optKeys = document.getElementById("optKeys");
+
+    let originalHtml = "";
+    let generatedHtml = "";
+
+    function setStatus(text, type = "") {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (type ? " " + type : "");
+    }
+
+    function normalizeOutputName(name) {
+      const trimmed = (name || "").trim() || "protegido.html";
+      return trimmed.toLowerCase().endsWith(".html") ? trimmed : trimmed + ".html";
+    }
+
+    function buildProtectionBlock() {
+      const lines = [];
+
+      lines.push("(function(){");
+      lines.push("  if (window.__htmlProtectionInstalled) return;");
+      lines.push("  window.__htmlProtectionInstalled = true;");
+
+      if (optContext.checked) {
+        lines.push("  document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, { capture: true });");
+      }
+
+      if (optSelect.checked) {
+        lines.push("  try {");
+        lines.push("    const s = document.createElement('style');");
+        lines.push("    s.textContent = 'html,body,*{-webkit-user-select:none !important;-ms-user-select:none !important;user-select:none !important;-webkit-touch-callout:none !important;}';");
+        lines.push("    document.head ? document.head.appendChild(s) : document.documentElement.appendChild(s);");
+        lines.push("  } catch(e) {}");
+        lines.push("  document.addEventListener('selectstart', function(e){ e.preventDefault(); }, { capture: true });");
+      }
+
+      if (optClipboard.checked) {
+        lines.push("  ['copy','cut'].forEach(function(evt){");
+        lines.push("    document.addEventListener(evt, function(e){ e.preventDefault(); }, { capture: true });");
+        lines.push("  });");
+      }
+
+      if (optDrag.checked) {
+        lines.push("  document.addEventListener('dragstart', function(e){ e.preventDefault(); }, { capture: true });");
+      }
+
+      if (optKeys.checked) {
+        lines.push("  document.addEventListener('keydown', function(e){");
+        lines.push("    const k = String(e.key || '').toLowerCase();");
+        lines.push("    if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }");
+        lines.push("    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); e.stopPropagation(); return false; }");
+        lines.push("    if (e.ctrlKey && ['u','c','x','s','a'].includes(k)) { e.preventDefault(); e.stopPropagation(); return false; }");
+        lines.push("    if (e.metaKey && ['u','c','x','s','a'].includes(k)) { e.preventDefault(); e.stopPropagation(); return false; }");
+        lines.push("  }, { capture: true });");
+      }
+
+      lines.push("})();");
+
+      return "\n<script>\n" + lines.join("\n") + "\n<\/script>\n";
+    }
+
+    function injectProtection(html) {
+      const extra = buildProtectionBlock();
+
+      if (/<\/body>/i.test(html)) {
+        return html.replace(/<\/body>/i, extra + "</body>");
+      }
+
+      if (/<\/html>/i.test(html)) {
+        return html.replace(/<\/html>/i, extra + "</html>");
+      }
+
+      return html + extra;
+    }
+
+    fileInput.addEventListener("change", async (event) => {
+      const file = event.target.files && event.target.files[0];
+      generatedHtml = "";
+      preview.value = "";
+      downloadBtn.disabled = true;
+
+      if (!file) {
+        originalHtml = "";
+        generateBtn.disabled = true;
+        setStatus("Selecciona un archivo para empezar.");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith(".html") && file.type !== "text/html") {
+        originalHtml = "";
+        generateBtn.disabled = true;
+        setStatus("El archivo debe ser HTML.", "err");
+        return;
+      }
+
+      try {
+        originalHtml = await file.text();
+        generateBtn.disabled = true;
+
+        if (!originalHtml.trim()) {
+          setStatus("El archivo está vacío.", "err");
+          return;
+        }
+
+        const suggested = file.name.replace(/\.html?$/i, "") + "-protegido.html";
+        outputName.value = suggested;
+        generateBtn.disabled = false;
+        setStatus("Archivo cargado. Ya puedes generar la versión protegida.", "ok");
+      } catch (err) {
+        originalHtml = "";
+        generateBtn.disabled = true;
+        setStatus("No se pudo leer el archivo.", "err");
+      }
+    });
+
+    generateBtn.addEventListener("click", () => {
+      if (!originalHtml) {
+        setStatus("Primero sube un archivo HTML.", "err");
+        return;
+      }
+
+      try {
+        generatedHtml = injectProtection(originalHtml);
+        preview.value = generatedHtml;
+        downloadBtn.disabled = false;
+        setStatus("HTML protegido generado correctamente.", "ok");
+      } catch (err) {
+        generatedHtml = "";
+        preview.value = "";
+        downloadBtn.disabled = true;
+        setStatus("Ocurrió un error al generar el HTML protegido.", "err");
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!generatedHtml) {
+        setStatus("No hay archivo generado para descargar.", "err");
+        return;
+      }
+
+      const blob = new Blob([generatedHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = normalizeOutputName(outputName.value);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus("Descarga iniciada.", "ok");
+    });
+
+    clearBtn.addEventListener("click", () => {
+      fileInput.value = "";
+      outputName.value = "protegido.html";
+      originalHtml = "";
+      generatedHtml = "";
+      preview.value = "";
+      generateBtn.disabled = true;
+      downloadBtn.disabled = true;
+      optContext.checked = true;
+      optSelect.checked = true;
+      optClipboard.checked = true;
+      optDrag.checked = true;
+      optKeys.checked = true;
+      setStatus("Formulario limpiado.");
+    });
+  </script>
+</body>
+</html>
