@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -5,31 +6,130 @@
     <title>Nut. Mabel Percca Paitan | Nutrición 100% Online</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter para un acabado ultra-limpio y corporativo -->
+    <!-- Google Fonts: Inter para un acabado limpio y corporativo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #E6DED4;
-        }
-        .premium-shadow {
-            box-shadow: 0 4px 20px -2px rgba(27, 24, 21, 0.06), 0 2px 6px -1px rgba(27, 24, 21, 0.04);
-        }
-    </style>
+<style>
+body{
+    font-family:'Inter',sans-serif;
+    background-color:#E6DED4;
+}
+
+.premium-shadow{
+    box-shadow:
+    0 4px 20px -2px rgba(27,24,21,.06),
+    0 2px 6px -1px rgba(27,24,21,.04);
+}
+
+/* PREMIUM ANIMATIONS */
+
+.reveal{
+    opacity:0;
+    transform:translateY(35px);
+    transition:all .8s cubic-bezier(.22,1,.36,1);
+}
+
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.card-hover{
+    transition:all .35s ease;
+}
+
+.card-hover:hover{
+    transform:translateY(-8px);
+    box-shadow:
+      0 25px 50px rgba(0,0,0,.08),
+      0 10px 20px rgba(0,0,0,.04);
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+}
+
+.profile-float{
+    animation:float 5s ease-in-out infinite;
+}
+
+.glow{
+    position:absolute;
+    inset:-10px;
+    background:rgba(16,185,129,.15);
+    filter:blur(25px);
+    border-radius:20px;
+    z-index:0;
+}
+
+.header-scrolled{
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+
+.btn-shine{
+    position:relative;
+    overflow:hidden;
+}
+
+.btn-shine::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:120%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.3),
+        transparent
+    );
+    transition:.8s;
+}
+
+.btn-shine:hover::before{
+    left:120%;
+}
+
+.time-slot{
+    transition:.25s ease;
+}
+
+.time-slot:hover{
+    transform:translateY(-3px) scale(1.05);
+}
+
+.whatsapp-float{
+    animation:float 4s ease-in-out infinite;
+}
+</style>
 </head>
-<body class="text-stone-800 antialiased min-h-screen flex flex-col">
+<body class="text-stone-800 antialiased min-h-screen flex flex-col relative pb-20 sm:pb-0">
+
+    <!-- Botón Emergente Flotante de WhatsApp -->
+    <a href="https://wa.me/51941428000?text=Hola%20Nut.%20Mabel,%20deseo%20realizar%20una%20consulta" target="_blank" class="fixed whatsapp-float bottom-6 right-6 z-50 bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-xl transition-all hover:scale-105 flex items-center justify-center group" aria-label="Contacto por WhatsApp">
+        <span class="absolute inset-0 rounded-full bg-emerald-600 opacity-40 animate-ping group-hover:hidden"></span>
+        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.456L0 24zm6.59-4.846c1.66.986 3.288 1.486 4.881 1.487 5.4 0 9.794-4.34 9.797-9.681.002-2.586-1.004-5.019-2.833-6.85C16.602 2.28 14.183 1.275 11.6 1.273c-5.396 0-9.786 4.342-9.79 9.684-.001 1.797.49 3.55 1.425 5.077L2.21 21.91l6.037-1.582zM17.487 14.39c-.314-.157-1.857-.915-2.142-1.018-.284-.104-.491-.157-.698.157-.206.314-.799 1.017-.98 1.225-.18.207-.36.233-.674.076-.314-.157-1.325-.488-2.524-1.558-.933-.832-1.563-1.86-1.746-2.174-.182-.314-.02-.484.137-.64.14-.14.314-.367.47-.55.156-.183.208-.314.313-.524.105-.21.052-.393-.026-.55-.078-.157-.698-1.682-.956-2.302-.25-.6-.51-.518-.698-.528-.18-.01-.387-.01-.594-.01-.207 0-.543.078-.827.393-.284.314-1.085 1.062-1.085 2.593 0 1.53 1.111 3.01 1.266 3.22.156.21 2.186 3.339 5.296 4.68.74.32 1.317.51 1.767.653.743.236 1.419.203 1.953.123.596-.089 1.857-.759 2.116-1.496.258-.737.258-1.37.18-1.496-.077-.127-.284-.203-.597-.36z"/>
+        </svg>
+    </a>
 
     <!-- Encabezado / Navbar Superior -->
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-stone-200/60">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="http://www.nutrimabel.com" class="flex items-center space-x-2 group">
+            <a href="http://www.nutrimabel.com" target="_blank" class="flex items-center space-x-2 group">
                 <span class="text-xl font-extrabold tracking-tight text-stone-900 group-hover:text-stone-600 transition-colors">NUTRIMABEL</span>
                 <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
             </a>
-            <div class="flex items-center space-x-4">
-                <a href="https://wa.me/51941428000" target="_blank" class="hidden sm:inline-flex text-xs font-semibold tracking-wider uppercase text-stone-600 hover:text-stone-900 transition-colors">Contacto Directo</a>
+            <div>
                 <a href="#tratamiento" class="bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold tracking-wide uppercase px-4 py-2.5 rounded-lg transition-all shadow-sm">Iniciar Tratamiento</a>
             </div>
         </div>
@@ -38,12 +138,13 @@
     <!-- Contenido Principal -->
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8">
         
-        <!-- Tarjeta de Perfil / Hero (Inspirada en Estructura de Embajadores SaludOnNet) -->
-        <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-10 premium-shadow">
+        <!-- Tarjeta de Perfil / Hero -->
+        <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-10 premium-shadow reveal">
             <div class="flex flex-col md:flex-row gap-8 items-center md:items-start">
                 
-                <!-- Foto de Perfil (Busca mepp.jpg en el mismo directorio) -->
-                <div class="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200/80 shadow-inner relative group">
+                <!-- Foto de Perfil (mepp.jpg) -->
+                <div class="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200/80 shadow-inner relative group profile-float">
+    <div class="glow"></div>inner relative group">
                     <img src="mepp.jpg" alt="Nut. Mabel Percca Paitan" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="absolute inset-0 hidden flex-col items-center justify-center text-center p-2 text-stone-400 bg-stone-50">
                         <svg class="w-8 h-8 mb-1 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -51,16 +152,16 @@
                     </div>
                 </div>
 
-                <!-- Detalles Profesionales -->
+                <!-- Detalles Profesionales y Mensaje Seleccionado -->
                 <div class="flex-1 text-center md:text-left space-y-3">
                     <div class="flex flex-wrap justify-center md:justify-start items-center gap-2">
-                        <span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-emerald-200/50">Nutricionista Registrada</span>
+                        <span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-emerald-200/50">Nutricionista Integral</span>
                         <span class="bg-stone-100 text-stone-600 text-[11px] font-medium px-2.5 py-1 rounded-md border border-stone-200/60">CNP 7718</span>
                     </div>
                     
                     <h1 class="text-2xl font-black text-stone-900 sm:text-3xl tracking-tight">Nut. Mabel Percca Paitan</h1>
                     <p class="text-stone-500 font-medium text-sm sm:text-base max-w-2xl leading-relaxed">
-                        Hola, soy Mabel, nutricionista. Quiero ayudarte a conseguir tus objetivos nutricionales y a llevar una vida más saludable. Para ello, te propongo una serie de servicios médicos relacionados, personalizados y de alta precisión científica.
+                        Bienvenido. Soy <strong>Mabel Percca</strong>, especialista en nutrición integral (<strong>CNP 7718</strong>). Creo firmemente que una vida saludable comienza con decisiones informadas y planes adaptados a tu realidad biológica. Aquí encontrarás programas nutricionales 100% online basados en evidencia y herramientas dinámicas en video que te acompañarán paso a paso en tu transformación.
                     </p>
 
                     <!-- Canales Rápidos de Comunicación -->
@@ -78,53 +179,54 @@
             </div>
         </div>
 
-        <!-- Sección de Bloque Principal del Servicio -->
+        <!-- Bloque de Servicios e Información de Pago -->
         <div id="tratamiento" class="grid lg:grid-cols-3 gap-8 items-start">
             
-            <!-- Columna Servicios (2/3 de ancho en pantallas grandes) -->
+            <!-- Columna de Tarjeta de Servicio Seleccionada -->
             <div class="lg:col-span-2 space-y-6">
                 <h2 class="text-xs uppercase tracking-widest text-stone-500 font-bold mb-2">Programas Clínicos Disponibles</h2>
                 
                 <!-- Tarjeta de Servicio Principal -->
-                <div class="bg-white rounded-2xl border border-stone-200/80 overflow-hidden premium-shadow group">
+                <div class="bg-white rounded-2xl border border-stone-200/80 overflow-hidden premium-shadow group card-hover reveal">
                     <div class="p-6 md:p-8 space-y-6">
-                        <div class="flex justify-between items-start gap-4">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                             <div>
                                 <span class="bg-stone-900 text-white text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded">Recomendado</span>
                                 <h3 class="text-xl font-bold text-stone-900 mt-2">Nutrición 100% Online</h3>
-                                <p class="text-stone-500 text-sm">Paquete mensual de acompañamiento y optimización metabólica personalizada.</p>
+                                <p class="text-stone-500 text-sm mt-1">Programa integral de intervención nutricional y optimización metabólica con acompañamiento continuo.</p>
                             </div>
-                            <div class="text-right">
-                                <span class="text-2xl font-black text-stone-900 block">S/. 250</span>
-                                <span class="text-stone-400 text-xs font-medium block mt-0.5">Por 8 Consultas</span>
+                            <div class="text-left sm:text-right min-w-[140px] pt-1">
+                                <span class="text-3xl font-black text-stone-900 block tracking-tight">S/. 250</span>
+                                <span class="text-stone-400 text-[10px] font-bold uppercase tracking-wider block mt-0.5">Inversión por Programa</span>
                             </div>
                         </div>
 
                         <div class="border-t border-stone-100 my-4"></div>
 
-                        <!-- Beneficios / Atributos del Servicio -->
-                        <div class="space-y-3">
-                            <h4 class="text-xs font-bold uppercase text-stone-400 tracking-wider">¿Qué incluye tu plan mensual?</h4>
-                            <div class="grid sm:grid-cols-2 gap-3 text-sm text-stone-600">
+                        <!-- Atributos del tratamiento -->
+                        <div class="space-y-4">
+                            <h4 class="text-xs font-bold uppercase text-stone-400 tracking-wider">¿Qué incluye tu tratamiento?</h4>
+                            <div class="grid sm:grid-cols-2 gap-4 text-sm text-stone-600">
                                 <div class="flex items-start space-x-2.5">
-                                    <span class="text-emerald-600 font-bold">&bull;</span>
-                                    <span><strong>2 consultas por semana</strong> (8 sesiones al mes en total).</span>
+                                    <span class="text-emerald-600 font-bold mt-0.5">&bull;</span>
+                                    <span><strong>Monitoreo Clínico Continuo:</strong> 2 consultas semanales programadas (8 sesiones de seguimiento al mes).</span>
                                 </div>
                                 <div class="flex items-start space-x-2.5">
-                                    <span class="text-emerald-600 font-bold">&bull;</span>
-                                    <span><strong>Atención personalizada</strong> adaptada a tus necesidades u patologías específicas.</span>
+                                    <span class="text-emerald-600 font-bold mt-0.5">&bull;</span>
+                                    <span><strong>Abordaje Terapéutico:</strong> Adaptado minuciosamente a tus objetivos metabólicos o patologías preexistentes.</span>
                                 </div>
                                 <div class="flex items-start space-x-2.5">
-                                    <span class="text-emerald-600 font-bold">&bull;</span>
-                                    <span><strong>Plan nutricional por día</strong> diseñado minuciosamente.</span>
+                                    <span class="text-emerald-600 font-bold mt-0.5">&bull;</span>
+                                    <span><strong>Planificación Nutricional Diaria:</strong> Diseño estructurado día a día según tus requerimientos energéticos.</span>
                                 </div>
                                 <div class="flex items-start space-x-2.5">
-                                    <span class="text-emerald-600 font-bold">&bull;</span>
-                                    <span><strong>Sesiones de 40 a 50 minutos</strong> (incluyendo tu primera consulta estratégica).</span>
+                                    <span class="text-emerald-600 font-bold mt-0.5">&bull;</span>
+                                    <span><strong>Consultas de Alta Precisión:</strong> Sesiones clínicas de 40 a 50 minutos desde la evaluación estratégica inicial.</span>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Requisito Fijo Obligatorio -->
                         <div class="bg-amber-50/60 border border-amber-200/70 rounded-xl p-4 flex gap-3">
                             <span class="text-lg">⚖️</span>
                             <div class="text-xs text-amber-900/90 leading-relaxed">
@@ -134,37 +236,34 @@
                         </div>
                     </div>
 
-                    <!-- Acción Principal -->
+                    <!-- Acción de Adquisición Directa -->
                     <div class="bg-stone-50 px-6 py-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <span class="text-xs text-stone-500 font-medium">Coordinación directa vía WhatsApp corporativo.</span>
-                        <a href="https://wa.me/51941428000?text=Hola%20Nut.%20Mabel,%20deseo%20iniciar%20el%20tratamiento%20de%20Nutrici%C3%B3n%20100%%20Online" target="_blank" class="w-full sm:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition-colors shadow-sm">
+                        <span class="text-xs text-stone-500 font-medium">Coordinación directa vía WhatsApp con la especialista.</span>
+                        <a href="https://wa.me/51941428000?text=Hola%20Nut.%20Mabel,%20deseo%20iniciar%20el%20tratamiento%20de%20Nutrici%C3%B3n%20100%%20Online" target="_blank" class="btn-shine w-full sm:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition-colors shadow-sm">
                             Adquirir Servicio &rarr;
                         </a>
                     </div>
                 </div>
 
-                <!-- Bloque de Horarios Disponibles -->
-                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-8 premium-shadow space-y-4">
+                <!-- Horarios Disponibles -->
+                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-8 premium-shadow space-y-4 card-hover reveal">
                     <div class="flex items-center space-x-2">
                         <span class="text-lg">📅</span>
-                        <h3 class="text-base font-bold text-stone-900">Horarios y Disponibilidad de Reserva</h3>
+                        <h3 class="text-base font-bold text-stone-900">Horarios Disponibles para Coordinación</h3>
                     </div>
-                    <p class="text-stone-500 text-xs">A continuación, escoge el horario regular de tu preferencia para sincronizar las citas quincenales/semanales:</p>
+                    <p class="text-stone-500 text-xs">Puedes escoger los bloques de horarios fijos que desees para coordinar tus consultas recurrentes:</p>
                     
                     <div class="grid sm:grid-cols-2 gap-4">
-                        <!-- Miércoles -->
                         <div class="bg-stone-50 rounded-xl p-4 border border-stone-200/40">
-                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Miércoles (Por la tarde)</span>
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Días Miércoles (Tarde)</span>
                             <div class="flex flex-wrap gap-2">
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">3:20 PM</span>
+                                <span class="time-slot bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">3:20 PM</span>
                                 <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">3:40 PM</span>
                                 <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">4:00 PM</span>
                             </div>
                         </div>
-
-                        <!-- Sábados -->
                         <div class="bg-stone-50 rounded-xl p-4 border border-stone-200/40">
-                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Sábados (Por la tarde)</span>
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Días Sábados (Tarde)</span>
                             <div class="flex flex-wrap gap-2">
                                 <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">3:20 PM</span>
                                 <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">3:40 PM</span>
@@ -174,17 +273,14 @@
                 </div>
             </div>
 
-            <!-- Columna Derecha: Métodos de Pago e Información Financiera (1/3 de ancho) -->
+            <!-- Columna Derecha: Canales de Pago Directo -->
             <div class="space-y-6">
-                <h2 class="text-xs uppercase tracking-widest text-stone-500 font-bold mb-2">Canales de Pago Directo</h2>
+                <h2 class="text-xs uppercase tracking-widest text-stone-500 font-bold mb-2">Canales de Recaudación</h2>
                 
-                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 premium-shadow space-y-6">
-                    <p class="text-stone-500 text-xs leading-relaxed">Una vez realizada la transferencia o depósito del servicio, por favor envíe el comprobante de pago al canal oficial de validación.</p>
+                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 premium-shadow space-y-6 card-hover reveal">
+                    <p class="text-stone-500 text-xs leading-relaxed">Transfiere o deposita directamente para asegurar tu cupo mensual e iniciar de inmediato.</p>
                     
-                    <!-- Cuentas Bancarias Transparente/Clean -->
                     <div class="space-y-4">
-                        
-                        <!-- BBVA -->
                         <div class="space-y-1">
                             <span class="text-[11px] font-extrabold uppercase tracking-wider text-blue-600 block">BBVA — Cuenta Independencia</span>
                             <div class="bg-stone-50 p-2.5 rounded-lg border border-stone-200/60 text-xs font-mono space-y-0.5">
@@ -193,16 +289,14 @@
                             </div>
                         </div>
 
-                        <!-- BCP -->
                         <div class="space-y-1">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 block">BCP — Cuenta Simple Soles</span>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 block">BCP — Cuenta Soles</span>
                             <div class="bg-stone-50 p-2.5 rounded-lg border border-stone-200/60 text-xs font-mono space-y-0.5">
                                 <div><span class="text-stone-400 text-[10px] uppercase font-sans mr-1">Cuenta:</span> 19191423521</div>
                                 <div><span class="text-stone-400 text-[10px] uppercase font-sans mr-1">CCI:</span> 002191191423521089</div>
                             </div>
                         </div>
 
-                        <!-- Interbank -->
                         <div class="space-y-1">
                             <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-600 block">Interbank — Cuenta Simple Soles</span>
                             <div class="bg-stone-50 p-2.5 rounded-lg border border-stone-200/60 text-xs font-mono space-y-0.5">
@@ -211,7 +305,6 @@
                             </div>
                         </div>
 
-                        <!-- Billeteras Digitales integradas en diseño compacto -->
                         <div class="pt-2 border-t border-stone-100 grid grid-cols-2 gap-2">
                             <div class="bg-purple-50 border border-purple-200/60 p-2.5 rounded-xl text-center">
                                 <span class="text-[10px] font-bold text-purple-700 uppercase block tracking-wider">Yape</span>
@@ -222,7 +315,6 @@
                                 <span class="text-xs font-mono font-bold text-stone-800 block mt-0.5">941 428 000</span>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -239,17 +331,52 @@
                     <p class="text-stone-500 mt-1">Garantizando bienestar y equilibrio de salud basado en evidencia clínica.</p>
                 </div>
                 <div class="flex gap-4 text-stone-300 font-medium">
-                    <a href="http://www.nutrimabel.com" class="hover:text-white transition-colors">www.nutrimabel.com</a>
+                    <a href="http://www.nutrimabel.com" target="_blank" class="hover:text-white transition-colors">www.nutrimabel.com</a>
                     <span>&middot;</span>
-                    <a href="mailto:nutrimabel01@gmail.com" class="hover:text-white transition-colors">Soporte Técnico</a>
+                    <!-- Redirección al WhatsApp de Soporte Técnico con texto pre-armado -->
+                    <a href="https://wa.me/51974550179?text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20con%20la%20web%20NutriMabel" target="_blank" class="hover:text-white transition-colors">Soporte Técnico</a>
                 </div>
             </div>
-            <div class="border-t border-stone-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-stone-500">
-                <p>&copy; 2026 NutriMabel. Todos los derechos reservados. Desarrollado con código premium de alta velocidad.</p>
-                <p>Huancavelica, Perú</p>
+            
+            <!-- Estructura de créditos basada en image_d1f267.png con link directo a WhatsApp sin texto -->
+            <div class="border-t border-stone-800 pt-6 text-center space-y-1 text-[11px] text-stone-500">
+                <p>&copy; 2026 Isgon &middot; Todos los derechos reservados</p>
+                <p>Diseñado por <a href="https://wa.me/51974550179" target="_blank" class="text-blue-500 font-semibold hover:underline">ServiComp+</a></p>
             </div>
         </div>
     </footer>
 
+
+<script>
+
+const reveals=document.querySelectorAll('.reveal');
+
+const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add('active');
+        }
+    });
+},{
+    threshold:0.15
+});
+
+reveals.forEach(el=>observer.observe(el));
+
+window.addEventListener('scroll',()=>{
+
+    const header=document.querySelector('header');
+
+    if(window.scrollY>20){
+        header.classList.add('header-scrolled');
+    }else{
+        header.classList.remove('header-scrolled');
+    }
+
+});
+
+</script>
+
+
 </body>
-</html>"""
+</html>
