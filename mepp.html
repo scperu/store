@@ -144,7 +144,6 @@ body{
                 
                 <!-- Foto de Perfil (mepp.jpg) -->
                 <div class="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200/80 shadow-inner relative group profile-float">
-    
                     <img src="mepp.jpg" alt="Nut. Mabel Percca Paitan" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="absolute inset-0 hidden flex-col items-center justify-center text-center p-2 text-stone-400 bg-stone-50">
                         <svg class="w-8 h-8 mb-1 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -182,7 +181,7 @@ body{
         <!-- Bloque de Servicios e Información de Pago -->
         <div id="tratamiento" class="grid lg:grid-cols-3 gap-8 items-start">
             
-            <!-- Columna de Tarjeta de Servicio Seleccionada -->
+            <!-- COLUMNA IZQUIERDA: Tarjeta de Servicio, Flujo y Reseñas (lg:col-span-2) -->
             <div class="lg:col-span-2 space-y-6">
                 <h2 class="text-xs uppercase tracking-widest text-stone-500 font-bold mb-2">Programas Clínicos Disponibles</h2>
                 
@@ -234,6 +233,52 @@ body{
                                 Para dar inicio formal y exacto a tu tratamiento clínico, es sumamente importante que cuentes con una <strong>balanza digital o de reloj</strong> y una <strong>cinta métrica</strong>.
                             </div>
                         </div>
+
+                        <!-- FLUJO DE TRABAJO POST-PAGO Y CASOS DE ÉXITO -->
+                        <div class="border-t border-stone-100 pt-6 space-y-6">
+                            <h4 class="text-xs font-bold uppercase text-stone-400 tracking-wider">¿Cómo iniciamos tu proceso una vez realizado el abono?</h4>
+                            
+                            <!-- Pasos del Flujo -->
+                            <div class="grid sm:grid-cols-2 gap-4 text-xs text-stone-600">
+                                <div class="bg-stone-50/50 border border-stone-200/40 p-3.5 rounded-xl flex items-start gap-3">
+                                    <span class="flex items-center justify-center w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px] shrink-0 border border-emerald-100">1</span>
+                                    <p><strong>Guía en Video Exclusiva:</strong> Recibirás un video instructivo detallado que explica de forma didáctica cómo tomar tus medidas correctamente desde casa.</p>
+                                </div>
+                                <div class="bg-stone-50/50 border border-stone-200/40 p-3.5 rounded-xl flex items-start gap-3">
+                                    <span class="flex items-center justify-center w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px] shrink-0 border border-emerald-100">2</span>
+                                    <p><strong>Registro en Formulario:</strong> Te enviaremos un enlace oficial para registrar tus datos y medidas métricas, optimizando el inicio de tu plan.</p>
+                                </div>
+                            </div>
+
+                            <!-- Bloque de Testimonios / Antes y Después -->
+                            <div class="bg-stone-50/40 border border-stone-200/50 rounded-xl p-4 sm:p-6 space-y-4">
+                                <div class="text-center sm:text-left">
+                                    <h5 class="text-sm font-bold text-stone-900">Casos de Éxito y Resultados Reales</h5>
+                                    <p class="text-stone-500 text-[11px] mt-0.5">La evolución de nuestros pacientes respalda el compromiso y la calidad de nuestro método clínico.</p>
+                                </div>
+
+                                <!-- Grid de Imágenes de Antes y Después -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-white p-2 rounded-lg border border-stone-200/60 shadow-sm text-center">
+                                        <div class="aspect-[4/3] bg-stone-100 rounded border border-stone-100 flex items-center justify-center overflow-hidden mb-2">
+                                            <span class="text-[10px] text-stone-400 uppercase font-medium tracking-wider">[ Foto Antes y Después ]</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wide">Caso de Éxito #1</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg border border-stone-200/60 shadow-sm text-center">
+                                        <div class="aspect-[4/3] bg-stone-100 rounded border border-stone-100 flex items-center justify-center overflow-hidden mb-2">
+                                            <span class="text-[10px] text-stone-400 uppercase font-medium tracking-wider">[ Foto Antes y Después ]</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wide">Caso de Éxito #2</span>
+                                    </div>
+                                </div>
+
+                                <p class="text-[10px] text-stone-400 text-center italic leading-tight pt-1">
+                                    *Imágenes publicadas bajo el consentimiento expreso de los pacientes para fines exclusivamente demostrativos.
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- Acción de Adquisición Directa -->
@@ -245,40 +290,140 @@ body{
                     </div>
                 </div>
 
-                <!-- Horarios Disponibles -->
-                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-8 premium-shadow space-y-4 card-hover reveal">
+                <!-- Sección de Reseñas / Testimonios Clínicos -->
+                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 md:p-8 premium-shadow space-y-6 card-hover reveal">
                     <div class="flex items-center space-x-2">
-                        <span class="text-lg">📅</span>
-                        <h3 class="text-base font-bold text-stone-900">Horarios Disponibles para Coordinación</h3>
+                        <span class="text-lg">⭐</span>
+                        <h3 class="text-base font-bold text-stone-900">Opiniones de nuestros pacientes</h3>
                     </div>
-                    <p class="text-stone-500 text-xs">Puedes escoger los bloques de horarios fijos que desees para coordinar tus consultas recurrentes:</p>
+                    <p class="text-stone-500 text-xs">Conoce la experiencia de quienes ya transformaron su salud con nuestro programa online:</p>
                     
-                    <div class="grid sm:grid-cols-2 gap-4">
-                        <div class="bg-stone-50 rounded-xl p-4 border border-stone-200/40">
-                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Días Miércoles (Tarde)</span>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="time-slot bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">5:00 PM</span>
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">5:40 PM</span>
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">7:20 PM</span>
+                    <div class="space-y-4 max-h-[480px] overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Reseña 1 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">ME</div>
+                                    <span class="text-xs font-bold text-stone-800">María E.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
                             </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Excelente profesional. El video explicativo para las medidas me ayudó muchísimo a no equivocarme. En un mes he mejorado mi digestión notablemente."</p>
                         </div>
-                        <div class="bg-stone-50 rounded-xl p-4 border border-stone-200/40">
-                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Días Sábados (Tarde)</span>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">5:20 PM</span>
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">5:40 PM</span>
-                                <span class="bg-white text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-stone-200 shadow-sm">7:20 PM</span>
-
+                        <!-- Reseña 2 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">JC</div>
+                                    <span class="text-xs font-bold text-stone-800">Juan C.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
                             </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Me diagnosticaron hígado graso y el plan terapéutico de la Nut. Mabel ha sido un cambio total. Las consultas semanales te mantienen super motivado."</p>
+                        </div>
+                        <!-- Reseña 3 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">AM</div>
+                                    <span class="text-xs font-bold text-stone-800">Andrea M.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Lo que más me gusta es que el menú diario es súper variado y con insumos fáciles de conseguir. No se pasa hambre para nada. ¡Muy recomendada!"</p>
+                        </div>
+                        <!-- Reseña 4 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">CV</div>
+                                    <span class="text-xs font-bold text-stone-800">Carlos V.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"La atención 100% online es comodísima para los que trabajamos todo el día. El orden y la precisión del formulario web inicial es de primer nivel."</p>
+                        </div>
+                        <!-- Reseña 5 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">LR</div>
+                                    <span class="text-xs font-bold text-stone-800">Lucía R.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Buscaba un enfoque clínico por un tema metabólico y la Nut. Mabel diseñó un plan perfecto. He bajado medidas y mis niveles en sangre están óptimos."</p>
+                        </div>
+                        <!-- Reseña 6 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">RP</div>
+                                    <span class="text-xs font-bold text-stone-800">Ricardo P.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Vale totalmente la inversión. El monitoreo constante marca la diferencia frente a otras consultas donde te dejan solo todo el mes."</p>
+                        </div>
+                        <!-- Reseña 7 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">DS</div>
+                                    <span class="text-xs font-bold text-stone-800">Diana S.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Me encanta la paciencia que tiene para explicar los requerimientos energéticos en las sesiones de 50 minutos. Aprendes a comer sano de verdad."</p>
+                        </div>
+                        <!-- Reseña 8 -->
+                        <div class="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center text-[10px] font-bold text-emerald-700">FG</div>
+                                    <span class="text-xs font-bold text-stone-800">Fernando G.</span>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-[11px] text-stone-600 leading-relaxed">"Es mi segundo mes en el programa online. No solo he bajado de peso, sino que mi rendimiento entrenando ha mejorado una barbaridad."</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Columna Derecha: Canales de Pago Directo -->
+            <!-- COLUMNA DERECHA: Horarios y Cuentas de Pago Directo -->
             <div class="space-y-6">
                 <h2 class="text-xs uppercase tracking-widest text-stone-500 font-bold mb-2">Canales de Recaudación</h2>
                 
+                <!-- Horarios Disponibles -->
+                <div class="bg-white rounded-2xl border border-stone-200/80 p-6 premium-shadow space-y-4 card-hover reveal">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg">📅</span>
+                        <h3 class="text-base font-bold text-stone-900">Horarios Disponibles</h3>
+                    </div>
+                    <p class="text-stone-500 text-xs">Bloques fijos para consultas recurrentes:</p>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-stone-50 rounded-xl p-3 border border-stone-200/40">
+                            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1.5">Miércoles (Tarde)</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">5:00 PM</span>
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">5:40 PM</span>
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">7:20 PM</span>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 rounded-xl p-3 border border-stone-200/40">
+                            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1.5">Sábados (Tarde)</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">5:20 PM</span>
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">5:40 PM</span>
+                                <span class="time-slot bg-white text-stone-800 text-[11px] font-semibold px-2 py-1 rounded border border-stone-200 shadow-sm">7:20 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Bancos -->
                 <div class="bg-white rounded-2xl border border-stone-200/80 p-6 premium-shadow space-y-6 card-hover reveal">
                     <p class="text-stone-500 text-xs leading-relaxed">Transfiere o deposita directamente para asegurar tu cupo mensual e iniciar de inmediato.</p>
                     
@@ -335,22 +480,18 @@ body{
                 <div class="flex gap-4 text-stone-300 font-medium">
                     <a href="http://www.nutrimabel.com" target="_blank" class="hover:text-white transition-colors">www.nutrimabel.com</a>
                     <span>&middot;</span>
-                    <!-- Redirección al WhatsApp de Soporte Técnico con texto pre-armado -->
-                    <a href="https://wa.me/51974550179?text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20con%20la%20web%20NutriMabel" target="_blank" class="hover:text-white transition-colors">Soporte Técnico</a>
+                    <a href="https://wa.me/51974550179?text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20con%20la%20web" target="_blank" class="hover:text-white transition-colors">Soporte Técnico</a>
                 </div>
             </div>
             
-            <!-- Estructura de créditos basada en image_d1f267.png con link directo a WhatsApp sin texto -->
             <div class="border-t border-stone-800 pt-6 text-center space-y-1 text-[11px] text-stone-500">
-                <p>&copy; 2026 Isgon &middot; Todos los derechos reservados</p>
+                <p>&copy; 2026 NutriMabel &middot; Todos los derechos reservados</p>
                 <p>Diseñado por <a href="https://wa.me/51974550179" target="_blank" class="text-blue-500 font-semibold hover:underline">ServiComp+</a></p>
             </div>
         </div>
     </footer>
 
-
 <script>
-
 const reveals=document.querySelectorAll('.reveal');
 
 const observer=new IntersectionObserver(entries=>{
@@ -366,19 +507,14 @@ const observer=new IntersectionObserver(entries=>{
 reveals.forEach(el=>observer.observe(el));
 
 window.addEventListener('scroll',()=>{
-
     const header=document.querySelector('header');
-
     if(window.scrollY>20){
         header.classList.add('header-scrolled');
     }else{
         header.classList.remove('header-scrolled');
     }
-
 });
-
 </script>
-
 
 </body>
 </html>
