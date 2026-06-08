@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1020;
+            --card: rgba(255, 255, 255, .08);
+            --border: rgba(255, 255, 255, .10);
+            --text: #fff;
+            --muted: #94a3b8;
+            --accent: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b1020, #111827, #172554);
+            min-height: 100vh;
+            padding: 30px;
+            color: white;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, .4);
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--muted);
+        }
+
+        .search {
+            margin-bottom: 20px;
+        }
+
+        .search input {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .08);
+            color: white;
+            font-size: 15px;
+            outline: none;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .search input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, .12);
+        }
+
+        /* SOLUCIÓN AL HORRIBLE SCROLL: Contenedor flexible tipo "Tags" */
+        .categories {
+            display: flex;
+            flex-wrap: wrap; /* Permite que los botones bajen si no caben */
+            gap: 8px;        /* Espaciado uniforme horizontal y vertical */
+            margin-bottom: 25px;
+        }
+
+        .category-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .06);
+            color: white;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .category-btn:hover {
+            background: rgba(255, 255, 255, .12);
+            border-color: rgba(255, 255, 255, .1);
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 18px;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #3b82f6;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon {
+            font-size: 26px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .category {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .open { background: #2563eb; color: white; text-align: center; text-decoration: none; display: block; border-radius: 12px; padding: 12px; font-weight: 600;}
+        .copy { background: #334155; color: white; }
+        .share { background: #0f766e; color: white; }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111827;
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .status-msg {
+            text-align: center;
+            color: var(--muted);
+            padding: 40px;
+            font-size: 16px;
+        }
+
+        @media(max-width:600px){
+            .actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="avatar">🚀</div>
+        <h1>Link Triales</h1>
+        <p>Directorio inteligente by Servicomp+</p>
+    </div>
+
+    <div class="search">
+        <input type="text" id="search" placeholder="Buscar por título o categoría...">
+    </div>
+
+    <div class="categories" id="categories"></div>
+    <div class="links" id="links">
+        <div class="status-msg">Cargando directorio...</div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+(() => {
+    const CONFIG = {
+        SHEET_ID: "1QsFpbKZbFb2NOyvoYQjDmfj9Ksmzu0E7TuCkZCXgoV4",
+        SHEET_NAME: "Trial"
+    };
+
+    const URL = `https://opensheet.elk.sh/${CONFIG.SHEET_ID}/${CONFIG.SHEET_NAME}`;
+    
+    let state = {
+        registros: [],
+        categoriaActual: "Todas",
+        filtroTexto: ""
+    };
+
+    const DOM = {
+        linksContainer: document.getElementById("links"),
+        categoriesContainer: document.getElementById("categories"),
+        searchInput: document.getElementById("search"),
+        toast: document.getElementById("toast")
+    };
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    function showToast(msg) {
+        DOM.toast.innerText = msg;
+        DOM.toast.style.display = "block";
+        setTimeout(() => DOM.toast.style.display = "none", 2000);
+    }
+
+    function initEvents() {
+        DOM.searchInput.addEventListener("input", (e) => {
+            state.filtroTexto = e.target.value.toLowerCase().trim();
+            renderLinks();
+        });
+
+        DOM.linksContainer.addEventListener("click", (e) => {
+            const btn = e.target.closest('.btn-action');
+            if (!btn) return;
+
+            const url = btn.dataset.url;
+            const action = btn.dataset.action;
+
+            if (action === 'copy') {
+                navigator.clipboard.writeText(url)
+                    .then(() => showToast("✓ Enlace copiado"))
+                    .catch(() => showToast("Error al copiar"));
+            } else if (action === 'share') {
+                if (navigator.share) {
+                    navigator.share({ url }).catch(console.error);
+                } else {
+                    navigator.clipboard.writeText(url);
+                    showToast("✓ Enlace copiado (Share no soportado)");
+                }
+            }
+        });
+    }
+
+    function renderCategories() {
+        // Obtenemos las categorías únicas y las ordenamos también alfabéticamente (opcional, pero limpio)
+        const categoriasUnicas = [...new Set(state.registros.map(x => x.categoria).filter(Boolean))];
+        categoriasUnicas.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+        
+        const categorias = ["Todas", ...categoriasUnicas];
+        
+        DOM.categoriesContainer.innerHTML = categorias.map(cat => `
+            <button class="category-btn ${cat === state.categoriaActual ? 'active' : ''}" data-category="${escapeHTML(cat)}">
+                ${escapeHTML(cat)}
+            </button>
+        `).join('');
+
+        DOM.categoriesContainer.onclick = (e) => {
+            const btn = e.target.closest('.category-btn');
+            if (!btn) return;
+
+            document.querySelectorAll(".category-btn").forEach(x => x.classList.remove("active"));
+            btn.classList.add("active");
+
+            state.categoriaActual = btn.dataset.category;
+            renderLinks();
+        };
+    }
+
+    function renderLinks() {
+        const filtrados = state.registros.filter(item => {
+            const esActivo = (item.activo || "").toLowerCase() === "si";
+            if (!esActivo) return false;
+
+            const coincideCategoria = state.categoriaActual === "Todas" || item.categoria === state.categoriaActual;
+            
+            const titulo = (item.titulo || "").toLowerCase();
+            const categoria = (item.categoria || "").toLowerCase();
+            const coincideTexto = titulo.includes(state.filtroTexto) || categoria.includes(state.filtroTexto);
+
+            return coincideCategoria && coincideTexto;
+        });
+
+        if (filtrados.length === 0) {
+            DOM.linksContainer.innerHTML = `<div class="status-msg">No se encontraron enlaces disponibles.</div>`;
+            return;
+        }
+
+        DOM.linksContainer.innerHTML = filtrados.map(item => `
+            <div class="card">
+                <div class="top">
+                    <div class="info">
+                        <div class="icon">${escapeHTML(item.icono) || "🔗"}</div>
+                        <div>
+                            <div class="title">${escapeHTML(item.titulo)}</div>
+                            <div class="category">${escapeHTML(item.categoria)}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <a href="${encodeURI(item.url)}" target="_blank" class="open" style="flex:1">Abrir</a>
+                    <button class="btn btn-action copy" data-action="copy" data-url="${escapeHTML(item.url)}">Copiar</button>
+                    <button class="btn btn-action share" data-action="share" data-url="${escapeHTML(item.url)}">Compartir</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function init() {
+        initEvents();
+        try {
+            const response = await fetch(URL);
+            if (!response.ok) throw new Error("Error en la respuesta de red");
+            
+            const data = await response.json();
+            
+            // SOLUCIÓN AL ORDENAMIENTO: Ordenar alfabéticamente por 'titulo' una sola vez al recibir los datos
+            state.registros = data.sort((a, b) => {
+                const tituloA = a.titulo || "";
+                const tituloB = b.titulo || "";
+                return tituloA.localeCompare(tituloB, 'es', { sensitivity: 'base' });
+            });
+            
+            renderCategories();
+            renderLinks();
+        } catch (error) {
+            console.error("Error cargando los datos:", error);
+            DOM.linksContainer.innerHTML = `<div class="status-msg" style="color:#ef4444;">Error al cargar el directorio. Inténtalo más tarde.</div>`;
+        }
+    }
+
+    init();
+})();
+</script>
+</body>
+</html>
