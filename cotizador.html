@@ -2,165 +2,528 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="referrer" content="no-referrer">
-    <title>Catálogo Sheets | ServiComp+</title>
+    <title>ServiComp+ | Catálogo Profesional</title>
 
+    <!-- TailwindCSS + Fonts + Icons + SweetAlert -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #334155; }
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid white; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08); border-color: #bfdbfe; }
-        .img-container { background: #f8fafc; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .placeholder-icon { position: absolute; z-index: 0; color: #cbd5e1; font-size: 1.5rem; transition: all 0.3s ease; }
-        .product-img { position: relative; z-index: 10; width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; opacity: 0; }
-        .product-img.loaded { opacity: 1; }
-        .img-container:hover .product-img { transform: scale(1.08); }
-        .img-container:hover .placeholder-icon { color: #94a3b8; transform: scale(1.1); }
-        .view-label { position: absolute; bottom: 4px; right: 4px; background: rgba(255, 255, 255, 0.9); color: #3b82f6; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 20; box-shadow: 0 1px 2px rgba(0,0,0,0.1); pointer-events: none; }
-        .copy-tooltip { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; opacity: 0; transition: opacity 0.3s, bottom 0.3s; pointer-events: none; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .copy-tooltip.show { opacity: 1; bottom: 30px; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .custom-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em;
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #eef2f6 100%); }
+        
+        /* Glass morphism premium */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
         }
-        @media print { body { background: white; } .no-print { display: none !important; } .product-card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 10px; page-break-inside: avoid; } .profit-display { display: none !important; } }
+        
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            background: white;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+            border-color: #6366f1;
+        }
+        
+        .img-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .product-img {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .product-img.loaded { opacity: 1; }
+        
+        .view-label {
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            color: white;
+            font-size: 7px;
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+        
+        .copy-tooltip {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s, bottom 0.2s;
+            z-index: 200;
+            pointer-events: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+            font-family: monospace;
+        }
+        .copy-tooltip.show { opacity: 1; bottom: 32px; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+        
+        .animate-slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .btn-premium {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.2s ease;
+        }
+        .btn-premium:hover {
+            transform: scale(0.98);
+            box-shadow: 0 10px 20px -5px rgba(99,102,241,0.4);
+        }
+        
+        @media print {
+            body { background: white; }
+            .no-print, .cotizador-panel, .btn-premium, button.fixed, .btn-cotizar-flotante { display: none !important; }
+            .product-card { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 16px; page-break-inside: avoid; }
+        }
+        
+        input, select { outline: none; }
+        
+        .badge-stock {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
-    <div id="copyFeedback" class="copy-tooltip"><i class="fa-solid fa-check mr-1"></i> ¡Copiado!</div>
+<body class="h-screen flex flex-col overflow-hidden antialiased">
 
-    <header class="bg-white border-b border-slate-200 z-30 flex-shrink-0 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-4 space-y-4">
-            <div class="flex justify-between items-center gap-3">
-                <div class="flex items-center gap-3 min-w-0">
-                    <img src="https://scperu.github.io/store/logo.png" class="h-9 object-contain" alt="ServiComp+" onerror="this.style.display='none'">
-                    <div class="min-w-0">
-                        <h1 class="font-bold text-xl text-slate-800 leading-none truncate">ServiComp<span class="text-red-600">+</span></h1>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Catálogo Sheets</span>
+    <div id="copyToast" class="copy-tooltip"><i class="fa-regular fa-copy mr-2"></i> ¡Código copiado!</div>
+
+    <!-- HEADER PREMIUM SIMPLIFICADO -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-100 z-30 flex-shrink-0 shadow-sm sticky top-0">
+        <div class="max-w-7xl mx-auto px-5 py-4">
+            <div class="flex justify-between items-center gap-4 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <img src="https://scperu.github.io/store/logo.png" class="h-10 object-contain" alt="Logo" onerror="this.style.display='none'">
+                    <div>
+                        <h1 class="font-bold text-2xl tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">ServiComp<span class="text-indigo-600">+</span></h1>
+                        <p class="text-[10px] font-medium text-slate-400 -mt-0.5">Catálogo Executive</p>
                     </div>
                 </div>
-                <div class="text-right shrink-0">
-                    <div id="resultCount" class="text-2xl font-black text-slate-800 leading-none">0</div>
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Resultados</div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
-                <div class="md:col-span-6 relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i class="fa-solid fa-layer-group text-slate-300 group-focus-within:text-blue-400 transition"></i>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div id="resultCount" class="text-2xl font-black text-slate-800 leading-5">0</div>
+                        <div class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Productos</div>
                     </div>
-                    <input type="text" id="searchInput" class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition placeholder-slate-400 shadow-sm" placeholder="Ej: i5 8gb dell o 481852 506076 472201">
-                </div>
-                <div class="md:col-span-3">
-                    <select id="catSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
-                        <option value="">Todas las Categorías</option>
-                    </select>
-                </div>
-                <div class="md:col-span-3">
-                    <select id="brandSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
-                        <option value="">Todas las Marcas</option>
-                    </select>
+                    <div id="exchangeRate" class="text-xs font-mono bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full border border-indigo-200 shadow-sm">TC: --</div>
                 </div>
             </div>
-            <div class="flex justify-between items-center text-[10px] font-semibold text-slate-400 px-1 pt-1 gap-2 flex-wrap">
-                <span id="dateDisplay">...</span>
-                <span id="exchangeRate" class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">TC: -</span>
+            <div class="text-[10px] text-slate-400 mt-3 flex justify-between items-center">
+                <span id="dateDisplay"></span>
+                <span class="hidden md:inline-flex items-center gap-1"><i class="fa-regular fa-circle-check text-indigo-500"></i> Catálogo en tiempo real</span>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow overflow-y-auto p-4 md:p-6 bg-slate-50 scroll-smooth">
-        <div id="productsList" class="max-w-7xl mx-auto space-y-4 pb-24">
-            <div class="flex flex-col items-center justify-center h-80 text-slate-300">
-                <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
-                <p class="text-xs font-bold uppercase tracking-widest animate-pulse">Cargando Inventario...</p>
+    <!-- MAIN: PRODUCTOS CON BOTÓN COTIZADOR CENTRADO -->
+    <main class="flex-grow overflow-y-auto relative">
+        <div id="productsContainer" class="h-full overflow-y-auto p-5 md:p-8 custom-scroll">
+            <div class="max-w-7xl mx-auto">
+                <!-- BOTÓN COTIZADOR CENTRADO (antes de productos) -->
+                <div class="flex justify-center mb-8">
+                    <button id="openQuotatorBtn" class="btn-premium text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-indigo-500/30 flex items-center gap-3 transition-all hover:shadow-2xl">
+                        <i class="fa-solid fa-calculator text-2xl"></i>
+                        <span>Abrir Cotizador Profesional</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </button>
+                </div>
+
+                <!-- LISTA DE PRODUCTOS -->
+                <div id="productsList" class="space-y-5 pb-10">
+                    <div class="flex flex-col items-center justify-center h-80 text-slate-300">
+                        <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-5"></div>
+                        <p class="text-sm font-medium text-slate-500">Cargando catálogo premium...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL COTIZADOR (lateral derecho) -->
+        <div id="quotationPanel" class="fixed inset-y-0 right-0 w-full md:w-[520px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-slate-200">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-file-invoice-dollar text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Cotizador Rápido</h2>
+                        <p class="text-[10px] text-slate-400">Agrega productos y genera presupuestos</p>
+                    </div>
+                </div>
+                <button id="closePanelBtn" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-all hover:scale-105"><i class="fa-solid fa-times"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+                <!-- Entrada rápida de minicódigos mejorada -->
+                <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100 shadow-sm">
+                    <label class="text-xs font-bold uppercase text-indigo-700 flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-keyboard text-indigo-600"></i> Agregar por minicódigo
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="quickCodeInput" class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" placeholder="Ej: 481852, 506076, 472201">
+                        <button id="addQuickCodeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-xl text-sm font-semibold transition shadow-md hover:shadow-lg">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2 flex items-center gap-1"><i class="fa-regular fa-lightbulb"></i> Separa múltiples códigos con comas o espacios</p>
+                </div>
+
+                <!-- Tabla de ítems cotizados (agrupados) -->
+                <div>
+                    <div class="flex justify-between items-center mb-3 px-1">
+                        <h3 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-table-list mr-2 text-indigo-500"></i> Items seleccionados</h3>
+                        <button id="clearQuotationBtn" class="text-xs text-red-500 hover:text-red-700 font-medium transition"><i class="fa-regular fa-trash-can mr-1"></i> Limpiar todo</button>
+                    </div>
+                    <div id="quotationItemsContainer" class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-sm min-h-[200px] max-h-[400px] overflow-y-auto">
+                        <div class="p-8 text-center text-slate-400 text-sm">✨ Agrega productos desde el catálogo o con minicódigo</div>
+                    </div>
+                </div>
+
+                <!-- Resumen + envío editable mejorado -->
+                <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-5 space-y-3 border border-slate-200">
+                    <div class="flex justify-between text-sm py-1">
+                        <span class="text-slate-600">📦 Productos distintos:</span>
+                        <span id="summaryDistinct" class="font-bold text-slate-800">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm py-1 border-t border-slate-200">
+                        <span class="text-slate-600">🔢 Unidades totales:</span>
+                        <span id="summaryUnits" class="font-bold text-slate-800">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm py-1 border-t border-slate-200">
+                        <span class="text-slate-600">💰 Subtotal:</span>
+                        <span id="summarySubtotal" class="font-bold text-indigo-600 text-base">S/ 0</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-t border-slate-200">
+                        <span class="text-slate-600 text-sm flex items-center gap-1"><i class="fa-solid fa-truck"></i> Envío:</span>
+                        <div class="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200">
+                            <span class="text-slate-500 text-xs font-mono">S/</span>
+                            <input type="number" id="shippingCost" value="19" step="5" class="w-24 text-right border-0 focus:ring-0 text-sm font-mono font-semibold text-slate-700">
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-lg font-black pt-3 border-t-2 border-slate-200 mt-1">
+                        <span class="text-slate-800">TOTAL</span>
+                        <span id="summaryTotal" class="text-indigo-600 text-2xl font-black">S/ 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción mejorados -->
+            <div class="p-6 border-t border-slate-100 grid grid-cols-2 gap-3 bg-white">
+                <button id="genWhatsappBtn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg">
+                    <i class="fab fa-whatsapp text-lg"></i> WhatsApp
+                </button>
+                <button id="genPDFBtn" class="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg">
+                    <i class="fa-regular fa-file-pdf text-lg"></i> Exportar PDF
+                </button>
+                <button id="printBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all col-span-2 border border-slate-200">
+                    <i class="fa-regular fa-print"></i> Imprimir Cotización
+                </button>
             </div>
         </div>
     </main>
 
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-slate-800 text-white w-11 h-11 rounded-full shadow-lg flex items-center justify-center hover:bg-slate-700 transition-all z-30 no-print hover:scale-110"><i class="fa-solid fa-arrow-up"></i></button>
+
     <script>
+        // ---------- CONFIGURACIÓN SHEETS ----------
         const SHEETS = {
-            productos: { URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/productos" },
-            cotizador: { URL: "https://opensheet.elk.sh/TU_ID_DE_HOJA_COTIZADOR/cotizador" }
+            productos: { SHEET_ID: "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI", SHEET_NAME: "productos", URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/productos" },
+            cotizador: { SHEET_ID: "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI", SHEET_NAME: "cotizador", URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/cotizador" }
         };
 
-        let productsDB = [];
-        let featuredCodes = [];
-        let filters = { search: '', category: '', brand: '' };
+        // Estado Global
+        let masterProducts = [];
+        let quotationMap = new Map();
+        let currentTC = 3.75;
 
-        function normalizeText(v) { return String(v || '').trim(); }
-        function normalizeNumber(v) { return Number(String(v ?? '').replace(/,/g, '').replace(/[^\d.-]/g, '')) || 0; }
-        function getCategory(p) {
-            const text = `${p.descripcion} ${p.detalles}`.toLowerCase();
-            if (text.includes('laptop')) return 'LAPTOPS';
-            if (text.includes('monitor')) return 'MONITORES';
-            if (text.includes('procesador')) return 'PROCESADORES';
-            if (text.includes('placa')) return 'PLACAS';
-            if (text.includes('memoria') || text.includes('ram')) return 'MEMORIAS';
-            if (text.includes('ssd') || text.includes('disco')) return 'ALMACENAMIENTO';
-            if (text.includes('impresora')) return 'IMPRESORAS';
+        // Helpers
+        const normalizeText = (v) => String(v ?? '').trim();
+        const normalizeNumber = (v) => { let n = parseFloat(String(v).replace(/,/g, '')); return isNaN(n) ? 0 : n; };
+        const formatMoney = (val) => `S/ ${Math.floor(val).toLocaleString('en-US')}`;
+        
+        function getCategoryFromText(desc, details) {
+            const txt = `${desc} ${details}`.toLowerCase();
+            if (txt.includes('laptop')) return 'LAPTOPS';
+            if (txt.includes('monitor')) return 'MONITORES';
+            if (txt.includes('procesador')) return 'PROCESADORES';
+            if (txt.includes('placa')) return 'PLACAS';
+            if (txt.includes('memoria') || txt.includes('ram')) return 'MEMORIAS';
+            if (txt.includes('ssd') || txt.includes('disco')) return 'ALMACENAMIENTO';
+            if (txt.includes('impresora')) return 'IMPRESORAS';
             return 'GENERAL';
         }
 
-        async function loadDatabase() {
+        // Cargar productos desde Google Sheets
+        async function loadData() {
             try {
-                const [r1, r2] = await Promise.all([fetch(SHEETS.productos.URL), fetch(SHEETS.cotizador.URL)]);
-                const [rawP, rawC] = await Promise.all([r1.json(), r2.json()]);
-
-                featuredCodes = [...new Set(rawC.map(r => normalizeText(r.mini_codigo)))];
-
-                productsDB = rawP.map(row => ({
+                const cotizadorResp = await fetch(SHEETS.cotizador.URL);
+                if (!cotizadorResp.ok) throw new Error('Error al cargar cotizador');
+                const cotizadorRaw = await cotizadorResp.json();
+                const allowedMiniSet = new Set();
+                cotizadorRaw.forEach(row => { if (row.mini_codigo) allowedMiniSet.add(normalizeText(row.mini_codigo)); });
+                
+                const prodResp = await fetch(SHEETS.productos.URL);
+                if (!prodResp.ok) throw new Error('Error al cargar productos');
+                const raw = await prodResp.json();
+                
+                if (raw.length) currentTC = normalizeNumber(raw[0].tipo_cambio) || normalizeNumber(raw[0].k2) || 3.75;
+                document.getElementById('exchangeRate').innerHTML = `TC: ${currentTC.toFixed(2)}`;
+                
+                masterProducts = raw.map(row => ({
                     codigo: normalizeText(row.codigo),
                     mini: normalizeText(row.mini_codigo),
                     descripcion: normalizeText(row.descripcion),
                     marca: normalizeText(row.marca) || 'GENÉRICO',
                     detalles: normalizeText(row.detalles),
-                    precio: normalizeNumber(row.precio_soles),
-                    ganancia: normalizeNumber(row.ganancia),
+                    precio: normalizeNumber(row.precio_soles) || normalizeNumber(row.h),
                     stock: Math.floor(normalizeNumber(row.stock)),
-                    categoria: getCategory(row)
-                })).filter(p => p.stock > 0);
-
-                populateFiltersUI();
-                applyFilters();
-            } catch (e) { Swal.fire('Error', 'No se pudieron cargar los datos.', 'error'); }
+                    categoria: getCategoryFromText(row.descripcion, row.detalles)
+                })).filter(p => p.stock > 0 && (p.codigo || p.mini) && allowedMiniSet.has(p.mini));
+                
+                masterProducts.sort((a, b) => a.precio - b.precio);
+                renderProducts(masterProducts);
+                document.getElementById('resultCount').innerText = masterProducts.length;
+            } catch (err) { 
+                console.error(err); 
+                Swal.fire('Error', 'No se pudo conectar con Google Sheets', 'error');
+                document.getElementById('productsList').innerHTML = '<div class="text-center py-20 text-red-500"><i class="fa-solid fa-database text-4xl mb-3"></i><p>Error de conexión</p></div>';
+            }
         }
 
-        function applyFilters() {
-            filters.category = document.getElementById('catSelect').value;
-            filters.brand = document.getElementById('brandSelect').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const hasFilters = filters.category || filters.brand || search;
+        function renderProducts(products) {
+            const container = document.getElementById('productsList');
+            if (!products.length) { 
+                container.innerHTML = `<div class='text-center py-20 text-slate-400'><i class='fa-solid fa-box-open text-5xl opacity-30 mb-3'></i><p class='text-sm'>No hay productos disponibles</p></div>`; 
+                return; 
+            }
+            
+            container.innerHTML = products.map(p => {
+                const thumbCode = p.codigo.toLowerCase();
+                const thumbUrl = `https://imagenes.deltron.com.pe/images/productos/items/${thumbCode.substring(0, 2)}/${thumbCode.substring(2, 4)}/${thumbCode}.jpg`;
+                const imgUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(p.codigo)}&nomenu=1`;
+                
+                return `
+                <div class="product-card rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="md:w-32 bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center p-3 img-container border-b md:border-b-0 md:border-r border-slate-200">
+                        <a href="${imgUrl}" target="_blank" class="w-24 h-24 flex items-center justify-center relative group">
+                            <i class="fa-solid fa-camera placeholder-icon text-slate-300 absolute text-2xl"></i>
+                            <img src="${thumbUrl}" class="product-img relative z-10 max-h-20 object-contain" alt="${p.descripcion}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+                            <span class="view-label absolute bottom-1 right-1 text-[8px] opacity-0 group-hover:opacity-100 transition">Ver foto</span>
+                        </a>
+                    </div>
+                    <div class="flex-1 p-5">
+                        <div class="flex flex-wrap gap-2 items-center mb-2">
+                            <button onclick="addToQuotation('${p.mini}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full transition flex items-center gap-2 shadow-sm hover:shadow">
+                                <i class="fa-solid fa-plus-circle text-indigo-600"></i> Cotizar
+                            </button>
+                            <button onclick="copyMini('${p.mini}')" class="text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full transition flex items-center gap-2 font-mono">
+                                <i class="fa-regular fa-copy"></i> ${p.mini}
+                            </button>
+                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">${p.marca}</span>
+                            <span class="text-[9px] text-slate-500 bg-slate-100 px-2 py-1 rounded-full">${p.categoria}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base leading-tight mb-1">${p.descripcion}</h3>
+                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.detalles.substring(0, 100)}${p.detalles.length > 100 ? '...' : ''}</p>
+                    </div>
+                    <div class="md:w-44 p-5 flex flex-row md:flex-col justify-between items-center border-t md:border-t-0 md:border-l border-slate-200 bg-gradient-to-r from-slate-50/50 to-white">
+                        <div class="text-right">
+                            <span class="text-[9px] uppercase text-slate-400 font-semibold tracking-wide">Precio Contado</span>
+                            <div class="text-2xl font-black text-indigo-600 tracking-tight">${formatMoney(p.precio)}</div>
+                        </div>
+                        <div class="flex items-center gap-2 badge-stock px-3 py-1.5 rounded-full shadow-sm">
+                            <i class="fa-solid fa-boxes text-white text-xs"></i>
+                            <span class="text-white text-xs font-bold">${p.stock} unidades</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
 
-            // LÓGICA: Si no hay filtros, usar featuredCodes. Si hay filtros, usar toda la BD.
-            let source = hasFilters ? [...productsDB] : productsDB.filter(p => featuredCodes.includes(p.mini));
-
-            let filtered = source.filter(p => {
-                if (filters.brand && p.marca !== filters.brand) return false;
-                if (filters.category && p.categoria !== filters.category) return false;
-                if (search) {
-                    const text = `${p.mini} ${p.descripcion} ${p.marca} ${p.codigo}`.toLowerCase();
-                    return search.split(/\s+/).every(t => text.includes(t));
-                }
-                return true;
+        // ---------- COTIZADOR LOGIC ----------
+        function addToQuotation(miniCode) {
+            const product = masterProducts.find(p => p.mini === miniCode);
+            if (!product) {
+                Swal.fire('Error', 'Producto no encontrado en el catálogo', 'error');
+                return;
+            }
+            if (quotationMap.has(miniCode)) {
+                let item = quotationMap.get(miniCode);
+                item.quantity += 1;
+                quotationMap.set(miniCode, item);
+            } else {
+                quotationMap.set(miniCode, { product: product, quantity: 1 });
+            }
+            renderQuotationTable();
+            Swal.fire({ 
+                title: '✓ Agregado', 
+                text: `${product.descripcion.substring(0, 40)} x1`, 
+                icon: 'success', 
+                toast: true, 
+                timer: 1000, 
+                showConfirmButton: false,
+                position: 'top-end'
             });
-
-            document.getElementById('resultCount').textContent = filtered.length;
-            renderList(filtered);
         }
 
-        // (Mantén tus funciones renderList, populateFiltersUI, etc. igual que antes)
-        // ...
+        function removeFromQuotation(miniCode, fullRemove = false) {
+            if (quotationMap.has(miniCode)) {
+                let item = quotationMap.get(miniCode);
+                if (fullRemove || item.quantity <= 1) quotationMap.delete(miniCode);
+                else { item.quantity -= 1; quotationMap.set(miniCode, item); }
+                renderQuotationTable();
+            }
+        }
+
+        function renderQuotationTable() {
+            const container = document.getElementById('quotationItemsContainer');
+            if (quotationMap.size === 0) { 
+                container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">✨ Agrega productos desde el catálogo o con minicódigo</div>`; 
+                updateSummary(); 
+                return; 
+            }
+            
+            let html = `<table class="w-full text-sm"><thead class="bg-slate-50 text-slate-600 text-[10px] uppercase tracking-wider"><tr>
+                <th class="p-3 text-left">Mini</th><th class="p-3 text-left">Producto</th><th class="p-3 text-center">Cant</th><th class="p-3 text-right">Precio</th><th class="p-3 text-right">Total</th><th></th>
+            </tr></thead><tbody>`;
+            
+            for (let [mini, item] of quotationMap.entries()) {
+                const prod = item.product;
+                const total = prod.precio * item.quantity;
+                html += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td class="p-2 font-mono text-[11px] font-semibold">${mini}</td>
+                    <td class="p-2 text-xs truncate max-w-[150px]" title="${prod.descripcion}">${prod.descripcion.substring(0, 45)}${prod.descripcion.length > 45 ? '...' : ''}</td>
+                    <td class="p-2 text-center"><div class="flex items-center justify-center gap-2"><button onclick="removeFromQuotation('${mini}',false)" class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition">-</button><span class="w-8 text-center text-sm font-bold text-slate-700">${item.quantity}</span><button onclick="addToQuotation('${mini}')" class="w-6 h-6 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold transition">+</button></div></td>
+                    <td class="p-2 text-right text-xs font-mono">${formatMoney(prod.precio)}</td>
+                    <td class="p-2 text-right font-bold text-indigo-600 text-sm">${formatMoney(total)}</td>
+                    <td class="p-2 text-center"><button onclick="removeFromQuotation('${mini}',true)" class="text-red-400 hover:text-red-600 transition text-xs"><i class="fa-regular fa-trash-can"></i></button></td>
+                </tr>`;
+            }
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let distinct = quotationMap.size;
+            let totalUnits = 0;
+            let subtotal = 0;
+            for (let item of quotationMap.values()) { 
+                totalUnits += item.quantity; 
+                subtotal += item.product.precio * item.quantity; 
+            }
+            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
+            let total = subtotal + shipping;
+            document.getElementById('summaryDistinct').innerText = distinct;
+            document.getElementById('summaryUnits').innerText = totalUnits;
+            document.getElementById('summarySubtotal').innerHTML = formatMoney(subtotal);
+            document.getElementById('summaryTotal').innerHTML = formatMoney(total);
+        }
+
+        function clearQuotation() { quotationMap.clear(); renderQuotationTable(); }
+        
+        function copyWhatsAppText() { 
+            if (quotationMap.size === 0) return Swal.fire('Cotización vacía', 'Agrega productos para cotizar', 'info');
+            let lines = ["📋 *COTIZACIÓN SERVICOMP+*", "━━━━━━━━━━━━━━━━━━", ""];
+            for (let [mini, item] of quotationMap.entries()) {
+                lines.push(`*${mini}* - ${item.product.descripcion.substring(0, 55)}`);
+                lines.push(`└ Cantidad: ${item.quantity} | Precio: ${formatMoney(item.product.precio)} | Total: ${formatMoney(item.product.precio * item.quantity)}`);
+                lines.push(``);
+            }
+            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
+            let subtotal = 0; 
+            for (let i of quotationMap.values()) subtotal += i.product.precio * i.quantity;
+            lines.push(`━━━━━━━━━━━━━━━━━━`);
+            lines.push(`🚚 *Envío:* ${formatMoney(shipping)}`);
+            lines.push(`💰 *TOTAL:* ${formatMoney(subtotal + shipping)}`);
+            lines.push(`📅 ${new Date().toLocaleDateString('es-PE')}`);
+            lines.push(`━━━━━━━━━━━━━━━━━━`);
+            lines.push(`✨ ¡Gracias por confiar en ServiComp+!`);
+            
+            const msg = lines.join('\n');
+            navigator.clipboard.writeText(msg);
+            document.getElementById('copyToast').classList.add('show');
+            setTimeout(() => document.getElementById('copyToast').classList.remove('show'), 1500);
+            Swal.fire('✓ Copiado', 'Listo para pegar en WhatsApp', 'success');
+        }
+
+        function exportPDF() {
+            if (quotationMap.size === 0) return Swal.fire('Vacío', 'Agrega items a la cotización', 'warning');
+            const printContent = document.createElement('div');
+            printContent.innerHTML = `
+                <div style="padding: 30px; font-family: 'Inter', sans-serif; max-width: 800px; margin: 0 auto;">
+                    <div style="display: flex; gap: 15px; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 20px; margin-bottom: 25px;">
+                        <img src="https://scperu.github.io/store/logo.png" height="50" alt="Logo"/>
+                        <div><h2 style="font-size: 24px; font-weight: 800; color: #1e293b;">ServiComp+</h2><p style="color: #64748b;">Cotización Oficial</p></div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>Fecha:</strong> ${new Date().toLocaleString('es-PE')}</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead><tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                            <th style="padding: 12px; text-align: left;">Mini</th><th style="padding: 12px; text-align: left;">Descripción</th><th style="padding: 12px; text-align: center;">Cant</th><th style="padding: 12px; text-align: right;">P/U</th><th style="padding: 12px; text-align: right;">Total</th>
+                        </tr></thead>
+                        <tbody>${Array.from(quotationMap.entries()).map(([mini, item]) => `<tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 10px;">${mini}</td><td style="padding: 10px;">${item.product.descripcion.substring(0, 60)}</td><td style="padding: 10px; text-align: center;">${item.quantity}</td><td style="padding: 10px; text-align: right;">${formatMoney(item.product.precio)}</td><td style="padding: 10px; text-align: right;">${formatMoney(item.product.precio * item.quantity)}</td>
+                        </tr>`).join('')}</tbody>
+                    </table>
+                    <div style="margin-top: 30px; text-align: right; border-top: 2px solid #e2e8f0; padding-top: 20px;">
+                        <p><strong>Subtotal:</strong> ${formatMoney(Array.from(quotationMap.values()).reduce((a, b) => a + (b.product.precio * b.quantity), 0))}</p>
+                        <p><strong>Envío:</strong> ${formatMoney(normalizeNumber(document.getElementById('shippingCost').value))}</p>
+                        <h3 style="font-size: 24px; color: #6366f1;"><strong>TOTAL:</strong> ${formatMoney(Array.from(quotationMap.values()).reduce((a, b) => a + (b.product.precio * b.quantity), 0) + normalizeNumber(document.getElementById('shippingCost').value))}</h3>
+                    </div>
+                </div>`;
+            html2pdf().from(printContent).set({ margin: 0.5, filename: `cotizacion_${Date.now()}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).save();
+        }
+
+        function printQuotation() { window.print(); }
+
+        // EVENTOS Y UI
+        document.getElementById('openQuotatorBtn').addEventListener('click', () => { document.getElementById('quotationPanel').classList.remove('translate-x-full'); });
+        document.getElementById('closePanelBtn').addEventListener('click', () => { document.getElementById('quotationPanel').classList.add('translate-x-full'); });
+        document.getElementById('clearQuotationBtn').addEventListener('click', clearQuotation);
+        document.getElementById('genWhatsappBtn').addEventListener('click', copyWhatsAppText);
+        document.getElementById('genPDFBtn').addEventListener('click', exportPDF);
+        document.getElementById('printBtn').addEventListener('click', printQuotation);
+        document.getElementById('addQuickCodeBtn').addEventListener('click', () => {
+            let raw = document.getElementById('quickCodeInput').value;
+            let codes = raw.split(/[ ,\n]+/).filter(c => c.trim());
+            codes.forEach(code => { if (code.trim()) addToQuotation(code.trim()); });
+            document.getElementById('quickCodeInput').value = '';
+        });
+        document.getElementById('quickCodeInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addQuickCodeBtn').click();
+        });
+        document.getElementById('shippingCost').addEventListener('input', () => updateSummary());
+        document.getElementById('backToTop').addEventListener('click', () => document.getElementById('productsContainer').scrollTop = 0);
+        
+        window.addToQuotation = addToQuotation;
+        window.removeFromQuotation = removeFromQuotation;
+        window.copyMini = (code) => { 
+            navigator.clipboard.writeText(code); 
+            document.getElementById('copyToast').classList.add('show'); 
+            setTimeout(() => document.getElementById('copyToast').classList.remove('show'), 1000);
+        };
+        
+        document.getElementById('dateDisplay').innerHTML = `<i class="fa-regular fa-calendar"></i> ${new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+        loadData();
     </script>
 </body>
 </html>
