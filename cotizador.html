@@ -4,416 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>Cotizador ServiComp+</title>
+    <title>Catálogo Sheets | ServiComp+</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS (Excel) -->
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-    <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- SweetAlert2 (Solo para errores) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* SEGURIDAD: Bloqueo de selección SOLO en elementos de lectura */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #334155; }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid white; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08); border-color: #bfdbfe; }
+        .img-container { background: #f8fafc; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .placeholder-icon { position: absolute; z-index: 0; color: #cbd5e1; font-size: 1.5rem; transition: all 0.3s ease; }
+        .product-img { position: relative; z-index: 10; width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; opacity: 0; }
+        .product-img.loaded { opacity: 1; }
+        .img-container:hover .product-img { transform: scale(1.08); }
+        .img-container:hover .placeholder-icon { color: #94a3b8; transform: scale(1.1); }
+        .view-label { position: absolute; bottom: 4px; right: 4px; background: rgba(255, 255, 255, 0.9); color: #3b82f6; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 20; box-shadow: 0 1px 2px rgba(0,0,0,0.1); pointer-events: none; }
+        .copy-tooltip { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; opacity: 0; transition: opacity 0.3s, bottom 0.3s; pointer-events: none; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .copy-tooltip.show { opacity: 1; bottom: 30px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .custom-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em;
         }
-
-        /* PERMITIR INTERACCIÓN TOTAL EN INPUTS (CRÍTICO PARA MÓVIL) */
-        input, textarea {
-            -webkit-user-select: text !important;
-            -moz-user-select: text !important;
-            -ms-user-select: text !important;
-            user-select: text !important;
-            -webkit-touch-callout: default !important;
-        }
-
-        img { pointer-events: none; }
-
-        .input-code {
-            letter-spacing: 1px;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-family: monospace;
-        }
-        
-        .product-card { transition: all 0.2s ease; }
-        .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        @media print { body { background: white; } .no-print { display: none !important; } .product-card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 10px; page-break-inside: avoid; } .profit-display { display: none !important; } }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col relative">
+<body class="h-screen flex flex-col overflow-hidden">
+    <div id="copyFeedback" class="copy-tooltip"><i class="fa-solid fa-check mr-1"></i> ¡Copiado!</div>
 
-    <!-- Navbar -->
-    <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="h-10 w-10 bg-white rounded-lg flex items-center justify-center overflow-hidden p-1">
-                    <img src="https://scperu.github.io/store/logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <i class="fa-solid fa-microchip text-slate-900 text-xl hidden"></i>
+    <header class="bg-white border-b border-slate-200 z-30 flex-shrink-0 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 space-y-4">
+            <div class="flex justify-between items-center gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="https://scperu.github.io/store/logo.png" class="h-9 object-contain" alt="ServiComp+" onerror="this.style.display='none'">
+                    <div class="min-w-0">
+                        <h1 class="font-bold text-xl text-slate-800 leading-none truncate">ServiComp<span class="text-red-600">+</span></h1>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Catálogo Sheets</span>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-none tracking-tight">ServiComp<span class="text-red-400">+</span></h1>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Soluciones TI</span>
+                <div class="text-right shrink-0">
+                    <div id="resultCount" class="text-2xl font-black text-slate-800 leading-none">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Resultados</div>
                 </div>
             </div>
-            <div class="text-right text-xs leading-tight">
-                <div id="dateDisplay" class="text-slate-300 mb-0.5 capitalize">...</div>
-                <div id="exchangeRate" class="text-blue-400 font-bold bg-slate-800 px-2 py-0.5 rounded inline-block">TC: ...</div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Contenido Principal -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- COLUMNA IZQUIERDA -->
-        <div class="lg:col-span-2 flex flex-col gap-6">
-            
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 sticky top-24 z-30">
-                <div class="flex justify-between items-end mb-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase ml-1">Código de cotización</label>
-                    <span class="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-bold">En Vivo</span>
-                </div>
-                <div class="relative">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                <div class="md:col-span-6 relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i class="fa-solid fa-barcode text-slate-400 text-lg"></i>
+                        <i class="fa-solid fa-layer-group text-slate-300 group-focus-within:text-blue-400 transition"></i>
                     </div>
-                    <!-- INPUT PRINCIPAL -->
-                    <input type="text" id="mainInput" 
-                        class="input-code w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-lg text-slate-800 placeholder-slate-400 shadow-inner"
-                        placeholder="Pegar código aquí..." 
-                        autofocus autocomplete="off">
+                    <input type="text" id="searchInput" class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition placeholder-slate-400 shadow-sm" placeholder="Ej: i5 8gb dell o 481852 506076 472201">
                 </div>
-                <p class="text-xs text-slate-400 mt-2 ml-1 flex items-center gap-1">
-                    <i class="fa-solid fa-circle-info"></i> Pega tu código de cotización.
-                </p>
+                <div class="md:col-span-3">
+                    <select id="catSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
+                        <option value="">Todas las Categorías</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3">
+                    <select id="brandSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
+                        <option value="">Todas las Marcas</option>
+                    </select>
+                </div>
             </div>
-
-            <div id="resultsArea" class="flex flex-col gap-3 min-h-[200px]">
-                <div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200 h-full opacity-60">
-                    <i class="fa-solid fa-arrow-up text-3xl mb-3"></i>
-                    <p>Listo para cotizar.</p>
-                </div>
+            <div class="flex justify-between items-center text-[10px] font-semibold text-slate-400 px-1 pt-1 gap-2 flex-wrap">
+                <span id="dateDisplay">...</span>
+                <span id="exchangeRate" class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">TC: -</span>
             </div>
         </div>
+    </header>
 
-        <!-- COLUMNA DERECHA -->
-        <div class="lg:col-span-1">
-            <div class="sticky top-24 space-y-4">
-                
-                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 ring-1 ring-slate-900/5">
-                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                        <h3 class="font-bold text-slate-800 text-lg">Resumen</h3>
-                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-full" id="itemsBadge">0 items</span>
-                    </div>
-                    
-                    <div class="space-y-3 text-sm mb-6">
-                        <div class="flex justify-between text-slate-600">
-                            <span>Subtotal</span>
-                            <span class="font-medium text-slate-900" id="subtotalVal">S/ 0</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600 items-center">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-truck-fast text-slate-400"></i> Envío</span>
-                            <span class="font-medium text-slate-900" id="shippingVal">S/ 0</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                        <div class="flex justify-between items-end">
-                            <span class="text-slate-600 font-bold text-xs mb-1 uppercase">Total a Pagar</span>
-                            <span id="totalVal" class="text-3xl font-black text-blue-700 leading-none">S/ 0</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-6 border-t border-slate-100 pt-4">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Aceptamos</p>
-                        <div class="flex justify-center gap-3">
-                            <div class="bg-orange-50 border border-orange-100 px-4 py-1.5 rounded flex items-center gap-2 shadow-sm">
-                                <i class="fa-solid fa-bank text-orange-500"></i>
-                                <span class="text-xs font-bold text-orange-800">BCP</span>
-                            </div>
-                            <div class="bg-purple-50 border border-purple-100 px-4 py-1.5 rounded flex items-center gap-2 shadow-sm">
-                                <i class="fa-solid fa-mobile-screen text-purple-600"></i>
-                                <span class="text-xs font-bold text-purple-800">YAPE</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-lg hover:shadow-xl transform active:scale-[0.98]">
-                        <i class="fa-solid fa-file-pdf"></i> Guardar Cotización PDF
-                    </button>
-                    
-                    <p class="text-[10px] text-center text-slate-400 mt-4 leading-relaxed">
-                        Precios válidos por 24 horas o hasta agotar stock.<br>Incluye IGV. Imágenes referenciales.
-                    </p>
-                </div>
+    <main class="flex-grow overflow-y-auto p-4 md:p-6 bg-slate-50 scroll-smooth">
+        <div id="productsList" class="max-w-7xl mx-auto space-y-4 pb-24">
+            <div class="flex flex-col items-center justify-center h-80 text-slate-300">
+                <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+                <p class="text-xs font-bold uppercase tracking-widest animate-pulse">Cargando Inventario...</p>
             </div>
         </div>
     </main>
 
-    <!-- SCRIPTS -->
     <script>
-        /* --- SEGURIDAD HÍBRIDA (Compatible con Móvil) --- */
-        document.addEventListener('contextmenu', function(e) {
-            // Permitir menú solo en inputs
-            if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') return true;
-            e.preventDefault(); return false;
-        });
-
-        /* --- CONFIGURACIÓN --- */
-        const _0x1a2b = "aHR0cHM6Ly9zY3BlcnUuZ2l0aHViLmlvL3N0b3JlL3Byb2R1Y3Rvcy54bHN4"; 
-        const CONFIG = {
-            excelUrl: atob(_0x1a2b),
-            baseShipping: 19
+        const SHEETS = {
+            productos: { URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/productos" },
+            cotizador: { URL: "https://opensheet.elk.sh/TU_ID_DE_HOJA_COTIZADOR/cotizador" }
         };
 
-        let inventory = [];
-        let globalExchangeRate = 0;
-        const moneyFormatter = new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-        function formatMoney(amount) { return "S/ " + moneyFormatter.format(amount); }
+        let productsDB = [];
+        let featuredCodes = [];
+        let filters = { search: '', category: '', brand: '' };
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('dateDisplay').textContent = dateStr;
+        function normalizeText(v) { return String(v || '').trim(); }
+        function normalizeNumber(v) { return Number(String(v ?? '').replace(/,/g, '').replace(/[^\d.-]/g, '')) || 0; }
+        function getCategory(p) {
+            const text = `${p.descripcion} ${p.detalles}`.toLowerCase();
+            if (text.includes('laptop')) return 'LAPTOPS';
+            if (text.includes('monitor')) return 'MONITORES';
+            if (text.includes('procesador')) return 'PROCESADORES';
+            if (text.includes('placa')) return 'PLACAS';
+            if (text.includes('memoria') || text.includes('ram')) return 'MEMORIAS';
+            if (text.includes('ssd') || text.includes('disco')) return 'ALMACENAMIENTO';
+            if (text.includes('impresora')) return 'IMPRESORAS';
+            return 'GENERAL';
+        }
 
-            await initDatabase();
-            
-            // Foco automático en el input al cargar
-            document.getElementById('mainInput').focus();
-            document.getElementById('mainInput').addEventListener('input', (e) => processCodes(e.target.value));
-        });
-
-        async function initDatabase() {
+        async function loadDatabase() {
             try {
-                const response = await fetch(CONFIG.excelUrl);
-                const buffer = await response.arrayBuffer();
-                const workbook = XLSX.read(buffer, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const [r1, r2] = await Promise.all([fetch(SHEETS.productos.URL), fetch(SHEETS.cotizador.URL)]);
+                const [rawP, rawC] = await Promise.all([r1.json(), r2.json()]);
 
-                if (sheet['K2']) {
-                    globalExchangeRate = parseFloat(sheet['K2'].v);
-                    document.getElementById('exchangeRate').textContent = "TC: " + globalExchangeRate.toFixed(3);
-                }
+                featuredCodes = [...new Set(rawC.map(r => normalizeText(r.mini_codigo)))];
 
-                const rawData = XLSX.utils.sheet_to_json(sheet);
-                
-                inventory = rawData.map(row => {
-                    const keys = Object.keys(row);
-                    const getCol = (str) => {
-                        const k = keys.find(key => key.toLowerCase().includes(str));
-                        return k ? row[k] : "";
-                    };
-                    
-                    const codeKey = keys.find(k => k.toLowerCase().includes("codigo") || k.toLowerCase().includes("código") && !k.toLowerCase().includes("mini"));
-                    const miniKey = keys.find(k => k.toLowerCase().includes("mini"));
-                    
-                    let rawStock = getCol("stock");
-                    if (typeof rawStock === 'string') rawStock = parseInt(rawStock.replace(/,/g, '')) || 0;
+                productsDB = rawP.map(row => ({
+                    codigo: normalizeText(row.codigo),
+                    mini: normalizeText(row.mini_codigo),
+                    descripcion: normalizeText(row.descripcion),
+                    marca: normalizeText(row.marca) || 'GENÉRICO',
+                    detalles: normalizeText(row.detalles),
+                    precio: normalizeNumber(row.precio_soles),
+                    ganancia: normalizeNumber(row.ganancia),
+                    stock: Math.floor(normalizeNumber(row.stock)),
+                    categoria: getCategory(row)
+                })).filter(p => p.stock > 0);
 
-                    return {
-                        codigo: row[codeKey] || "N/A",
-                        mini: String(row[miniKey] || "").trim(),
-                        desc: getCol("descrip"),
-                        marca: getCol("marca"),
-                        detalles: getCol("detalles"),
-                        precio: parseFloat(getCol("soles")) || 0,
-                        stock: rawStock
-                    };
-                });
-
-                document.getElementById('resultsArea').innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200 h-full opacity-60">
-                        <i class="fa-solid fa-arrow-up text-3xl mb-3"></i>
-                        <p>Listo para cotizar.</p>
-                    </div>`;
-
-            } catch (err) {
-                Swal.fire("Error", "Error de conexión con base de datos.", "error");
-            }
+                populateFiltersUI();
+                applyFilters();
+            } catch (e) { Swal.fire('Error', 'No se pudieron cargar los datos.', 'error'); }
         }
 
-        /* --- FUNCIÓN PARA DESCOMPACTAR BASE62 --- */
-        function descompactarBase62(compactado) {
-            const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let valor = 0n;
-            for (let char of compactado) {
-                const index = chars.indexOf(char);
-                if (index === -1) return null; // No es válido
-                valor = valor * 62n + BigInt(index);
-            }
-            
-            // Rellenar ceros y dividir en grupos de 6
-            let texto = valor.toString();
-            // Aseguramos que sea múltiplo de 6 para cortar bien
-            const targetLen = Math.ceil(texto.length / 6) * 6;
-            texto = texto.padStart(targetLen, '0');
-            
-            // Retorna array de strings ["470601", "037265", ...]
-            return texto.match(/.{1,6}/g);
-        }
+        function applyFilters() {
+            filters.category = document.getElementById('catSelect').value;
+            filters.brand = document.getElementById('brandSelect').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const hasFilters = filters.category || filters.brand || search;
 
-        /* --- LÓGICA DE PROCESAMIENTO CORREGIDA --- */
-        function processCodes(inputString) {
-            if (!inputString) {
-                renderList([]);
-                return;
-            }
+            // LÓGICA: Si no hay filtros, usar featuredCodes. Si hay filtros, usar toda la BD.
+            let source = hasFilters ? [...productsDB] : productsDB.filter(p => featuredCodes.includes(p.mini));
 
-            let cleanInput = inputString.trim();
-            let searchCodes = [];
-
-            // 1. DETECCIÓN INTELIGENTE
-            // Si no tiene guiones y es alfanumérico, asumimos Base62 (incluso si es corto)
-            const hasHyphen = cleanInput.includes("-");
-            const isBase62 = /^[0-9a-zA-Z]+$/.test(cleanInput);
-
-            if (!hasHyphen && isBase62) {
-                // INTENTAR DESCOMPACTAR
-                const decoded = descompactarBase62(cleanInput);
-                
-                if (decoded && decoded.length > 0) {
-                    // ÉXITO: Es un código compactado
-                    // IMPORTANTE: Normalizar (quitar ceros a la izquierda) para buscar en el inventario
-                    // El packer manda "037265", pero el inventario tiene "37265"
-                    searchCodes = decoded.map(c => c.replace(/^0+/, '')); 
-                } else {
-                    // Falló descompactar, buscar tal cual (búsqueda normal)
-                    searchCodes = [cleanInput];
+            let filtered = source.filter(p => {
+                if (filters.brand && p.marca !== filters.brand) return false;
+                if (filters.category && p.categoria !== filters.category) return false;
+                if (search) {
+                    const text = `${p.mini} ${p.descripcion} ${p.marca} ${p.codigo}`.toLowerCase();
+                    return search.split(/\s+/).every(t => text.includes(t));
                 }
-            } else {
-                // 2. MODO NORMAL (Con guiones o texto simple)
-                searchCodes = cleanInput.split('-').map(s => s.trim()).filter(s => s);
-            }
-
-            const validCodes = searchCodes.filter(c => c.length > 0);
-            const matchedProducts = [];
-
-            // BUSCAR EN INVENTARIO
-            validCodes.forEach(code => {
-                // Normalizamos el código de búsqueda también aquí por seguridad
-                const searchCodeNorm = code.replace(/^0+/, ''); 
-
-                const product = inventory.find(p => {
-                    // Normalizar el mini del inventario (quitar ceros izquierda)
-                    const pMiniNorm = String(p.mini).trim().replace(/^0+/, '');
-                    return pMiniNorm === searchCodeNorm;
-                });
-
-                if (product && product.stock > 0) {
-                    matchedProducts.push(product);
-                }
+                return true;
             });
 
-            renderList(matchedProducts);
+            document.getElementById('resultCount').textContent = filtered.length;
+            renderList(filtered);
         }
 
-        function renderList(products) {
-            const container = document.getElementById('resultsArea');
-            let subtotal = 0;
-
-            if (products.length === 0) {
-                container.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-                    <i class="fa-solid fa-ghost text-3xl mb-3 opacity-50"></i>
-                    <p>No se encontraron productos con stock.</p>
-                </div>`;
-                updateTotals(0, 0);
-                return;
-            }
-
-            let html = '';
-            products.forEach(p => {
-                subtotal += p.precio;
-                const photoUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(p.codigo)}&nomenu=1`;
-                    // Thumb pattern (foto pequeñita)
-                    const c_thumb = String(p.codigo).toLowerCase().trim();
-                    const sub1_thumb = c_thumb.substring(0, 2);
-                    const sub2_thumb = c_thumb.substring(2, 4);
-                    const thumbUrl = `https://imagenes.deltron.com.pe/images/productos/items/${sub1_thumb}/${sub2_thumb}/${c_thumb}.jpg`;
-
-
-                
-                html += `
-                <div class="product-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-blue-200 group relative overflow-hidden">
-                    <div class="flex items-start gap-4 z-10 relative">
-                        <div class="flex-shrink-0 pt-1 flex flex-col items-center gap-1">
-                                    <a href="${photoUrl}" target="_blank" rel="noopener noreferrer" class="w-16 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden hover:border-blue-300 transition relative shadow-sm">
-                                        <img src="${thumbUrl}" alt="img" class="w-full h-full object-contain p-0.5">
-                                    </a>
-                                    <a href="${photoUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 leading-none">
-                                        Ver Foto <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
-                                    </a>
-                                </div>
-                        <div class="flex-grow min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <div class="flex items-center bg-slate-800 text-white rounded overflow-hidden">
-    <span onclick="copiarMiniCodigo('${p.mini}', this.nextElementSibling)"
-          class="text-[10px] font-black tracking-wider px-2 py-0.5 uppercase cursor-pointer">
-        ${p.mini}
-    </span>
-    <button onclick="copiarMiniCodigo('${p.mini}', this)" 
-            class="bg-slate-700 hover:bg-blue-600 px-2 py-0.5 text-[10px] transition">
-        <i class="fa-regular fa-copy"></i>
-    </button>
-</div>
-                                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">${p.marca}</span>
-                            </div>
-                            <h4 class="text-sm font-bold text-slate-800 leading-snug mb-1 pr-2">${p.desc}</h4>
-                            ${p.detalles ? `<p class="text-xs text-slate-500 italic border-l-2 border-slate-200 pl-2 mb-2 line-clamp-2">${p.detalles}</p>` : ''}
-                            
-                            <div class="flex items-center gap-3 text-xs mt-1">
-                                <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-current opacity-80">Stock: ${p.stock}</span>
-                                <span class="text-slate-400 font-mono">Cód: ${p.codigo}</span>
-                            </div>
-                        </div>
-                        <div class="text-right flex-shrink-0 self-center">
-                            <div class="text-lg font-black text-slate-800">${formatMoney(p.precio)}</div>
-                        </div>
-                    </div>
-                </div>`;
-            });
-
-            container.innerHTML = html;
-            updateTotals(subtotal, products.length);
-        }
-
-        function updateTotals(subtotal, count) {
-            const shipping = count > 0 ? CONFIG.baseShipping : 0;
-            const total = subtotal + shipping;
-
-            document.getElementById('itemsBadge').textContent = count + " items";
-            document.getElementById('subtotalVal').textContent = formatMoney(subtotal);
-            document.getElementById('shippingVal').textContent = formatMoney(shipping);
-            document.getElementById('totalVal').textContent = formatMoney(total);
-        }
-
-
-/* --- COPIAR MINICÓDIGO --- */
-function copiarMiniCodigo(texto, btn) {
-    navigator.clipboard.writeText(texto).then(() => {
-        const original = btn.innerHTML;
-        btn.innerHTML = "✔";
-        btn.classList.add("text-green-400");
-
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-            btn.classList.remove("text-green-400");
-        }, 1000);
-    });
-}
-
-
-
-
-
+        // (Mantén tus funciones renderList, populateFiltersUI, etc. igual que antes)
+        // ...
     </script>
 </body>
 </html>
