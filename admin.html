@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>Catálogo Sheets | ServiComp+</title>
+    <title>Catálogo Sheets | ServiComp+ Cotizador</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Librería para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
         body {
@@ -97,7 +99,7 @@
         }
         @media print {
             body { background: white; }
-            .no-print { display: none !important; }
+            .no-print, .cotizador-panel, .float-cart, .print-hide { display: none !important; }
             .product-card {
                 break-inside: avoid;
                 border: 1px solid #ccc;
@@ -112,6 +114,30 @@
             border-color: #ffc4c4;
             color: #c2410c;
         }
+        /* Estilos adicionales para el cotizador */
+        .float-cart {
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s ease;
+        }
+        .float-cart:hover {
+            transform: scale(1.08);
+            background: #4f46e5;
+            box-shadow: 0 20px 30px -8px rgba(79, 70, 229, 0.5);
+        }
+        .btn-cart-icon {
+            background: white;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        .btn-cart-icon:hover {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+            transform: scale(1.05);
+        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -133,9 +159,8 @@
                 </div>
             </div>
 
-            <!-- NUEVA ESTRUCTURA DE FILTROS: Search + 3 Filtros (Categoría, Marca, Sede) -->
+            <!-- Filtros: Search + Categoría + Marca + Sede -->
             <div class="space-y-3">
-                <!-- Buscador principal -->
                 <div class="relative group w-full">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="fa-solid fa-layer-group text-slate-300 group-focus-within:text-blue-400 transition"></i>
@@ -145,7 +170,6 @@
                         placeholder="Ej: i5 8gb dell o 481852 506076 472201 | Múltiples minicódigos separados por espacios">
                 </div>
 
-                <!-- Filtros: Categoría, Marca y SEDE (nuevo) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                         <select id="catSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
@@ -158,7 +182,6 @@
                         </select>
                     </div>
                     <div>
-                        <!-- COMBO SEDE: NUEVO FILTRO según requerimiento -->
                         <select id="sedeSelect" class="custom-select w-full bg-white border border-slate-200 text-slate-600 py-3 pl-4 pr-10 rounded-xl text-xs font-bold uppercase tracking-wide focus:border-blue-400 outline-none cursor-pointer shadow-sm">
                             <option value="">Todas las Sedes</option>
                         </select>
@@ -182,11 +205,81 @@
         </div>
     </main>
 
-    <button onclick="document.querySelector('main').scrollTop = 0" class="fixed bottom-8 right-8 bg-slate-800 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:bg-slate-700 transition z-40 no-print" aria-label="Volver arriba">
+    <!-- PANEL COTIZADOR (lateral derecho) -->
+    <div id="quotationPanel" class="fixed inset-y-0 right-0 w-full md:w-[540px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-slate-200">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white/95 sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-cart-shopping text-white text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Mi Carrito</h2>
+                    <p class="text-[10px] text-slate-400">Agrega productos y genera presupuesto</p>
+                </div>
+            </div>
+            <button id="closePanelBtn" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 transition"><i class="fa-solid fa-times text-slate-500"></i></button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+            <!-- Entrada rápida por minicódigo -->
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100">
+                <label class="text-xs font-bold uppercase text-indigo-700 flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-keyboard"></i> Agregar por código
+                </label>
+                <div class="flex gap-2">
+                    <input type="text" id="quickCodeInput" class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" placeholder="Ej: MINI001, MINI003">
+                    <button id="addQuickCodeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-xl text-sm font-semibold transition shadow"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2"><i class="fa-regular fa-lightbulb"></i> Separa con comas o espacios</p>
+            </div>
+
+            <!-- Tabla de items -->
+            <div>
+                <div class="flex justify-between items-center mb-3 px-1">
+                    <h3 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-list mr-2 text-indigo-500"></i> Productos agregados</h3>
+                    <button id="clearQuotationBtn" class="text-xs text-red-500 hover:text-red-700 font-medium"><i class="fa-regular fa-trash-can mr-1"></i> Limpiar todo</button>
+                </div>
+                <div id="quotationItemsContainer" class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-sm min-h-[200px] max-h-[380px] overflow-y-auto">
+                    <div class="p-8 text-center text-slate-400 text-sm">🛒 Agrega productos desde el catálogo o con código</div>
+                </div>
+            </div>
+
+            <!-- Resumen + envío -->
+            <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-5 space-y-3 border border-slate-200">
+                <div class="flex justify-between text-sm py-1"><span class="text-slate-600">📦 Productos distintos:</span><span id="summaryDistinct" class="font-bold">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-600">🔢 Unidades totales:</span><span id="summaryUnits" class="font-bold">0</span></div>
+                <div class="flex justify-between text-sm border-t border-slate-200 pt-2"><span class="text-slate-600">💰 Subtotal:</span><span id="summarySubtotal" class="font-bold text-indigo-600 text-base">S/ 0</span></div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-600 text-sm flex items-center gap-1"><i class="fa-solid fa-truck"></i> Envío:</span>
+                    <div class="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200">
+                        <span class="text-slate-500 text-xs">S/</span>
+                        <input type="number" id="shippingCost" value="19" step="5" class="w-24 text-right border-0 focus:ring-0 text-sm font-mono font-semibold">
+                    </div>
+                </div>
+                <div class="flex justify-between text-lg font-black pt-3 border-t-2 border-slate-200"><span>TOTAL</span><span id="summaryTotal" class="text-indigo-600 text-2xl font-black">S/ 0</span></div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="p-6 border-t border-slate-100 grid grid-cols-2 gap-3 bg-white">
+            <button id="genWhatsappBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition"><i class="fab fa-whatsapp text-lg"></i> WhatsApp</button>
+            <button id="genPDFBtn" class="bg-gradient-to-r from-slate-700 to-slate-800 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button>
+            <button id="printBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 col-span-2 border"><i class="fa-regular fa-print"></i> Imprimir Cotización</button>
+        </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE CARRITO (similar a WhatsApp) -->
+    <button id="floatingCartBtn" class="fixed bottom-8 right-8 z-40 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center hover:bg-indigo-700 transition-all duration-200 float-cart no-print print-hide">
+        <i class="fa-solid fa-cart-shopping text-2xl"></i>
+        <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm hidden">0</span>
+    </button>
+
+    <button onclick="document.querySelector('main').scrollTop = 0" class="fixed bottom-24 right-8 bg-slate-800 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:bg-slate-700 transition z-40 no-print" aria-label="Volver arriba">
         <i class="fa-solid fa-arrow-up"></i>
     </button>
 
     <script>
+        // ---------- DATOS Y FILTROS EXISTENTES (preservados) ----------
         const SHEETS = {
             productos: {
                 SHEET_ID: "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI",
@@ -196,7 +289,7 @@
         };
 
         let productsDB = [];
-        let filters = { search: '', category: '', brand: '', sede: '' };  // NUEVO: sede filter
+        let filters = { search: '', category: '', brand: '', sede: '' };
 
         function formatMoney(amount) {
             return `S/ ${Math.floor(Number(amount) || 0).toLocaleString('en-US')}`;
@@ -247,7 +340,7 @@
 
             document.getElementById('catSelect').addEventListener('change', applyFilters);
             document.getElementById('brandSelect').addEventListener('change', applyFilters);
-            document.getElementById('sedeSelect').addEventListener('change', applyFilters);  // NUEVO: filtro sede
+            document.getElementById('sedeSelect').addEventListener('change', applyFilters);
 
             await loadDatabase();
         });
@@ -266,7 +359,6 @@
                 if (!response.ok) throw new Error('No se pudo cargar la hoja');
                 const rawProducts = await response.json();
 
-                // MAPEO INCLUYENDO EL NUEVO CAMPO "sede" (columna añadida en sheets)
                 productsDB = rawProducts.map(row => {
                     const rawSede = row.sede !== undefined ? row.sede : (row.Sede ? row.Sede : '');
                     const sedeValue = normalizeText(rawSede);
@@ -284,7 +376,7 @@
                         stock: Math.floor(normalizeNumber(row.stock)),
                         tipoCambio: normalizeNumber(row.tipo_cambio) || normalizeNumber(row.k3),
                         categoria: getCategory(row),
-                        sede: sedeValue || ''   // NUEVO campo: sede, puede estar vacío pero se mostrará en la tarjeta
+                        sede: sedeValue || ''
                     };
                 }).filter(p => p.stock > 0 && (p.codigo || p.mini || p.descripcion));
 
@@ -310,8 +402,6 @@
 
             const brands = [...new Set(productsDB.map(p => p.marca).filter(Boolean))].sort();
             const categories = [...new Set(productsDB.map(p => p.categoria).filter(Boolean))].sort();
-            
-            // Obtener sedes únicas (excluir vacíos para opciones limpias, pero si existe valor vacío se omitirá del filtro específico)
             const uniqueSedes = [...new Set(productsDB.map(p => p.sede).filter(s => s && s.trim() !== ""))].sort();
 
             brands.forEach(b => {
@@ -328,7 +418,6 @@
                 catSelect.appendChild(opt);
             });
 
-            // Llenar combo SEDE con opciones reales (todas las sedes registradas)
             uniqueSedes.forEach(sede => {
                 const opt = document.createElement('option');
                 opt.value = sede;
@@ -340,7 +429,7 @@
         function applyFilters() {
             filters.category = document.getElementById('catSelect').value;
             filters.brand = document.getElementById('brandSelect').value;
-            filters.sede = document.getElementById('sedeSelect').value;   // NUEVO: toma valor del combo sede
+            filters.sede = document.getElementById('sedeSelect').value;
 
             const hasFilters = filters.category !== '' || filters.brand !== '' || filters.sede !== '' || filters.search !== '';
             let source = hasFilters ? [...productsDB] : shuffleArray(productsDB);
@@ -348,7 +437,7 @@
             let filtered = source.filter(p => {
                 if (filters.brand && p.marca !== filters.brand) return false;
                 if (filters.category && p.categoria !== filters.category) return false;
-                if (filters.sede && p.sede !== filters.sede) return false;   // FILTRO POR SEDE
+                if (filters.sede && p.sede !== filters.sede) return false;
 
                 if (filters.search) {
                     const terms = filters.search.split(/[\s,;|]+/).map(t => t.trim()).filter(Boolean);
@@ -372,7 +461,6 @@
             renderList(filtered);
         }
 
-        // Función global de copia (unificada)
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const tooltip = document.getElementById('copyFeedback');
@@ -383,6 +471,172 @@
             });
         };
 
+        // ---------- COTIZADOR (nuevo) ----------
+        let quotationMap = new Map();  // mini -> { product, quantity }
+
+        function addToQuotation(miniCode) {
+            const product = productsDB.find(p => p.mini === miniCode);
+            if (!product) {
+                Swal.fire('Error', 'Producto no encontrado en el catálogo', 'error');
+                return false;
+            }
+            if (quotationMap.has(miniCode)) {
+                let item = quotationMap.get(miniCode);
+                item.quantity += 1;
+                quotationMap.set(miniCode, item);
+            } else {
+                quotationMap.set(miniCode, { product: product, quantity: 1 });
+            }
+            renderQuotationTable();
+            updateCartBadge();
+            Swal.fire({ title: '✓ Agregado', text: `${product.descripcion.substring(0, 35)} x1`, icon: 'success', toast: true, timer: 1000, showConfirmButton: false, position: 'top-end' });
+            return true;
+        }
+
+        function removeFromQuotation(miniCode, fullRemove = false) {
+            if (quotationMap.has(miniCode)) {
+                let item = quotationMap.get(miniCode);
+                if (fullRemove || item.quantity <= 1) quotationMap.delete(miniCode);
+                else { item.quantity -= 1; quotationMap.set(miniCode, item); }
+                renderQuotationTable();
+                updateCartBadge();
+            }
+        }
+
+        function renderQuotationTable() {
+            const container = document.getElementById('quotationItemsContainer');
+            if (quotationMap.size === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">🛒 Agrega productos desde el catálogo o con código</div>`;
+                updateSummary();
+                return;
+            }
+            let html = `<table class="w-full text-sm"><thead class="bg-slate-50 text-slate-600 text-[10px] uppercase"><tr>
+                <th class="p-3 text-left">Código</th><th class="p-3 text-left">Producto</th><th class="p-3 text-center">Cant</th><th class="p-3 text-right">P/U</th><th class="p-3 text-right">Total</th><th></th>
+            </tr></thead><tbody>`;
+            for (let [mini, item] of quotationMap.entries()) {
+                const prod = item.product;
+                const total = prod.precio * item.quantity;
+                html += `<tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-2 font-mono text-[11px] font-semibold">${mini}</td>
+                    <td class="p-2 text-xs truncate max-w-[150px]" title="${prod.descripcion}">${prod.descripcion.substring(0, 42)}</td>
+                    <td class="p-2 text-center"><div class="flex items-center justify-center gap-2"><button onclick="window.removeFromQuotation('${mini}',false)" class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold">-</button><span class="w-8 text-center text-sm font-bold">${item.quantity}</span><button onclick="window.addToQuotation('${mini}')" class="w-6 h-6 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold">+</button></div></td>
+                    <td class="p-2 text-right text-xs font-mono">${formatMoney(prod.precio)}</td>
+                    <td class="p-2 text-right font-bold text-indigo-600 text-sm">${formatMoney(total)}</td>
+                    <td class="p-2 text-center"><button onclick="window.removeFromQuotation('${mini}',true)" class="text-red-400 hover:text-red-600"><i class="fa-regular fa-trash-can"></i></button></td>
+                </tr>`;
+            }
+            html += `</tbody>${'</td>'}`;
+            container.innerHTML = html;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let distinct = quotationMap.size;
+            let totalUnits = 0, subtotal = 0;
+            for (let item of quotationMap.values()) {
+                totalUnits += item.quantity;
+                subtotal += item.product.precio * item.quantity;
+            }
+            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
+            let total = subtotal + shipping;
+            document.getElementById('summaryDistinct').innerText = distinct;
+            document.getElementById('summaryUnits').innerText = totalUnits;
+            document.getElementById('summarySubtotal').innerHTML = formatMoney(subtotal);
+            document.getElementById('summaryTotal').innerHTML = formatMoney(total);
+        }
+
+        function clearQuotation() { quotationMap.clear(); renderQuotationTable(); updateCartBadge(); }
+
+        function copyWhatsAppMessage() {
+            if (quotationMap.size === 0) return Swal.fire('Carrito vacío', 'Agrega productos', 'info');
+            let lines = ["📋 *COTIZACIÓN - SERVICOMP+*", "━━━━━━━━━━━━━━━━━━", ""];
+            for (let [mini, item] of quotationMap.entries()) {
+                lines.push(`*${mini}* - ${item.product.descripcion.substring(0, 55)}`);
+                lines.push(`└ Cant: ${item.quantity} | P/U: ${formatMoney(item.product.precio)} | Total: ${formatMoney(item.product.precio * item.quantity)}`);
+                lines.push(``);
+            }
+            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
+            let subtotal = 0; for (let i of quotationMap.values()) subtotal += i.product.precio * i.quantity;
+            lines.push(`━━━━━━━━━━━━━━━━━━`);
+            lines.push(`🚚 *Envío:* ${formatMoney(shipping)}`);
+            lines.push(`💰 *TOTAL:* ${formatMoney(subtotal + shipping)}`);
+            lines.push(`📅 ${new Date().toLocaleDateString('es-PE')}`);
+            lines.push(`✨ ¡Gracias por tu cotización!`);
+            navigator.clipboard.writeText(lines.join('\n'));
+            const toast = document.getElementById('copyFeedback');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1500);
+            Swal.fire('✓ Copiado', 'Texto listo para WhatsApp', 'success');
+        }
+
+        function exportPDF() {
+            if (quotationMap.size === 0) return Swal.fire('Vacío', 'No hay productos', 'warning');
+            const printDiv = document.createElement('div');
+            let subtotalCalc = 0;
+            for(let it of quotationMap.values()) subtotalCalc += it.product.precio * it.quantity;
+            const shippingVal = normalizeNumber(document.getElementById('shippingCost').value);
+            printDiv.innerHTML = `
+                <div style="padding: 30px; font-family: 'Plus Jakarta Sans',sans-serif; max-width: 800px; margin:0 auto;">
+                    <div style="display:flex; gap:15px; align-items:center; border-bottom:2px solid #6366f1; padding-bottom:20px; margin-bottom:25px;">
+                        <div style="background:#eef2ff; width:50px; height:50px; border-radius:16px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-cart-shopping" style="font-size:28px; color:#4f46e5;"></i></div>
+                        <div><h2 style="font-size:26px; font-weight:800;">ServiComp+</h2><p style="color:#475569;">Cotización generada</p></div>
+                    </div>
+                    <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-PE')}</p>
+                    <table style="width:100%; border-collapse:collapse; margin-top:25px;">
+                        <thead><tr style="background:#f1f5f9;"><th style="padding:12px; text-align:left;">Código</th><th style="padding:12px; text-align:left;">Producto</th><th style="padding:12px; text-align:center;">Cant</th><th style="padding:12px; text-align:right;">Precio</th><th style="padding:12px; text-align:right;">Total</th> </tr></thead>
+                        <tbody>${Array.from(quotationMap.entries()).map(([mini, item]) => `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px;">${mini}</td><td style="padding:10px;">${item.product.descripcion}</td><td style="padding:10px; text-align:center;">${item.quantity}</td><td style="padding:10px; text-align:right;">${formatMoney(item.product.precio)}</td><td style="padding:10px; text-align:right;">${formatMoney(item.product.precio * item.quantity)}</td></tr>`).join('')}</tbody>
+                    </table>
+                    <div style="margin-top:35px; text-align:right; border-top:2px solid #cbd5e1; padding-top:20px;">
+                        <p><strong>Subtotal:</strong> ${formatMoney(subtotalCalc)}</p>
+                        <p><strong>Envío:</strong> ${formatMoney(shippingVal)}</p>
+                        <h3 style="font-size:26px; color:#4f46e5;">TOTAL: ${formatMoney(subtotalCalc + shippingVal)}</h3>
+                    </div>
+                </div>`;
+            html2pdf().from(printDiv).set({ margin: 0.5, filename: `cotizacion_${Date.now()}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).save();
+        }
+
+        function printQuotation() { window.print(); }
+
+        function addMultipleQuickCodes() {
+            let raw = document.getElementById('quickCodeInput').value;
+            let codes = raw.split(/[ ,\n]+/).filter(c => c.trim().length > 0);
+            if(codes.length === 0) return;
+            codes.forEach(code => addToQuotation(code.trim()));
+            document.getElementById('quickCodeInput').value = '';
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            let totalItems = 0;
+            for (let item of quotationMap.values()) totalItems += item.quantity;
+            if (totalItems > 0) {
+                badge.innerText = totalItems > 9 ? '9+' : totalItems;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Exponer funciones globales para los botones dinámicos
+        window.addToQuotation = addToQuotation;
+        window.removeFromQuotation = removeFromQuotation;
+
+        // Eventos del cotizador
+        document.getElementById('floatingCartBtn').addEventListener('click', () => {
+            document.getElementById('quotationPanel').classList.remove('translate-x-full');
+        });
+        document.getElementById('closePanelBtn').addEventListener('click', () => {
+            document.getElementById('quotationPanel').classList.add('translate-x-full');
+        });
+        document.getElementById('clearQuotationBtn').addEventListener('click', clearQuotation);
+        document.getElementById('genWhatsappBtn').addEventListener('click', copyWhatsAppMessage);
+        document.getElementById('genPDFBtn').addEventListener('click', exportPDF);
+        document.getElementById('printBtn').addEventListener('click', printQuotation);
+        document.getElementById('addQuickCodeBtn').addEventListener('click', addMultipleQuickCodes);
+        document.getElementById('quickCodeInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') addMultipleQuickCodes(); });
+        document.getElementById('shippingCost').addEventListener('input', () => updateSummary());
+
+        // ---------- RENDER DE PRODUCTOS CON ICONO DE CARRITO ----------
         function renderList(list) {
             const container = document.getElementById('productsList');
             if (list.length === 0) {
@@ -400,7 +654,6 @@
                 const thumbUrl = `https://imagenes.deltron.com.pe/images/productos/items/${sub1Thumb}/${sub2Thumb}/${cThumb}.jpg`;
                 const detailUrl = `https://www.deltron.com.pe/modulos/productos/items/postsql.php?from=new_product&item_number=${encodedCodigo}`;
                 
-                // Mostrar sede con estilo destacado (color rojo / terracota como pide el requerimiento visual)
                 const sedeDisplay = p.sede && p.sede.trim() !== "" ? p.sede : "Sin sede";
                 const sedeBadgeClass = "text-[10px] font-bold uppercase tracking-wide border px-2 py-0.5 rounded bg-red-50 text-red-700 border-red-200";
                 
@@ -418,7 +671,10 @@
 
                     <div class="flex-grow p-5 flex flex-col justify-center">
                         <div class="flex flex-wrap items-center gap-2 mb-2">
-                            <button onclick="copyToClipboard('${String(p.mini).replace(/'/g, "&#39;")}')" class="bg-slate-900 hover:bg-slate-700 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer transition flex items-center gap-1 active:scale-95" title="Copiar minicódigo">
+                            <button onclick="addToQuotation('${String(p.mini).replace(/'/g, "\\'")}')" class="btn-cart-icon w-8 h-8 rounded-full flex items-center justify-center text-indigo-600 hover:text-white transition-all shadow-sm" title="Agregar al carrito">
+                                <i class="fa-solid fa-cart-plus text-sm"></i>
+                            </button>
+                            <button onclick="copyToClipboard('${String(p.mini).replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-700 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer transition flex items-center gap-1 active:scale-95" title="Copiar minicódigo">
                                 ${p.mini || '-'} <i class="fa-regular fa-copy text-[9px] opacity-70"></i>
                             </button>
                             <a href="${detailUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 w-6 h-5 flex items-center justify-center rounded text-[10px] transition" title="Ver ficha">
@@ -426,7 +682,6 @@
                             </a>
                             <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wide border border-blue-100 px-2 py-0.5 rounded">${p.marca}</span>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded">${p.categoria}</span>
-                            <!-- NUEVO BADGE DE SEDE - UBICADO DESPUÉS DE CATEGORÍA (según requerimiento con indicación roja) -->
                             <span class="${sedeBadgeClass}"><i class="fa-solid fa-location-dot text-[8px] mr-1"></i>${sedeDisplay}</span>
                         </div>
                         <h3 class="text-base font-bold text-slate-800 leading-snug mb-2 pr-4 hover:text-blue-600 transition-colors">${p.descripcion}</h3>
@@ -437,7 +692,7 @@
                         <div class="profit-display text-[9px] font-mono text-slate-300 mb-auto hidden md:block select-none">g:${p.ganancia}</div>
                         <div class="text-right">
                             <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Precio Contado</div>
-                            <div class="text-3xl font-black text-blue-600 tracking-tight leading-none">S/ ${Math.floor(p.precio).toLocaleString('en-US')}</div>
+                            <div class="text-3xl font-black text-blue-600 tracking-tight leading-none">${formatMoney(p.precio)}</div>
                         </div>
                         <div class="mt-auto pt-2 md:pt-4">
                             <div class="flex items-center gap-2 bg-white text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100 shadow-sm">
