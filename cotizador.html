@@ -545,51 +545,6 @@
             font-size: 13px;
         }
 
-        .btn-flotante {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #1a3a5c;
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: none;
-            box-shadow: 0 4px 20px rgba(26,58,92,0.3);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            z-index: 100;
-        }
-
-        .btn-flotante:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(26,58,92,0.4);
-        }
-
-        .btn-flotante .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #dc3545;
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-flotante .badge.hidden {
-            display: none;
-        }
-
         .copy-tooltip {
             position: fixed;
             bottom: 100px;
@@ -613,7 +568,6 @@
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
             .no-print { display: none !important; }
-            .btn-flotante { display: none !important; }
             .tarjeta-producto { break-inside: avoid; }
         }
 
@@ -635,11 +589,6 @@
 <body>
 
     <div id="copyFeedback" class="copy-tooltip"><i class="fa-regular fa-check-circle mr-2"></i> Copiado al portapapeles</div>
-
-    <button id="floatingCartBtn" class="btn-flotante no-print">
-        <i class="fa-regular fa-file-lines"></i>
-        <span id="cartBadge" class="badge hidden">0</span>
-    </button>
 
     <div class="documento-cotizador" id="cotizadorDocumento">
         
@@ -683,8 +632,7 @@
         <!-- TABLA DE PRODUCTOS (DESDE HOJA "cotizador") -->
         <div class="tabla-productos">
             <div class="titulo-seccion">
-                <h3><i class="fa-regular fa-list"></i> Productos</h3>
-                <!-- ELIMINADO: <span class="items-count"> -->
+                <!-- TÍTULO ELIMINADO: se eliminó la etiqueta <h3> con la palabra "Productos" -->
                 <button class="btn-limpiar" id="limpiarBtn"><i class="fa-regular fa-trash-can"></i> Limpiar</button>
             </div>
             <div id="tablaProductosContainer">
@@ -1137,16 +1085,8 @@
         // ACTUALIZAR BADGE
         // ============================================================
         function actualizarBadge() {
-            const badge = document.getElementById('cartBadge');
-            let total = 0;
-            for (let p of productosCotizacion) total += p.cantidad;
-
-            if (total > 0) {
-                badge.textContent = total > 9 ? '9+' : total;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            // El badge ya no se usa porque se eliminó el botón flotante.
+            // Esta función se mantiene vacía para no romper el código.
         }
 
         // ============================================================
@@ -1233,9 +1173,7 @@
         // ============================================================
         // EVENTOS
         // ============================================================
-        document.getElementById('floatingCartBtn').addEventListener('click', () => {
-            document.getElementById('cotizadorDocumento').scrollIntoView({ behavior: 'smooth' });
-        });
+        // El botón flotante ya no existe, así que no se asigna evento.
 
         document.getElementById('limpiarBtn').addEventListener('click', limpiarCotizacion);
 
