@@ -99,7 +99,6 @@
             text-transform: uppercase;
             pointer-events: none;
         }
-        /* ✅ 1. Icono fa-solid en view-label */
         .view-label i {
             font-size: 8px;
         }
@@ -154,7 +153,6 @@
             border-color: #2563eb;
         }
 
-        /* ✅ 3. Badge "+" más grande */
         .badge-add {
             background: #2563eb;
             color: white;
@@ -180,7 +178,6 @@
             font-size: 12px;
         }
 
-        /* ✅ Stock compacto */
         .stock-status {
             font-size: 8px;
             font-weight: 700;
@@ -374,7 +371,6 @@
             border-color: rgba(239,68,68,0.2);
         }
 
-        /* ✅ 4. Precio más grande */
         .price-tag {
             font-size: 22px;
             font-weight: 800;
@@ -771,7 +767,7 @@
         }
 
         // ==================================================================
-        //  APLICAR FILTROS
+        //  APLICAR FILTROS - DESTACADOS ALEATORIOS Y RESTO ALEATORIO
         // ==================================================================
 
         function applyFilters() {
@@ -784,10 +780,13 @@
                 return true;
             });
 
+            // ✅ Destacados mezclados aleatoriamente
             const featured = shuffleArray(filtered.filter(p => p.isFeatured));
-            const rest = filtered.filter(p => !p.isFeatured).sort((a, b) => a.codigo.localeCompare(b.codigo));
-            
+            // ✅ Resto de productos mezclados aleatoriamente
+            const rest = shuffleArray(filtered.filter(p => !p.isFeatured));
+
             fullList = [...featured, ...rest];
+            
             currentBatch = 0;
             displayedCount = 0;
 
@@ -797,7 +796,7 @@
         }
 
         // ==================================================================
-        //  LOAD NEXT BATCH
+        //  LOAD NEXT BATCH - MANTIENE SECCIÓN DE DESTACADOS
         // ==================================================================
 
         function loadNextBatch() {
@@ -835,7 +834,7 @@
                                 <span class="line"></span>
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                                ${renderProductCards(featuredItems, true)}
+                                ${renderProductCards(featuredItems)}
                             </div>
                         </div>
                     `;
@@ -852,7 +851,7 @@
                                 <span class="flex-1 h-px bg-gray-200/60"></span>
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                                ${renderProductCards(restItems, false)}
+                                ${renderProductCards(restItems)}
                             </div>
                         </div>
                     `;
@@ -860,7 +859,7 @@
             } else {
                 html = `
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                        ${renderProductCards(batch, false)}
+                        ${renderProductCards(batch)}
                     </div>
                 `;
             }
@@ -901,7 +900,7 @@
         //  RENDER PRODUCT CARDS
         // ==================================================================
 
-        function renderProductCards(products, isFeatured) {
+        function renderProductCards(products) {
             return products.map(p => {
                 const encodedCodigo = encodeURIComponent(p.codigo);
                 const imgUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodedCodigo}&nomenu=1`;
@@ -914,17 +913,16 @@
                 const isFav = isFavorite(p.mini);
 
                 return `
-                <div class="product-grid-card ${isFeatured ? 'featured' : ''}">
+                <div class="product-grid-card ${p.isFeatured ? 'featured' : ''}">
                     <div class="img-wrapper">
                         <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center">
                             <i class="fa-solid fa-camera placeholder-icon"></i>
                             <img src="${thumbUrl}" class="product-img" alt="${p.descripcion.replace(/"/g, '&quot;')}" loading="lazy"
                                  onload="this.classList.add('loaded')"
                                  onerror="this.style.display='none'">
-                            <!-- ✅ 1. Icono fa-solid en view-label -->
                             <span class="view-label"><i class="fa-solid fa-eye mr-1"></i> Ver foto</span>
                         </a>
-                        ${isFeatured ? `<span class="absolute top-1.5 left-1.5 badge-featured"><i class="fa-solid fa-star mr-1"></i>${SECTION_NAME}</span>` : ''}
+                        ${p.isFeatured ? `<span class="absolute top-1.5 left-1.5 badge-featured"><i class="fa-solid fa-star mr-1"></i>${SECTION_NAME}</span>` : ''}
                         <button class="favorite-btn ${isFav ? 'active' : ''}" data-mini="${String(p.mini).replace(/'/g, "\\'")}" onclick="toggleFavorite('${String(p.mini).replace(/'/g, "\\'")}')" title="${isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
                             <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
                         </button>
@@ -936,7 +934,6 @@
                             <button onclick="copyToClipboard('${String(p.mini).replace(/'/g, "\\'")}')" class="badge-mini" title="Copiar minicódigo">
                                 <i class="fa-regular fa-copy mr-1"></i>${p.mini || '---'}
                             </button>
-                            <!-- ✅ 3. Badge "+" más grande -->
                             <button onclick="addToQuotation('${String(p.mini).replace(/'/g, "\\'")}')" class="badge-add" title="Agregar al carrito">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -947,7 +944,6 @@
 
                         <div class="flex items-center justify-between pt-1.5 border-t border-gray-50">
                             <div>
-                                <!-- ✅ 4. Precio más grande (22px) -->
                                 <span class="price-label">Precio</span>
                                 <div class="price-tag">${formatMoney(p.precio)}</div>
                             </div>
