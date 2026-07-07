@@ -2,528 +2,1253 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>ServiComp+ | Catálogo Profesional</title>
+    <title>ServiComp+ | Cotizador en Vivo</title>
 
-    <!-- TailwindCSS + Fonts + Icons + SweetAlert -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- PDF Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: linear-gradient(135deg, #f5f7fa 0%, #eef2f6 100%); }
-        
-        /* Glass morphism premium */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5);
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a1a;
+            -webkit-font-smoothing: antialiased;
         }
-        
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(226, 232, 240, 0.6);
-            background: white;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
-            border-color: #6366f1;
-        }
-        
-        .img-container {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .product-img {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .product-img.loaded { opacity: 1; }
-        
-        .view-label {
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(4px);
+
+        /* ===== ESTILOS DEL BADGE EN VIVO ===== */
+        .live-badge {
+            background: #10b981;
             color: white;
-            font-size: 7px;
-            border-radius: 6px;
-            padding: 2px 6px;
+            padding: 2px 14px 2px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 6px;
+            vertical-align: middle;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
-        
+
+        .pulse-icon {
+            font-size: 7px;
+            color: #fff;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.6); }
+        }
+
+        /* ===== RESTO DE ESTILOS ===== */
+        .documento-cotizador {
+            background: #ffffff;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e8eaed;
+        }
+
+        .header-documento {
+            border-bottom: 3px solid #1a3a5c;
+            padding-bottom: 15px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-documento .empresa {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-documento .empresa img {
+            height: 50px;
+            width: auto;
+        }
+
+        .header-documento .empresa h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a3a5c;
+            letter-spacing: -0.5px;
+        }
+
+        .header-documento .empresa h1 span {
+            color: #dc3545;
+        }
+
+        .header-documento .empresa .sub {
+            font-size: 10px;
+            color: #6c757d;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: block;
+            margin-top: -2px;
+        }
+
+        .header-documento .numero-cotizacion {
+            text-align: right;
+        }
+
+        .header-documento .numero-cotizacion .label {
+            font-size: 9px;
+            color: #6c757d;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-documento .numero-cotizacion .numero {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a3a5c;
+        }
+
+        .info-cabecera {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 12px;
+            color: #495057;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-cabecera span i {
+            margin-right: 6px;
+            color: #1a3a5c;
+        }
+
+        .datos-cliente {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .datos-cliente .campo label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .datos-cliente .campo input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #dee2e6;
+            padding: 4px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            background: transparent;
+            transition: border-color 0.2s;
+        }
+
+        .datos-cliente .campo input:focus {
+            outline: none;
+            border-bottom-color: #1a3a5c;
+        }
+
+        .tabla-productos {
+            margin-bottom: 20px;
+        }
+
+        .tabla-productos .titulo-seccion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .tabla-productos .titulo-seccion h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a3a5c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tabla-productos table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .tabla-productos table thead th {
+            background: #f8f9fa;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .tabla-productos table thead th:last-child {
+            text-align: center;
+        }
+
+        .tabla-productos table tbody td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f3f5;
+            vertical-align: middle;
+        }
+
+        .tabla-productos table tbody td:last-child {
+            text-align: center;
+        }
+
+        .tabla-productos table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .producto-miniatura {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .producto-miniatura:hover {
+            transform: scale(1.05);
+        }
+
+        .producto-codigo {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 12px;
+            color: #1a3a5c;
+        }
+
+        .producto-nombre {
+            font-size: 12px;
+            color: #495057;
+            max-width: 200px;
+        }
+
+        .btn-accion {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #adb5bd;
+            transition: color 0.2s;
+            padding: 4px 6px;
+            font-size: 14px;
+        }
+
+        .btn-accion:hover {
+            color: #dc3545;
+        }
+
+        .cantidad-label {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a1a1a;
+            text-align: center;
+            display: block;
+        }
+
+        .resumen-cotizacion {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .resumen-cotizacion .fila {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+        }
+
+        .resumen-cotizacion .fila .label {
+            color: #6c757d;
+        }
+
+        .resumen-cotizacion .fila .valor {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .resumen-cotizacion .fila.total {
+            border-top: 2px solid #dee2e6;
+            padding-top: 10px;
+            margin-top: 6px;
+        }
+
+        .resumen-cotizacion .fila.total .label {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1a3a5c;
+        }
+
+        .resumen-cotizacion .fila.total .valor {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a3a5c;
+        }
+
+        .resumen-cotizacion .fila .envio-input {
+            border: none;
+            border-bottom: 2px solid #dee2e6;
+            width: 80px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+            background: transparent;
+            color: #1a1a1a;
+            padding: 2px 4px;
+        }
+
+        .resumen-cotizacion .fila .envio-input:focus {
+            outline: none;
+            border-bottom-color: #1a3a5c;
+        }
+
+        .acciones-cotizacion {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .acciones-cotizacion button {
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1da851;
+            transform: translateY(-1px);
+        }
+
+        .btn-pdf {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-imprimir {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-imprimir:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .catalogo-productos {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #dee2e6;
+        }
+
+        .catalogo-productos .titulo {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a3a5c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .grid-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .tarjeta-producto {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tarjeta-producto:hover {
+            border-color: #1a3a5c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .tarjeta-producto .img-wrapper {
+            background: #f8f9fa;
+            border-radius: 4px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tarjeta-producto .img-wrapper img {
+            max-height: 80px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .tarjeta-producto .img-wrapper .view-label {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 8px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tarjeta-producto:hover .img-wrapper .view-label {
+            opacity: 1;
+        }
+
+        .tarjeta-producto .codigo {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            color: #1a3a5c;
+        }
+
+        .tarjeta-producto .nombre {
+            font-size: 11px;
+            color: #495057;
+            margin: 2px 0 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tarjeta-producto .precio {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1a3a5c;
+        }
+
+        .tarjeta-producto .btn-agregar {
+            background: #1a3a5c;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tarjeta-producto .btn-agregar:hover {
+            transform: scale(1.1);
+            background: #2c5282;
+        }
+
+        .tarjeta-producto .stock {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 1px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .stock-ok { background: #d4edda; color: #155724; }
+        .stock-low { background: #fff3cd; color: #856404; }
+        .stock-critical { background: #f8d7da; color: #721c24; }
+
+        .btn-limpiar {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-limpiar:hover {
+            text-decoration: underline;
+        }
+
+        .vacio {
+            text-align: center;
+            padding: 30px 0;
+            color: #adb5bd;
+        }
+
+        .vacio i {
+            font-size: 30px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .vacio p {
+            font-size: 13px;
+        }
+
+        .btn-flotante {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1a3a5c;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 4px 20px rgba(26,58,92,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 100;
+        }
+
+        .btn-flotante:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(26,58,92,0.4);
+        }
+
+        .btn-flotante .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #dc3545;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-flotante .badge.hidden {
+            display: none;
+        }
+
         .copy-tooltip {
             position: fixed;
-            bottom: 24px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
-            background: #0f172a;
+            background: #1a1a1a;
             color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
             opacity: 0;
-            transition: opacity 0.2s, bottom 0.2s;
+            transition: opacity 0.3s;
             z-index: 200;
             pointer-events: none;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-            font-family: monospace;
         }
-        .copy-tooltip.show { opacity: 1; bottom: 32px; }
-        
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
-        
-        .animate-slide-in { animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        
-        .btn-premium {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            transition: all 0.2s ease;
-        }
-        .btn-premium:hover {
-            transform: scale(0.98);
-            box-shadow: 0 10px 20px -5px rgba(99,102,241,0.4);
-        }
-        
+
+        .copy-tooltip.show { opacity: 1; }
+
         @media print {
             body { background: white; }
-            .no-print, .cotizador-panel, .btn-premium, button.fixed, .btn-cotizar-flotante { display: none !important; }
-            .product-card { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 16px; page-break-inside: avoid; }
+            .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
+            .no-print { display: none !important; }
+            .btn-flotante { display: none !important; }
+            .tarjeta-producto { break-inside: avoid; }
         }
-        
-        input, select { outline: none; }
-        
-        .badge-stock {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+        @media (max-width: 640px) {
+            .documento-cotizador { padding: 15px; margin: 10px; }
+            .header-documento { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header-documento .numero-cotizacion { text-align: left; width: 100%; }
+            .datos-cliente { grid-template-columns: 1fr; }
+            .tabla-productos table { font-size: 11px; }
+            .tabla-productos table thead th { font-size: 8px; padding: 4px 6px; }
+            .tabla-productos table tbody td { padding: 4px 6px; }
+            .producto-miniatura { width: 30px; height: 30px; }
+            .grid-productos { grid-template-columns: repeat(2, 1fr); }
+            .acciones-cotizacion { grid-template-columns: 1fr; }
+            .resumen-cotizacion .fila.total .valor { font-size: 18px; }
         }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden antialiased">
+<body>
 
-    <div id="copyToast" class="copy-tooltip"><i class="fa-regular fa-copy mr-2"></i> ¡Código copiado!</div>
+    <div id="copyFeedback" class="copy-tooltip"><i class="fa-regular fa-check-circle mr-2"></i> Copiado al portapapeles</div>
 
-    <!-- HEADER PREMIUM SIMPLIFICADO -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-slate-100 z-30 flex-shrink-0 shadow-sm sticky top-0">
-        <div class="max-w-7xl mx-auto px-5 py-4">
-            <div class="flex justify-between items-center gap-4 flex-wrap">
-                <div class="flex items-center gap-3">
-                    <img src="https://scperu.github.io/store/logo.png" class="h-10 object-contain" alt="Logo" onerror="this.style.display='none'">
-                    <div>
-                        <h1 class="font-bold text-2xl tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">ServiComp<span class="text-indigo-600">+</span></h1>
-                        <p class="text-[10px] font-medium text-slate-400 -mt-0.5">Catálogo Executive</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <div id="resultCount" class="text-2xl font-black text-slate-800 leading-5">0</div>
-                        <div class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Productos</div>
-                    </div>
-                    <div id="exchangeRate" class="text-xs font-mono bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full border border-indigo-200 shadow-sm">TC: --</div>
-                </div>
-            </div>
-            <div class="text-[10px] text-slate-400 mt-3 flex justify-between items-center">
-                <span id="dateDisplay"></span>
-                <span class="hidden md:inline-flex items-center gap-1"><i class="fa-regular fa-circle-check text-indigo-500"></i> Catálogo en tiempo real</span>
-            </div>
-        </div>
-    </header>
+    <button id="floatingCartBtn" class="btn-flotante no-print">
+        <i class="fa-regular fa-file-lines"></i>
+        <span id="cartBadge" class="badge hidden">0</span>
+    </button>
 
-    <!-- MAIN: PRODUCTOS CON BOTÓN COTIZADOR CENTRADO -->
-    <main class="flex-grow overflow-y-auto relative">
-        <div id="productsContainer" class="h-full overflow-y-auto p-5 md:p-8 custom-scroll">
-            <div class="max-w-7xl mx-auto">
-                <!-- BOTÓN COTIZADOR CENTRADO (antes de productos) -->
-                <div class="flex justify-center mb-8">
-                    <button id="openQuotatorBtn" class="btn-premium text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-indigo-500/30 flex items-center gap-3 transition-all hover:shadow-2xl">
-                        <i class="fa-solid fa-calculator text-2xl"></i>
-                        <span>Abrir Cotizador Profesional</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                    </button>
-                </div>
-
-                <!-- LISTA DE PRODUCTOS -->
-                <div id="productsList" class="space-y-5 pb-10">
-                    <div class="flex flex-col items-center justify-center h-80 text-slate-300">
-                        <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-5"></div>
-                        <p class="text-sm font-medium text-slate-500">Cargando catálogo premium...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL COTIZADOR (lateral derecho) -->
-        <div id="quotationPanel" class="fixed inset-y-0 right-0 w-full md:w-[520px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-slate-200">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                        <i class="fa-solid fa-file-invoice-dollar text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800">Cotizador Rápido</h2>
-                        <p class="text-[10px] text-slate-400">Agrega productos y genera presupuestos</p>
-                    </div>
-                </div>
-                <button id="closePanelBtn" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-all hover:scale-105"><i class="fa-solid fa-times"></i></button>
-            </div>
-
-            <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
-                <!-- Entrada rápida de minicódigos mejorada -->
-                <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100 shadow-sm">
-                    <label class="text-xs font-bold uppercase text-indigo-700 flex items-center gap-2 mb-3">
-                        <i class="fa-solid fa-keyboard text-indigo-600"></i> Agregar por minicódigo
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="text" id="quickCodeInput" class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" placeholder="Ej: 481852, 506076, 472201">
-                        <button id="addQuickCodeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-xl text-sm font-semibold transition shadow-md hover:shadow-lg">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <p class="text-[10px] text-slate-500 mt-2 flex items-center gap-1"><i class="fa-regular fa-lightbulb"></i> Separa múltiples códigos con comas o espacios</p>
-                </div>
-
-                <!-- Tabla de ítems cotizados (agrupados) -->
+    <div class="documento-cotizador" id="cotizadorDocumento">
+        
+        <!-- HEADER -->
+        <div class="header-documento">
+            <div class="empresa">
+                <img src="https://scperu.github.io/store/logo.png" alt="ServiComp+" onerror="this.style.display='none'">
                 <div>
-                    <div class="flex justify-between items-center mb-3 px-1">
-                        <h3 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-table-list mr-2 text-indigo-500"></i> Items seleccionados</h3>
-                        <button id="clearQuotationBtn" class="text-xs text-red-500 hover:text-red-700 font-medium transition"><i class="fa-regular fa-trash-can mr-1"></i> Limpiar todo</button>
-                    </div>
-                    <div id="quotationItemsContainer" class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-sm min-h-[200px] max-h-[400px] overflow-y-auto">
-                        <div class="p-8 text-center text-slate-400 text-sm">✨ Agrega productos desde el catálogo o con minicódigo</div>
-                    </div>
-                </div>
-
-                <!-- Resumen + envío editable mejorado -->
-                <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-5 space-y-3 border border-slate-200">
-                    <div class="flex justify-between text-sm py-1">
-                        <span class="text-slate-600">📦 Productos distintos:</span>
-                        <span id="summaryDistinct" class="font-bold text-slate-800">0</span>
-                    </div>
-                    <div class="flex justify-between text-sm py-1 border-t border-slate-200">
-                        <span class="text-slate-600">🔢 Unidades totales:</span>
-                        <span id="summaryUnits" class="font-bold text-slate-800">0</span>
-                    </div>
-                    <div class="flex justify-between text-sm py-1 border-t border-slate-200">
-                        <span class="text-slate-600">💰 Subtotal:</span>
-                        <span id="summarySubtotal" class="font-bold text-indigo-600 text-base">S/ 0</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-t border-slate-200">
-                        <span class="text-slate-600 text-sm flex items-center gap-1"><i class="fa-solid fa-truck"></i> Envío:</span>
-                        <div class="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200">
-                            <span class="text-slate-500 text-xs font-mono">S/</span>
-                            <input type="number" id="shippingCost" value="19" step="5" class="w-24 text-right border-0 focus:ring-0 text-sm font-mono font-semibold text-slate-700">
-                        </div>
-                    </div>
-                    <div class="flex justify-between text-lg font-black pt-3 border-t-2 border-slate-200 mt-1">
-                        <span class="text-slate-800">TOTAL</span>
-                        <span id="summaryTotal" class="text-indigo-600 text-2xl font-black">S/ 0</span>
-                    </div>
+                    <h1>ServiComp<span>+</span></h1>
+                 
+                        <span class="live-badge">
+                            <i class="fa-solid fa-circle pulse-icon"></i> EN VIVO
+                        </span>
+                   
                 </div>
             </div>
-
-            <!-- Botones de acción mejorados -->
-            <div class="p-6 border-t border-slate-100 grid grid-cols-2 gap-3 bg-white">
-                <button id="genWhatsappBtn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg">
-                    <i class="fab fa-whatsapp text-lg"></i> WhatsApp
-                </button>
-                <button id="genPDFBtn" class="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg">
-                    <i class="fa-regular fa-file-pdf text-lg"></i> Exportar PDF
-                </button>
-                <button id="printBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all col-span-2 border border-slate-200">
-                    <i class="fa-regular fa-print"></i> Imprimir Cotización
-                </button>
+            <div class="numero-cotizacion">
+                <div class="label">Cotización N°</div>
+                <div class="numero" id="cotizacionNumero">20260706</div>
             </div>
         </div>
-    </main>
 
-    <button id="backToTop" class="fixed bottom-8 right-8 bg-slate-800 text-white w-11 h-11 rounded-full shadow-lg flex items-center justify-center hover:bg-slate-700 transition-all z-30 no-print hover:scale-110"><i class="fa-solid fa-arrow-up"></i></button>
+        <!-- INFO CABECERA -->
+        <div class="info-cabecera">
+            <span><i class="fa-regular fa-calendar"></i> <span id="fechaDisplay">Cargando...</span></span>
+            <span><i class="fa-regular fa-money-bill-1"></i> Tipo de Cambio: <span id="tipoCambioDisplay">—</span></span>
+        </div>
+
+        <!-- DATOS CLIENTE -->
+        <div class="datos-cliente">
+            <div class="campo">
+                <label><i class="fa-regular fa-user"></i> Cliente</label>
+                <input type="text" id="clienteNombre" placeholder="Nombre del cliente">
+            </div>
+            <div class="campo">
+                <label><i class="fa-regular fa-id-card"></i> RUC / DNI</label>
+                <input type="text" id="clienteDocumento" placeholder="RUC o DNI">
+            </div>
+        </div>
+
+        <!-- TABLA DE PRODUCTOS (DESDE HOJA "cotizador") -->
+        <div class="tabla-productos">
+            <div class="titulo-seccion">
+                <h3><i class="fa-regular fa-list"></i> Productos</h3>
+                <!-- ELIMINADO: <span class="items-count"> -->
+                <button class="btn-limpiar" id="limpiarBtn"><i class="fa-regular fa-trash-can"></i> Limpiar</button>
+            </div>
+            <div id="tablaProductosContainer">
+                <div class="vacio">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                    <p>Cargando productos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="resumen-cotizacion">
+            <div class="fila">
+                <span class="label">Productos distintos</span>
+                <span class="valor" id="resumenDistintos">0</span>
+            </div>
+            <div class="fila">
+                <span class="label">Unidades totales</span>
+                <span class="valor" id="resumenUnidades">0</span>
+            </div>
+            <div class="fila">
+                <span class="label">Subtotal</span>
+                <span class="valor" id="resumenSubtotal">S/ 0</span>
+            </div>
+            <div class="fila">
+                <span class="label"><i class="fa-solid fa-truck"></i> Envío</span>
+                <span class="valor">
+                    S/ <input type="number" id="envioInput" class="envio-input" value="19" step="1" min="0">
+                </span>
+            </div>
+            <div class="fila total">
+                <span class="label">TOTAL</span>
+                <span class="valor" id="resumenTotal">S/ 0</span>
+            </div>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="acciones-cotizacion no-print">
+            <button class="btn-whatsapp" id="whatsappBtn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            <button class="btn-pdf" id="pdfBtn"><i class="fa-regular fa-file-pdf"></i> PDF</button>
+            <button class="btn-imprimir" id="imprimirBtn"><i class="fa-regular fa-print"></i> Imprimir</button>
+        </div>
+
+        <!-- CATÁLOGO DE PRODUCTOS DESTACADOS (DESDE HOJA "destacados") -->
+        <div class="catalogo-productos no-print">
+            <div class="titulo"><i class="fa-regular fa-star"></i> Productos Destacados</div>
+            <div id="catalogoGrid" class="grid-productos">
+                <div class="text-center text-gray-400 py-8 col-span-full">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                    <p class="text-sm mt-2">Cargando productos destacados...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        // ---------- CONFIGURACIÓN SHEETS ----------
-        const SHEETS = {
-            productos: { SHEET_ID: "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI", SHEET_NAME: "productos", URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/productos" },
-            cotizador: { SHEET_ID: "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI", SHEET_NAME: "cotizador", URL: "https://opensheet.elk.sh/1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI/cotizador" }
-        };
+        // ============================================================
+        // CONFIGURACIÓN
+        // ============================================================
+        const SHEET_ID = "1nJBrtDv-_YS1VHkX6G_Wvc8fDk2YCZWWLelIWuSmFbI";
+        const SHEET_PRODUCTOS = "productos";
+        const SHEET_DESTACADOS = "destacados";
+        const SHEET_COTIZADOR = "cotizador";
 
-        // Estado Global
-        let masterProducts = [];
-        let quotationMap = new Map();
-        let currentTC = 3.75;
+        let productosCotizacion = [];
+        let productosDestacados = [];
 
-        // Helpers
-        const normalizeText = (v) => String(v ?? '').trim();
-        const normalizeNumber = (v) => { let n = parseFloat(String(v).replace(/,/g, '')); return isNaN(n) ? 0 : n; };
-        const formatMoney = (val) => `S/ ${Math.floor(val).toLocaleString('en-US')}`;
-        
-        function getCategoryFromText(desc, details) {
-            const txt = `${desc} ${details}`.toLowerCase();
-            if (txt.includes('laptop')) return 'LAPTOPS';
-            if (txt.includes('monitor')) return 'MONITORES';
-            if (txt.includes('procesador')) return 'PROCESADORES';
-            if (txt.includes('placa')) return 'PLACAS';
-            if (txt.includes('memoria') || txt.includes('ram')) return 'MEMORIAS';
-            if (txt.includes('ssd') || txt.includes('disco')) return 'ALMACENAMIENTO';
-            if (txt.includes('impresora')) return 'IMPRESORAS';
-            return 'GENERAL';
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
+        function formatearMoneda(monto) {
+            return `S/ ${Math.floor(Number(monto) || 0).toLocaleString('es-PE')}`;
         }
 
-        // Cargar productos desde Google Sheets
-        async function loadData() {
+        function normalizarTexto(valor) {
+            return String(valor || '').trim();
+        }
+
+        function normalizarNumero(valor) {
+            const limpio = String(valor || '').replace(/,/g, '').replace(/[^\d.-]/g, '');
+            return Number(limpio) || 0;
+        }
+
+        function obtenerMiniatura(codigo) {
+            const c = String(codigo).toLowerCase().trim();
+            const sub1 = c.substring(0, 2);
+            const sub2 = c.substring(2, 4);
+            return `https://imagenes.deltron.com.pe/images/productos/items/${sub1}/${sub2}/${c}.jpg`;
+        }
+
+        function obtenerFoto(codigo) {
+            return `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(codigo)}&nomenu=1`;
+        }
+
+        function obtenerStockClass(stock) {
+            if (stock <= 2) return 'stock-critical';
+            if (stock <= 5) return 'stock-low';
+            return 'stock-ok';
+        }
+
+        function generarNumeroCotizacion() {
+            const ahora = new Date();
+            const año = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            return `${año}${mes}${dia}`;
+        }
+
+        // ============================================================
+        // CARGAR DATOS
+        // ============================================================
+        async function cargarDatos() {
             try {
-                const cotizadorResp = await fetch(SHEETS.cotizador.URL);
-                if (!cotizadorResp.ok) throw new Error('Error al cargar cotizador');
-                const cotizadorRaw = await cotizadorResp.json();
-                const allowedMiniSet = new Set();
-                cotizadorRaw.forEach(row => { if (row.mini_codigo) allowedMiniSet.add(normalizeText(row.mini_codigo)); });
+                const urlProductos = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_PRODUCTOS}`;
+                const resProductos = await fetch(urlProductos);
+                if (!resProductos.ok) throw new Error('Error al cargar productos');
+
+                const raw = await resProductos.json();
+
+                const todosProductos = raw
+                    .map(row => ({
+                        codigo: normalizarTexto(row.codigo),
+                        mini: normalizarTexto(row.mini_codigo),
+                        descripcion: normalizarTexto(row.descripcion),
+                        marca: normalizarTexto(row.marca) || 'GENÉRICO',
+                        detalles: normalizarTexto(row.detalles),
+                        precio: normalizarNumero(row.precio_soles) || normalizarNumero(row.h),
+                        stock: Math.floor(normalizarNumero(row.stock)),
+                        tipoCambio: normalizarNumero(row.tipo_cambio) || normalizarNumero(row.k3),
+                        sede: normalizarTexto(row.sede || row.Sede || ''),
+                        cantidad: 1
+                    }))
+                    .filter(p => p.stock > 0 && (p.codigo || p.mini))
+                    .filter(p => {
+                        const sede = p.sede.toUpperCase();
+                        return ['LIMA', 'HUANCAYO', 'LIMA - STORE', 'HUANCAYO - STORE'].some(s => sede === s || sede.includes(s));
+                    });
+
+                // Cargar destacados
+                const urlDestacados = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_DESTACADOS}`;
+                const resDestacados = await fetch(urlDestacados);
+                if (resDestacados.ok) {
+                    const data = await resDestacados.json();
+                    const codigosDestacados = data
+                        .map(row => {
+                            const keys = Object.keys(row);
+                            const miniKey = keys.find(k => k.toLowerCase() === 'mini_codigo');
+                            return miniKey ? normalizarTexto(row[miniKey]) : '';
+                        })
+                        .filter(c => c !== '');
+                    
+                    productosDestacados = todosProductos.filter(p => codigosDestacados.includes(p.mini));
+                }
+
+                // Cargar cotizador
+                const urlCotizador = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_COTIZADOR}`;
+                const resCotizador = await fetch(urlCotizador);
+                if (!resCotizador.ok) throw new Error('Error al cargar cotizador');
+
+                const dataCotizador = await resCotizador.json();
                 
-                const prodResp = await fetch(SHEETS.productos.URL);
-                if (!prodResp.ok) throw new Error('Error al cargar productos');
-                const raw = await prodResp.json();
-                
-                if (raw.length) currentTC = normalizeNumber(raw[0].tipo_cambio) || normalizeNumber(raw[0].k2) || 3.75;
-                document.getElementById('exchangeRate').innerHTML = `TC: ${currentTC.toFixed(2)}`;
-                
-                masterProducts = raw.map(row => ({
-                    codigo: normalizeText(row.codigo),
-                    mini: normalizeText(row.mini_codigo),
-                    descripcion: normalizeText(row.descripcion),
-                    marca: normalizeText(row.marca) || 'GENÉRICO',
-                    detalles: normalizeText(row.detalles),
-                    precio: normalizeNumber(row.precio_soles) || normalizeNumber(row.h),
-                    stock: Math.floor(normalizeNumber(row.stock)),
-                    categoria: getCategoryFromText(row.descripcion, row.detalles)
-                })).filter(p => p.stock > 0 && (p.codigo || p.mini) && allowedMiniSet.has(p.mini));
-                
-                masterProducts.sort((a, b) => a.precio - b.precio);
-                renderProducts(masterProducts);
-                document.getElementById('resultCount').innerText = masterProducts.length;
-            } catch (err) { 
-                console.error(err); 
-                Swal.fire('Error', 'No se pudo conectar con Google Sheets', 'error');
-                document.getElementById('productsList').innerHTML = '<div class="text-center py-20 text-red-500"><i class="fa-solid fa-database text-4xl mb-3"></i><p>Error de conexión</p></div>';
+                const cotizacionMap = new Map();
+                for (let row of dataCotizador) {
+                    const keys = Object.keys(row);
+                    const miniKey = keys.find(k => k.toLowerCase() === 'mini_codigo');
+                    const cantKey = keys.find(k => k.toLowerCase() === 'cantidad');
+                    
+                    if (miniKey && cantKey) {
+                        const mini = normalizarTexto(row[miniKey]);
+                        const cant = normalizarNumero(row[cantKey]);
+                        if (mini && cant > 0) {
+                            cotizacionMap.set(mini, cant);
+                        }
+                    }
+                }
+
+                productosCotizacion = todosProductos
+                    .filter(p => cotizacionMap.has(p.mini))
+                    .map(p => {
+                        p.cantidad = cotizacionMap.get(p.mini) || 1;
+                        return p;
+                    });
+
+                const tc = todosProductos.find(p => p.tipoCambio > 0)?.tipoCambio || 0;
+                document.getElementById('tipoCambioDisplay').textContent = tc ? tc.toFixed(2) : '—';
+
+                const ahora = new Date();
+                document.getElementById('fechaDisplay').textContent = ahora.toLocaleDateString('es-PE', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                document.getElementById('cotizacionNumero').textContent = generarNumeroCotizacion();
+
+                renderizarTablaProductos();
+                renderizarCatalogo();
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo cargar los datos: ' + error.message, 'error');
             }
         }
 
-        function renderProducts(products) {
-            const container = document.getElementById('productsList');
-            if (!products.length) { 
-                container.innerHTML = `<div class='text-center py-20 text-slate-400'><i class='fa-solid fa-box-open text-5xl opacity-30 mb-3'></i><p class='text-sm'>No hay productos disponibles</p></div>`; 
-                return; 
+        // ============================================================
+        // RENDERIZAR TABLA PRINCIPAL
+        // ============================================================
+        function renderizarTablaProductos() {
+            const container = document.getElementById('tablaProductosContainer');
+
+            if (productosCotizacion.length === 0) {
+                container.innerHTML = `
+                    <div class="vacio">
+                        <i class="fa-regular fa-list"></i>
+                        <p>No hay productos en la cotización</p>
+                        <p style="font-size:11px;color:#ced4da;">Agrega desde los destacados abajo</p>
+                    </div>
+                `;
+                return;
             }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:50px;"></th>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th style="text-align:center;width:70px;">Stock</th>
+                            <th style="text-align:right;width:100px;">Precio</th>
+                            <th style="text-align:center;width:80px;">Cant</th>
+                            <th style="text-align:right;width:100px;">Total</th>
+                            <th style="text-align:center;width:50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (let p of productosCotizacion) {
+                const thumb = obtenerMiniatura(p.codigo);
+                const foto = obtenerFoto(p.codigo);
+                const stockClass = obtenerStockClass(p.stock);
+                const total = p.precio * p.cantidad;
+
+                html += `
+                    <tr>
+                        <td>
+                            <img src="${thumb}" class="producto-miniatura" alt="${p.codigo}" onclick="window.open('${foto}','_blank')" title="Ver foto" onerror="this.style.display='none'">
+                        </td>
+                        <td><span class="producto-codigo">${p.mini || p.codigo}</span></td>
+                        <td><span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span></td>
+                        <td style="text-align:center;">
+                            <span class="stock ${stockClass}">${p.stock}</span>
+                        </td>
+                        <td style="text-align:right;font-weight:600;color:#1a3a5c;">${formatearMoneda(p.precio)}</td>
+                        <td style="text-align:center;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <button class="btn-accion" onclick="cambiarCantidad('${p.mini}', -1)" style="color:#1a3a5c;font-weight:700;font-size:16px;">−</button>
+                                <span class="cantidad-label" style="min-width:24px;">${p.cantidad}</span>
+                                <button class="btn-accion" onclick="cambiarCantidad('${p.mini}', 1)" style="color:#1a3a5c;font-weight:700;font-size:16px;">+</button>
+                            </div>
+                        </td>
+                        <td style="text-align:right;font-weight:700;color:#1a3a5c;">${formatearMoneda(total)}</td>
+                        <td style="text-align:center;">
+                            <button class="btn-accion" onclick="eliminarProducto('${p.mini}')" title="Eliminar">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
             
-            container.innerHTML = products.map(p => {
-                const thumbCode = p.codigo.toLowerCase();
-                const thumbUrl = `https://imagenes.deltron.com.pe/images/productos/items/${thumbCode.substring(0, 2)}/${thumbCode.substring(2, 4)}/${thumbCode}.jpg`;
-                const imgUrl = `https://www.deltron.com.pe/modulos/productos/items/image_ext.php?item=${encodeURIComponent(p.codigo)}&nomenu=1`;
-                
+            actualizarResumen();
+            actualizarBadge();
+        }
+
+        // ============================================================
+        // RENDERIZAR CATÁLOGO INFERIOR
+        // ============================================================
+        function renderizarCatalogo() {
+            const grid = document.getElementById('catalogoGrid');
+
+            if (productosDestacados.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-center text-gray-400 py-8 col-span-full">
+                        <i class="fa-regular fa-star text-2xl"></i>
+                        <p class="text-sm mt-2">No hay productos destacados disponibles</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = productosDestacados.map(p => {
+                const thumb = obtenerMiniatura(p.codigo);
+                const foto = obtenerFoto(p.codigo);
+                const stockClass = obtenerStockClass(p.stock);
+
                 return `
-                <div class="product-card rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div class="md:w-32 bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center p-3 img-container border-b md:border-b-0 md:border-r border-slate-200">
-                        <a href="${imgUrl}" target="_blank" class="w-24 h-24 flex items-center justify-center relative group">
-                            <i class="fa-solid fa-camera placeholder-icon text-slate-300 absolute text-2xl"></i>
-                            <img src="${thumbUrl}" class="product-img relative z-10 max-h-20 object-contain" alt="${p.descripcion}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
-                            <span class="view-label absolute bottom-1 right-1 text-[8px] opacity-0 group-hover:opacity-100 transition">Ver foto</span>
-                        </a>
-                    </div>
-                    <div class="flex-1 p-5">
-                        <div class="flex flex-wrap gap-2 items-center mb-2">
-                            <button onclick="addToQuotation('${p.mini}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full transition flex items-center gap-2 shadow-sm hover:shadow">
-                                <i class="fa-solid fa-plus-circle text-indigo-600"></i> Cotizar
+                    <div class="tarjeta-producto">
+                        <div class="img-wrapper" onclick="window.open('${foto}', '_blank')">
+                            <img src="${thumb}" alt="${p.descripcion}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect fill=%22%23f8f9fa%22 width=%2280%22 height=%2280%22/%3E%3Ctext x=%2240%22 y=%2245%22 text-anchor=%22middle%22 fill=%22%23adb5bd%22 font-size=%2220%22 font-family=%22Arial%22%3E📦%3C/text%3E%3C/svg%3E'">
+                            <span class="view-label"><i class="fa-regular fa-eye"></i> Ver</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <span class="codigo">${p.mini || p.codigo}</span>
+                            <span class="stock ${stockClass}">${p.stock}</span>
+                        </div>
+                        <div class="nombre">${p.descripcion}</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                            <span class="precio">${formatearMoneda(p.precio)}</span>
+                            <button class="btn-agregar" onclick="agregarProducto('${p.mini}')" title="Agregar a cotización">
+                                <i class="fa-solid fa-plus"></i>
                             </button>
-                            <button onclick="copyMini('${p.mini}')" class="text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full transition flex items-center gap-2 font-mono">
-                                <i class="fa-regular fa-copy"></i> ${p.mini}
-                            </button>
-                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">${p.marca}</span>
-                            <span class="text-[9px] text-slate-500 bg-slate-100 px-2 py-1 rounded-full">${p.categoria}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base leading-tight mb-1">${p.descripcion}</h3>
-                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.detalles.substring(0, 100)}${p.detalles.length > 100 ? '...' : ''}</p>
-                    </div>
-                    <div class="md:w-44 p-5 flex flex-row md:flex-col justify-between items-center border-t md:border-t-0 md:border-l border-slate-200 bg-gradient-to-r from-slate-50/50 to-white">
-                        <div class="text-right">
-                            <span class="text-[9px] uppercase text-slate-400 font-semibold tracking-wide">Precio Contado</span>
-                            <div class="text-2xl font-black text-indigo-600 tracking-tight">${formatMoney(p.precio)}</div>
-                        </div>
-                        <div class="flex items-center gap-2 badge-stock px-3 py-1.5 rounded-full shadow-sm">
-                            <i class="fa-solid fa-boxes text-white text-xs"></i>
-                            <span class="text-white text-xs font-bold">${p.stock} unidades</span>
                         </div>
                     </div>
-                </div>`;
+                `;
             }).join('');
         }
 
-        // ---------- COTIZADOR LOGIC ----------
-        function addToQuotation(miniCode) {
-            const product = masterProducts.find(p => p.mini === miniCode);
-            if (!product) {
-                Swal.fire('Error', 'Producto no encontrado en el catálogo', 'error');
+        // ============================================================
+        // FUNCIONES DE COTIZACIÓN
+        // ============================================================
+        function agregarProducto(mini) {
+            let producto = productosCotizacion.find(p => p.mini === mini);
+            
+            if (producto) {
+                producto.cantidad += 1;
+                renderizarTablaProductos();
+                Swal.fire({
+                    title: '✓ Agregado',
+                    text: `${producto.descripcion.substring(0, 30)} x${producto.cantidad}`,
+                    icon: 'success',
+                    toast: true,
+                    timer: 800,
+                    showConfirmButton: false,
+                    position: 'top-end'
+                });
                 return;
             }
-            if (quotationMap.has(miniCode)) {
-                let item = quotationMap.get(miniCode);
-                item.quantity += 1;
-                quotationMap.set(miniCode, item);
-            } else {
-                quotationMap.set(miniCode, { product: product, quantity: 1 });
+
+            const destacado = productosDestacados.find(p => p.mini === mini);
+            if (!destacado) {
+                Swal.fire('Error', 'Producto no encontrado', 'error');
+                return;
             }
-            renderQuotationTable();
-            Swal.fire({ 
-                title: '✓ Agregado', 
-                text: `${product.descripcion.substring(0, 40)} x1`, 
-                icon: 'success', 
-                toast: true, 
-                timer: 1000, 
+
+            const nuevoProducto = {
+                ...destacado,
+                cantidad: 1
+            };
+            productosCotizacion.push(nuevoProducto);
+            renderizarTablaProductos();
+
+            Swal.fire({
+                title: '✓ Agregado',
+                text: `${destacado.descripcion.substring(0, 30)} x1`,
+                icon: 'success',
+                toast: true,
+                timer: 800,
                 showConfirmButton: false,
                 position: 'top-end'
             });
         }
 
-        function removeFromQuotation(miniCode, fullRemove = false) {
-            if (quotationMap.has(miniCode)) {
-                let item = quotationMap.get(miniCode);
-                if (fullRemove || item.quantity <= 1) quotationMap.delete(miniCode);
-                else { item.quantity -= 1; quotationMap.set(miniCode, item); }
-                renderQuotationTable();
-            }
-        }
-
-        function renderQuotationTable() {
-            const container = document.getElementById('quotationItemsContainer');
-            if (quotationMap.size === 0) { 
-                container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">✨ Agrega productos desde el catálogo o con minicódigo</div>`; 
-                updateSummary(); 
-                return; 
+        function cambiarCantidad(mini, delta) {
+            const producto = productosCotizacion.find(p => p.mini === mini);
+            if (!producto) return;
+            
+            const nuevaCantidad = producto.cantidad + delta;
+            if (nuevaCantidad < 1) return;
+            if (nuevaCantidad > producto.stock) {
+                Swal.fire('Stock insuficiente', `Solo hay ${producto.stock} unidades disponibles`, 'warning');
+                return;
             }
             
-            let html = `<table class="w-full text-sm"><thead class="bg-slate-50 text-slate-600 text-[10px] uppercase tracking-wider"><tr>
-                <th class="p-3 text-left">Mini</th><th class="p-3 text-left">Producto</th><th class="p-3 text-center">Cant</th><th class="p-3 text-right">Precio</th><th class="p-3 text-right">Total</th><th></th>
-            </tr></thead><tbody>`;
-            
-            for (let [mini, item] of quotationMap.entries()) {
-                const prod = item.product;
-                const total = prod.precio * item.quantity;
-                html += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                    <td class="p-2 font-mono text-[11px] font-semibold">${mini}</td>
-                    <td class="p-2 text-xs truncate max-w-[150px]" title="${prod.descripcion}">${prod.descripcion.substring(0, 45)}${prod.descripcion.length > 45 ? '...' : ''}</td>
-                    <td class="p-2 text-center"><div class="flex items-center justify-center gap-2"><button onclick="removeFromQuotation('${mini}',false)" class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition">-</button><span class="w-8 text-center text-sm font-bold text-slate-700">${item.quantity}</span><button onclick="addToQuotation('${mini}')" class="w-6 h-6 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold transition">+</button></div></td>
-                    <td class="p-2 text-right text-xs font-mono">${formatMoney(prod.precio)}</td>
-                    <td class="p-2 text-right font-bold text-indigo-600 text-sm">${formatMoney(total)}</td>
-                    <td class="p-2 text-center"><button onclick="removeFromQuotation('${mini}',true)" class="text-red-400 hover:text-red-600 transition text-xs"><i class="fa-regular fa-trash-can"></i></button></td>
-                </tr>`;
-            }
-            html += `</tbody></table>`;
-            container.innerHTML = html;
-            updateSummary();
+            producto.cantidad = nuevaCantidad;
+            renderizarTablaProductos();
         }
 
-        function updateSummary() {
-            let distinct = quotationMap.size;
-            let totalUnits = 0;
+        function eliminarProducto(mini) {
+            const producto = productosCotizacion.find(p => p.mini === mini);
+            if (!producto) return;
+            
+            Swal.fire({
+                title: `¿Eliminar ${producto.descripcion.substring(0, 30)}?`,
+                text: 'Se eliminará este producto de la cotización',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const index = productosCotizacion.indexOf(producto);
+                    if (index > -1) {
+                        productosCotizacion.splice(index, 1);
+                    }
+                    renderizarTablaProductos();
+                }
+            });
+        }
+
+        function limpiarCotizacion() {
+            if (productosCotizacion.length === 0) return;
+            
+            Swal.fire({
+                title: '¿Limpiar cotización?',
+                text: 'Se eliminarán todos los productos de la cotización',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    productosCotizacion = [];
+                    renderizarTablaProductos();
+                    document.getElementById('clienteNombre').value = '';
+                    document.getElementById('clienteDocumento').value = '';
+                }
+            });
+        }
+
+        // ============================================================
+        // ACTUALIZAR RESUMEN
+        // ============================================================
+        function actualizarResumen() {
+            let distintos = productosCotizacion.filter(p => p.cantidad > 0).length;
+            let unidades = 0;
             let subtotal = 0;
-            for (let item of quotationMap.values()) { 
-                totalUnits += item.quantity; 
-                subtotal += item.product.precio * item.quantity; 
+
+            for (let p of productosCotizacion) {
+                unidades += p.cantidad;
+                subtotal += p.precio * p.cantidad;
             }
-            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
-            let total = subtotal + shipping;
-            document.getElementById('summaryDistinct').innerText = distinct;
-            document.getElementById('summaryUnits').innerText = totalUnits;
-            document.getElementById('summarySubtotal').innerHTML = formatMoney(subtotal);
-            document.getElementById('summaryTotal').innerHTML = formatMoney(total);
+
+            const envio = normalizarNumero(document.getElementById('envioInput').value);
+            const total = subtotal + envio;
+
+            document.getElementById('resumenDistintos').textContent = distintos;
+            document.getElementById('resumenUnidades').textContent = unidades;
+            document.getElementById('resumenSubtotal').textContent = formatearMoneda(subtotal);
+            document.getElementById('resumenTotal').textContent = formatearMoneda(total);
         }
 
-        function clearQuotation() { quotationMap.clear(); renderQuotationTable(); }
-        
-        function copyWhatsAppText() { 
-            if (quotationMap.size === 0) return Swal.fire('Cotización vacía', 'Agrega productos para cotizar', 'info');
-            let lines = ["📋 *COTIZACIÓN SERVICOMP+*", "━━━━━━━━━━━━━━━━━━", ""];
-            for (let [mini, item] of quotationMap.entries()) {
-                lines.push(`*${mini}* - ${item.product.descripcion.substring(0, 55)}`);
-                lines.push(`└ Cantidad: ${item.quantity} | Precio: ${formatMoney(item.product.precio)} | Total: ${formatMoney(item.product.precio * item.quantity)}`);
-                lines.push(``);
+        // ============================================================
+        // ACTUALIZAR BADGE
+        // ============================================================
+        function actualizarBadge() {
+            const badge = document.getElementById('cartBadge');
+            let total = 0;
+            for (let p of productosCotizacion) total += p.cantidad;
+
+            if (total > 0) {
+                badge.textContent = total > 9 ? '9+' : total;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
             }
-            let shipping = normalizeNumber(document.getElementById('shippingCost').value);
-            let subtotal = 0; 
-            for (let i of quotationMap.values()) subtotal += i.product.precio * i.quantity;
-            lines.push(`━━━━━━━━━━━━━━━━━━`);
-            lines.push(`🚚 *Envío:* ${formatMoney(shipping)}`);
-            lines.push(`💰 *TOTAL:* ${formatMoney(subtotal + shipping)}`);
-            lines.push(`📅 ${new Date().toLocaleDateString('es-PE')}`);
-            lines.push(`━━━━━━━━━━━━━━━━━━`);
-            lines.push(`✨ ¡Gracias por confiar en ServiComp+!`);
+        }
+
+        // ============================================================
+        // EXPORTAR FUNCIONES
+        // ============================================================
+        function copiarWhatsApp() {
+            const productosConCantidad = productosCotizacion.filter(p => p.cantidad > 0);
             
-            const msg = lines.join('\n');
-            navigator.clipboard.writeText(msg);
-            document.getElementById('copyToast').classList.add('show');
-            setTimeout(() => document.getElementById('copyToast').classList.remove('show'), 1500);
-            Swal.fire('✓ Copiado', 'Listo para pegar en WhatsApp', 'success');
+            if (productosConCantidad.length === 0) {
+                Swal.fire('Sin productos', 'No hay productos en la cotización', 'info');
+                return;
+            }
+
+            const cliente = document.getElementById('clienteNombre').value.trim() || 'Cliente';
+            const documento = document.getElementById('clienteDocumento').value.trim() || '---';
+
+            let lines = [];
+            lines.push('📋 *COTIZACIÓN - SERVICOMP+*');
+            lines.push('━━━━━━━━━━━━━━━━━━');
+            lines.push('');
+            lines.push(`👤 *Cliente:* ${cliente}`);
+            lines.push(`📄 *RUC/DNI:* ${documento}`);
+            lines.push(`📅 ${new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`);
+            lines.push('');
+            lines.push('⭐ *PRODUCTOS:*');
+            lines.push('━━━━━━━━━━━━━━━━━━');
+
+            let subtotal = 0;
+            for (let p of productosConCantidad) {
+                const total = p.precio * p.cantidad;
+                subtotal += total;
+                lines.push(`*${p.mini || p.codigo}* - ${p.descripcion.substring(0, 45)}`);
+                lines.push(`└ Cant: ${p.cantidad} | Total: ${formatearMoneda(total)}`);
+                lines.push('');
+            }
+
+            const envio = normalizarNumero(document.getElementById('envioInput').value);
+            const total = subtotal + envio;
+
+            lines.push('━━━━━━━━━━━━━━━━━━');
+            lines.push(`📊 *Subtotal:* ${formatearMoneda(subtotal)}`);
+            lines.push(`🚚 *Envío:* ${formatearMoneda(envio)}`);
+            lines.push(`💰 *TOTAL:* ${formatearMoneda(total)}`);
+            lines.push('━━━━━━━━━━━━━━━━━━');
+            lines.push('✨ ¡Gracias por su cotización!');
+
+            const texto = lines.join('\n');
+            navigator.clipboard.writeText(texto);
+
+            const tooltip = document.getElementById('copyFeedback');
+            tooltip.textContent = '✓ Copiado al portapapeles';
+            tooltip.classList.add('show');
+            setTimeout(() => tooltip.classList.remove('show'), 2000);
+
+            Swal.fire('✓ Copiado', 'Texto listo para WhatsApp', 'success');
         }
 
-        function exportPDF() {
-            if (quotationMap.size === 0) return Swal.fire('Vacío', 'Agrega items a la cotización', 'warning');
-            const printContent = document.createElement('div');
-            printContent.innerHTML = `
-                <div style="padding: 30px; font-family: 'Inter', sans-serif; max-width: 800px; margin: 0 auto;">
-                    <div style="display: flex; gap: 15px; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 20px; margin-bottom: 25px;">
-                        <img src="https://scperu.github.io/store/logo.png" height="50" alt="Logo"/>
-                        <div><h2 style="font-size: 24px; font-weight: 800; color: #1e293b;">ServiComp+</h2><p style="color: #64748b;">Cotización Oficial</p></div>
-                    </div>
-                    <p style="margin-bottom: 20px;"><strong>Fecha:</strong> ${new Date().toLocaleString('es-PE')}</p>
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                        <thead><tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                            <th style="padding: 12px; text-align: left;">Mini</th><th style="padding: 12px; text-align: left;">Descripción</th><th style="padding: 12px; text-align: center;">Cant</th><th style="padding: 12px; text-align: right;">P/U</th><th style="padding: 12px; text-align: right;">Total</th>
-                        </tr></thead>
-                        <tbody>${Array.from(quotationMap.entries()).map(([mini, item]) => `<tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 10px;">${mini}</td><td style="padding: 10px;">${item.product.descripcion.substring(0, 60)}</td><td style="padding: 10px; text-align: center;">${item.quantity}</td><td style="padding: 10px; text-align: right;">${formatMoney(item.product.precio)}</td><td style="padding: 10px; text-align: right;">${formatMoney(item.product.precio * item.quantity)}</td>
-                        </tr>`).join('')}</tbody>
-                    </table>
-                    <div style="margin-top: 30px; text-align: right; border-top: 2px solid #e2e8f0; padding-top: 20px;">
-                        <p><strong>Subtotal:</strong> ${formatMoney(Array.from(quotationMap.values()).reduce((a, b) => a + (b.product.precio * b.quantity), 0))}</p>
-                        <p><strong>Envío:</strong> ${formatMoney(normalizeNumber(document.getElementById('shippingCost').value))}</p>
-                        <h3 style="font-size: 24px; color: #6366f1;"><strong>TOTAL:</strong> ${formatMoney(Array.from(quotationMap.values()).reduce((a, b) => a + (b.product.precio * b.quantity), 0) + normalizeNumber(document.getElementById('shippingCost').value))}</h3>
-                    </div>
-                </div>`;
-            html2pdf().from(printContent).set({ margin: 0.5, filename: `cotizacion_${Date.now()}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).save();
+        function exportarPDF() {
+            const productosConCantidad = productosCotizacion.filter(p => p.cantidad > 0);
+            
+            if (productosConCantidad.length === 0) {
+                Swal.fire('Sin productos', 'No hay productos en la cotización', 'info');
+                return;
+            }
+
+            const elemento = document.getElementById('cotizadorDocumento');
+            const fecha = new Date().toLocaleDateString('es-PE');
+            
+            html2pdf()
+                .set({
+                    margin: 0.5,
+                    filename: `cotizacion_${fecha}.pdf`,
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'a4' }
+                })
+                .from(elemento)
+                .save();
         }
 
-        function printQuotation() { window.print(); }
+        function imprimirCotizacion() {
+            window.print();
+        }
 
-        // EVENTOS Y UI
-        document.getElementById('openQuotatorBtn').addEventListener('click', () => { document.getElementById('quotationPanel').classList.remove('translate-x-full'); });
-        document.getElementById('closePanelBtn').addEventListener('click', () => { document.getElementById('quotationPanel').classList.add('translate-x-full'); });
-        document.getElementById('clearQuotationBtn').addEventListener('click', clearQuotation);
-        document.getElementById('genWhatsappBtn').addEventListener('click', copyWhatsAppText);
-        document.getElementById('genPDFBtn').addEventListener('click', exportPDF);
-        document.getElementById('printBtn').addEventListener('click', printQuotation);
-        document.getElementById('addQuickCodeBtn').addEventListener('click', () => {
-            let raw = document.getElementById('quickCodeInput').value;
-            let codes = raw.split(/[ ,\n]+/).filter(c => c.trim());
-            codes.forEach(code => { if (code.trim()) addToQuotation(code.trim()); });
-            document.getElementById('quickCodeInput').value = '';
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        document.getElementById('floatingCartBtn').addEventListener('click', () => {
+            document.getElementById('cotizadorDocumento').scrollIntoView({ behavior: 'smooth' });
         });
-        document.getElementById('quickCodeInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('addQuickCodeBtn').click();
+
+        document.getElementById('limpiarBtn').addEventListener('click', limpiarCotizacion);
+
+        document.getElementById('envioInput').addEventListener('input', actualizarResumen);
+
+        document.getElementById('whatsappBtn').addEventListener('click', copiarWhatsApp);
+        document.getElementById('pdfBtn').addEventListener('click', exportarPDF);
+        document.getElementById('imprimirBtn').addEventListener('click', imprimirCotizacion);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarDatos();
         });
-        document.getElementById('shippingCost').addEventListener('input', () => updateSummary());
-        document.getElementById('backToTop').addEventListener('click', () => document.getElementById('productsContainer').scrollTop = 0);
-        
-        window.addToQuotation = addToQuotation;
-        window.removeFromQuotation = removeFromQuotation;
-        window.copyMini = (code) => { 
-            navigator.clipboard.writeText(code); 
-            document.getElementById('copyToast').classList.add('show'); 
-            setTimeout(() => document.getElementById('copyToast').classList.remove('show'), 1000);
-        };
-        
-        document.getElementById('dateDisplay').innerHTML = `<i class="fa-regular fa-calendar"></i> ${new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
-        loadData();
     </script>
+
 </body>
 </html>
