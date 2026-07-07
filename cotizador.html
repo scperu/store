@@ -180,17 +180,9 @@
 
         .tabla-productos .titulo-seccion {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 8px;
-        }
-
-        .tabla-productos .titulo-seccion h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a3a5c;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .tabla-productos table {
@@ -564,6 +556,7 @@
 
         .copy-tooltip.show { opacity: 1; }
 
+        /* ===== RESPONSIVE ===== */
         @media print {
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
@@ -571,18 +564,41 @@
             .tarjeta-producto { break-inside: avoid; }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .documento-cotizador { padding: 15px; margin: 10px; }
             .header-documento { flex-direction: column; align-items: flex-start; gap: 10px; }
             .header-documento .numero-cotizacion { text-align: left; width: 100%; }
             .datos-cliente { grid-template-columns: 1fr; }
-            .tabla-productos table { font-size: 11px; }
-            .tabla-productos table thead th { font-size: 8px; padding: 4px 6px; }
-            .tabla-productos table tbody td { padding: 4px 6px; }
-            .producto-miniatura { width: 30px; height: 30px; }
             .grid-productos { grid-template-columns: repeat(2, 1fr); }
             .acciones-cotizacion { grid-template-columns: 1fr; }
             .resumen-cotizacion .fila.total .valor { font-size: 18px; }
+            
+            /* Tabla con scroll horizontal en móvil */
+            .tabla-productos {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .tabla-productos table {
+                font-size: 11px;
+                min-width: 500px;
+            }
+            .tabla-productos table thead th {
+                font-size: 8px;
+                padding: 4px 6px;
+            }
+            .tabla-productos table tbody td {
+                padding: 4px 6px;
+            }
+            .producto-miniatura { width: 30px; height: 30px; }
+            .producto-nombre { max-width: 120px; font-size: 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .grid-productos { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .tarjeta-producto { padding: 8px; }
+            .tarjeta-producto .img-wrapper { height: 80px; }
+            .tarjeta-producto .precio { font-size: 14px; }
+            .info-cabecera { flex-direction: column; gap: 4px; font-size: 11px; }
         }
     </style>
 </head>
@@ -598,11 +614,9 @@
                 <img src="https://scperu.github.io/store/logo.png" alt="ServiComp+" onerror="this.style.display='none'">
                 <div>
                     <h1>ServiComp<span>+</span></h1>
-                 
-                        <span class="live-badge">
-                            <i class="fa-solid fa-circle pulse-icon"></i> EN VIVO
-                        </span>
-                   
+                    <span class="live-badge">
+                        <i class="fa-solid fa-circle pulse-icon"></i> EN VIVO
+                    </span>
                 </div>
             </div>
             <div class="numero-cotizacion">
@@ -629,10 +643,9 @@
             </div>
         </div>
 
-        <!-- TABLA DE PRODUCTOS (DESDE HOJA "cotizador") -->
+        <!-- TABLA DE PRODUCTOS -->
         <div class="tabla-productos">
             <div class="titulo-seccion">
-                <!-- TÍTULO ELIMINADO: se eliminó la etiqueta <h3> con la palabra "Productos" -->
                 <button class="btn-limpiar" id="limpiarBtn"><i class="fa-regular fa-trash-can"></i> Limpiar</button>
             </div>
             <div id="tablaProductosContainer">
@@ -676,7 +689,7 @@
             <button class="btn-imprimir" id="imprimirBtn"><i class="fa-regular fa-print"></i> Imprimir</button>
         </div>
 
-        <!-- CATÁLOGO DE PRODUCTOS DESTACADOS (DESDE HOJA "destacados") -->
+        <!-- CATÁLOGO DE PRODUCTOS DESTACADOS -->
         <div class="catalogo-productos no-print">
             <div class="titulo"><i class="fa-regular fa-star"></i> Productos Destacados</div>
             <div id="catalogoGrid" class="grid-productos">
@@ -840,7 +853,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR TABLA PRINCIPAL
+        // RENDERIZAR TABLA PRINCIPAL (SIN COLUMNA STOCK)
         // ============================================================
         function renderizarTablaProductos() {
             const container = document.getElementById('tablaProductosContainer');
@@ -863,7 +876,6 @@
                             <th style="width:50px;"></th>
                             <th>Código</th>
                             <th>Producto</th>
-                            <th style="text-align:center;width:70px;">Stock</th>
                             <th style="text-align:right;width:100px;">Precio</th>
                             <th style="text-align:center;width:80px;">Cant</th>
                             <th style="text-align:right;width:100px;">Total</th>
@@ -876,7 +888,6 @@
             for (let p of productosCotizacion) {
                 const thumb = obtenerMiniatura(p.codigo);
                 const foto = obtenerFoto(p.codigo);
-                const stockClass = obtenerStockClass(p.stock);
                 const total = p.precio * p.cantidad;
 
                 html += `
@@ -886,9 +897,6 @@
                         </td>
                         <td><span class="producto-codigo">${p.mini || p.codigo}</span></td>
                         <td><span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span></td>
-                        <td style="text-align:center;">
-                            <span class="stock ${stockClass}">${p.stock}</span>
-                        </td>
                         <td style="text-align:right;font-weight:600;color:#1a3a5c;">${formatearMoneda(p.precio)}</td>
                         <td style="text-align:center;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
@@ -911,7 +919,6 @@
             container.innerHTML = html;
             
             actualizarResumen();
-            actualizarBadge();
         }
 
         // ============================================================
@@ -964,6 +971,10 @@
             let producto = productosCotizacion.find(p => p.mini === mini);
             
             if (producto) {
+                if (producto.cantidad + 1 > producto.stock) {
+                    Swal.fire('Stock insuficiente', `Solo hay ${producto.stock} unidades disponibles`, 'warning');
+                    return;
+                }
                 producto.cantidad += 1;
                 renderizarTablaProductos();
                 Swal.fire({
@@ -981,6 +992,11 @@
             const destacado = productosDestacados.find(p => p.mini === mini);
             if (!destacado) {
                 Swal.fire('Error', 'Producto no encontrado', 'error');
+                return;
+            }
+
+            if (destacado.stock < 1) {
+                Swal.fire('Sin stock', 'Este producto no tiene stock disponible', 'warning');
                 return;
             }
 
@@ -1082,14 +1098,6 @@
         }
 
         // ============================================================
-        // ACTUALIZAR BADGE
-        // ============================================================
-        function actualizarBadge() {
-            // El badge ya no se usa porque se eliminó el botón flotante.
-            // Esta función se mantiene vacía para no romper el código.
-        }
-
-        // ============================================================
         // EXPORTAR FUNCIONES
         // ============================================================
         function copiarWhatsApp() {
@@ -1173,12 +1181,8 @@
         // ============================================================
         // EVENTOS
         // ============================================================
-        // El botón flotante ya no existe, así que no se asigna evento.
-
         document.getElementById('limpiarBtn').addEventListener('click', limpiarCotizacion);
-
         document.getElementById('envioInput').addEventListener('input', actualizarResumen);
-
         document.getElementById('whatsappBtn').addEventListener('click', copiarWhatsApp);
         document.getElementById('pdfBtn').addEventListener('click', exportarPDF);
         document.getElementById('imprimirBtn').addEventListener('click', imprimirCotizacion);
