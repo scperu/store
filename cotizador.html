@@ -21,7 +21,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== ESTILOS DEL BADGE EN VIVO ===== */
         .live-badge {
             background: #10b981;
             color: white;
@@ -49,7 +48,6 @@
             50% { opacity: 0.2; transform: scale(0.6); }
         }
 
-        /* ===== RESTO DE ESTILOS ===== */
         .documento-cotizador {
             background: #ffffff;
             max-width: 900px;
@@ -221,20 +219,67 @@
             background: #f8f9fa;
         }
 
-        .producto-miniatura {
+        /* ===== SISTEMA DE MINIATURAS (igual que el catálogo) ===== */
+        .img-wrapper-mini {
             width: 40px;
             height: 40px;
             border-radius: 4px;
-            object-fit: contain;
             background: #f8f9fa;
             border: 1px solid #e9ecef;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .producto-miniatura:hover {
+        .img-wrapper-mini:hover {
             transform: scale(1.05);
+            border-color: #1a3a5c;
+            box-shadow: 0 2px 8px rgba(26,58,92,0.15);
+        }
+
+        .img-wrapper-mini .placeholder-icon {
+            position: absolute;
+            color: #d1d5db;
+            font-size: 18px;
+            z-index: 1;
+        }
+
+        .img-wrapper-mini .product-img-mini {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-wrapper-mini .product-img-mini.loaded {
+            opacity: 1;
+        }
+
+        .img-wrapper-mini .view-label-mini {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 6px;
+            padding: 1px 6px;
+            border-radius: 8px;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .img-wrapper-mini:hover .view-label-mini {
+            opacity: 1;
         }
 
         .producto-codigo {
@@ -418,8 +463,9 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
+        /* ===== SISTEMA DE IMÁGENES PARA CATÁLOGO (igual que tu index) ===== */
         .tarjeta-producto .img-wrapper {
-            background: #f8f9fa;
+            background: #fafbfc;
             border-radius: 4px;
             height: 100px;
             display: flex;
@@ -428,12 +474,28 @@
             margin-bottom: 8px;
             position: relative;
             cursor: pointer;
+            overflow: hidden;
         }
 
-        .tarjeta-producto .img-wrapper img {
+        .tarjeta-producto .img-wrapper .placeholder-icon {
+            position: absolute;
+            z-index: 1;
+            color: #e5e7eb;
+            font-size: 32px;
+        }
+
+        .tarjeta-producto .img-wrapper .product-img {
+            position: relative;
+            z-index: 2;
             max-height: 80px;
             max-width: 100%;
             object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tarjeta-producto .img-wrapper .product-img.loaded {
+            opacity: 1;
         }
 
         .tarjeta-producto .img-wrapper .view-label {
@@ -442,11 +504,16 @@
             right: 4px;
             background: rgba(0,0,0,0.7);
             color: white;
-            font-size: 8px;
+            font-size: 7px;
             padding: 2px 8px;
             border-radius: 10px;
             opacity: 0;
             transition: opacity 0.2s;
+            z-index: 5;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-weight: 600;
+            pointer-events: none;
         }
 
         .tarjeta-producto:hover .img-wrapper .view-label {
@@ -556,7 +623,21 @@
 
         .copy-tooltip.show { opacity: 1; }
 
-        /* ===== RESPONSIVE ===== */
+        .badge-featured {
+            background: #fef3c7;
+            color: #b45309;
+            font-weight: 700;
+            font-size: 7px;
+            letter-spacing: 0.06em;
+            padding: 2px 8px;
+            border-radius: 100px;
+            border: 1px solid rgba(251,191,36,0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            text-transform: uppercase;
+        }
+
         @media print {
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
@@ -573,7 +654,6 @@
             .acciones-cotizacion { grid-template-columns: 1fr; }
             .resumen-cotizacion .fila.total .valor { font-size: 18px; }
             
-            /* Tabla con scroll horizontal en móvil */
             .tabla-productos {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
@@ -589,7 +669,8 @@
             .tabla-productos table tbody td {
                 padding: 4px 6px;
             }
-            .producto-miniatura { width: 30px; height: 30px; }
+            .img-wrapper-mini { width: 30px; height: 30px; }
+            .img-wrapper-mini .placeholder-icon { font-size: 14px; }
             .producto-nombre { max-width: 120px; font-size: 10px; }
         }
 
@@ -730,6 +811,7 @@
             return Number(limpio) || 0;
         }
 
+        // ===== SISTEMA DE IMÁGENES (igual que tu catálogo) =====
         function obtenerMiniatura(codigo) {
             const c = String(codigo).toLowerCase().trim();
             const sub1 = c.substring(0, 2);
@@ -853,7 +935,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR TABLA PRINCIPAL (SIN COLUMNA STOCK)
+        // RENDERIZAR TABLA PRINCIPAL (con el mismo sistema de imágenes)
         // ============================================================
         function renderizarTablaProductos() {
             const container = document.getElementById('tablaProductosContainer');
@@ -886,16 +968,26 @@
             `;
 
             for (let p of productosCotizacion) {
+                const total = p.precio * p.cantidad;
                 const thumb = obtenerMiniatura(p.codigo);
                 const foto = obtenerFoto(p.codigo);
-                const total = p.precio * p.cantidad;
+                const codigoDisplay = p.mini || p.codigo;
 
                 html += `
                     <tr>
                         <td>
-                            <img src="${thumb}" class="producto-miniatura" alt="${p.codigo}" onclick="window.open('${foto}','_blank')" title="Ver foto" onerror="this.style.display='none'">
+                            <div class="img-wrapper-mini" onclick="window.open('${foto}','_blank')" title="Ver foto">
+                                <i class="fa-solid fa-camera placeholder-icon"></i>
+                                <img src="${thumb}" 
+                                     class="product-img-mini" 
+                                     alt="${codigoDisplay}"
+                                     loading="lazy"
+                                     onload="this.classList.add('loaded')"
+                                     onerror="this.style.display='none'">
+                                <span class="view-label-mini"><i class="fa-regular fa-eye"></i> Ver</span>
+                            </div>
                         </td>
-                        <td><span class="producto-codigo">${p.mini || p.codigo}</span></td>
+                        <td><span class="producto-codigo">${codigoDisplay}</span></td>
                         <td><span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span></td>
                         <td style="text-align:right;font-weight:600;color:#1a3a5c;">${formatearMoneda(p.precio)}</td>
                         <td style="text-align:center;">
@@ -922,7 +1014,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR CATÁLOGO INFERIOR
+        // RENDERIZAR CATÁLOGO INFERIOR (con el mismo sistema de imágenes)
         // ============================================================
         function renderizarCatalogo() {
             const grid = document.getElementById('catalogoGrid');
@@ -941,15 +1033,23 @@
                 const thumb = obtenerMiniatura(p.codigo);
                 const foto = obtenerFoto(p.codigo);
                 const stockClass = obtenerStockClass(p.stock);
+                const codigoDisplay = p.mini || p.codigo;
 
                 return `
                     <div class="tarjeta-producto">
                         <div class="img-wrapper" onclick="window.open('${foto}', '_blank')">
-                            <img src="${thumb}" alt="${p.descripcion}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect fill=%22%23f8f9fa%22 width=%2280%22 height=%2280%22/%3E%3Ctext x=%2240%22 y=%2245%22 text-anchor=%22middle%22 fill=%22%23adb5bd%22 font-size=%2220%22 font-family=%22Arial%22%3E📦%3C/text%3E%3C/svg%3E'">
+                            <i class="fa-solid fa-camera placeholder-icon"></i>
+                            <img src="${thumb}" 
+                                 class="product-img" 
+                                 alt="${codigoDisplay}"
+                                 loading="lazy"
+                                 onload="this.classList.add('loaded')"
+                                 onerror="this.style.display='none'">
                             <span class="view-label"><i class="fa-regular fa-eye"></i> Ver</span>
+                            ${p.isFeatured ? `<span class="badge-featured" style="position:absolute;top:4px;left:4px;z-index:10;"><i class="fa-solid fa-star mr-1"></i>Destacado</span>` : ''}
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                            <span class="codigo">${p.mini || p.codigo}</span>
+                            <span class="codigo">${codigoDisplay}</span>
                             <span class="stock ${stockClass}">${p.stock}</span>
                         </div>
                         <div class="nombre">${p.descripcion}</div>
