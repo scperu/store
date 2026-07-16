@@ -48,6 +48,19 @@
             50% { opacity: 0.2; transform: scale(0.6); }
         }
 
+        .sede-badge {
+            background: #1a3a5c;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .documento-cotizador {
             background: #ffffff;
             max-width: 900px;
@@ -65,6 +78,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .header-documento .empresa {
@@ -87,16 +102,6 @@
 
         .header-documento .empresa h1 span {
             color: #dc3545;
-        }
-
-        .header-documento .empresa .sub {
-            font-size: 10px;
-            color: #6c757d;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: block;
-            margin-top: -2px;
         }
 
         .header-documento .numero-cotizacion {
@@ -127,6 +132,8 @@
             font-size: 12px;
             color: #495057;
             border: 1px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .info-cabecera span i {
@@ -219,7 +226,6 @@
             background: #f8f9fa;
         }
 
-        /* ===== SISTEMA DE MINIATURAS (igual que el catálogo) ===== */
         .img-wrapper-mini {
             width: 40px;
             height: 40px;
@@ -463,7 +469,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        /* ===== SISTEMA DE IMÁGENES PARA CATÁLOGO (igual que tu index) ===== */
         .tarjeta-producto .img-wrapper {
             background: #fafbfc;
             border-radius: 4px;
@@ -638,6 +643,18 @@
             text-transform: uppercase;
         }
 
+        .sede-filter-badge {
+            background: #1a3a5c;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         @media print {
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
@@ -672,6 +689,7 @@
             .img-wrapper-mini { width: 30px; height: 30px; }
             .img-wrapper-mini .placeholder-icon { font-size: 14px; }
             .producto-nombre { max-width: 120px; font-size: 10px; }
+            .info-cabecera { flex-direction: column; gap: 4px; font-size: 11px; }
         }
 
         @media (max-width: 480px) {
@@ -679,7 +697,6 @@
             .tarjeta-producto { padding: 8px; }
             .tarjeta-producto .img-wrapper { height: 80px; }
             .tarjeta-producto .precio { font-size: 14px; }
-            .info-cabecera { flex-direction: column; gap: 4px; font-size: 11px; }
         }
     </style>
 </head>
@@ -710,6 +727,9 @@
         <div class="info-cabecera">
             <span><i class="fa-regular fa-calendar"></i> <span id="fechaDisplay">Cargando...</span></span>
             <span><i class="fa-regular fa-money-bill-1"></i> Tipo de Cambio: <span id="tipoCambioDisplay">—</span></span>
+            <span id="sedeDisplayWrapper" style="display:none;">
+                <i class="fa-solid fa-location-dot"></i> Sede: <span id="sedeDisplay" class="font-bold text-blue-600">Todas</span>
+            </span>
         </div>
 
         <!-- DATOS CLIENTE -->
@@ -794,6 +814,8 @@
 
         let productosCotizacion = [];
         let productosDestacados = [];
+        let sedeFiltro = '';
+        let allProducts = [];
 
         // ============================================================
         // UTILIDADES
@@ -811,7 +833,6 @@
             return Number(limpio) || 0;
         }
 
-        // ===== SISTEMA DE IMÁGENES (igual que tu catálogo) =====
         function obtenerMiniatura(codigo) {
             const c = String(codigo).toLowerCase().trim();
             const sub1 = c.substring(0, 2);
@@ -848,7 +869,7 @@
 
                 const raw = await resProductos.json();
 
-                const todosProductos = raw
+                allProducts = raw
                     .map(row => ({
                         codigo: normalizarTexto(row.codigo),
                         mini: normalizarTexto(row.mini_codigo),
@@ -867,7 +888,74 @@
                         return ['LIMA', 'HUANCAYO', 'LIMA - STORE', 'HUANCAYO - STORE'].some(s => sede === s || sede.includes(s));
                     });
 
-                // Cargar destacados
+                // ===== NUEVO: Cargar cotizador con sede =====
+                const urlCotizador = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_COTIZADOR}`;
+                const resCotizador = await fetch(urlCotizador);
+                if (!resCotizador.ok) throw new Error('Error al cargar cotizador');
+
+                const dataCotizador = await resCotizador.json();
+                
+                const cotizacionMap = new Map();
+                const sedesEncontradas = new Set();
+
+                for (let row of dataCotizador) {
+                    const keys = Object.keys(row);
+                    const miniKey = keys.find(k => k.toLowerCase() === 'mini_codigo');
+                    const cantKey = keys.find(k => k.toLowerCase() === 'cantidad');
+                    const sedeKey = keys.find(k => k.toLowerCase() === 'sede');
+                    
+                    if (miniKey && cantKey) {
+                        const mini = normalizarTexto(row[miniKey]);
+                        const cant = normalizarNumero(row[cantKey]);
+                        const sede = sedeKey ? normalizarTexto(row[sedeKey]) : '';
+                        
+                        if (mini && cant > 0) {
+                            cotizacionMap.set(mini, { cantidad: cant, sede: sede });
+                            if (sede) sedesEncontradas.add(sede.toUpperCase());
+                        }
+                    }
+                }
+
+                // Detectar sede única para el filtro
+                const sedesArray = Array.from(sedesEncontradas);
+                sedeFiltro = sedesArray.length === 1 ? sedesArray[0] : '';
+                
+                // Mostrar sede en la cabecera
+                const sedeDisplay = document.getElementById('sedeDisplay');
+                const sedeWrapper = document.getElementById('sedeDisplayWrapper');
+                if (sedeFiltro) {
+                    sedeDisplay.textContent = sedeFiltro;
+                    sedeWrapper.style.display = 'inline';
+                } else if (sedesArray.length > 1) {
+                    sedeDisplay.textContent = 'Múltiples';
+                    sedeWrapper.style.display = 'inline';
+                } else {
+                    sedeWrapper.style.display = 'none';
+                }
+
+                // ===== FILTRAR PRODUCTOS POR SEDE =====
+                productosCotizacion = allProducts
+                    .filter(p => cotizacionMap.has(p.mini))
+                    .map(p => {
+                        const data = cotizacionMap.get(p.mini);
+                        p.cantidad = data.cantidad || 1;
+                        p.sedeCotizacion = data.sede || '';
+                        return p;
+                    })
+                    .filter(p => {
+                        // Si no hay filtro de sede, mostrar todos
+                        if (!sedeFiltro) return true;
+                        
+                        // Verificar si el producto pertenece a la sede filtrada
+                        const productoSede = p.sede.toUpperCase();
+                        const sedeFiltroUpper = sedeFiltro.toUpperCase();
+                        
+                        // Coincidencia exacta o parcial
+                        return productoSede.includes(sedeFiltroUpper) || 
+                               sedeFiltroUpper.includes(productoSede);
+                    });
+
+                // ===== Cargar destacados =====
                 const urlDestacados = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_DESTACADOS}`;
                 const resDestacados = await fetch(urlDestacados);
                 if (resDestacados.ok) {
@@ -880,41 +968,23 @@
                         })
                         .filter(c => c !== '');
                     
-                    productosDestacados = todosProductos.filter(p => codigosDestacados.includes(p.mini));
+                    // Destacados filtrados por sede también
+                    productosDestacados = allProducts
+                        .filter(p => codigosDestacados.includes(p.mini))
+                        .filter(p => {
+                            if (!sedeFiltro) return true;
+                            const productoSede = p.sede.toUpperCase();
+                            const sedeFiltroUpper = sedeFiltro.toUpperCase();
+                            return productoSede.includes(sedeFiltroUpper) || 
+                                   sedeFiltroUpper.includes(productoSede);
+                        });
                 }
 
-                // Cargar cotizador
-                const urlCotizador = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_COTIZADOR}`;
-                const resCotizador = await fetch(urlCotizador);
-                if (!resCotizador.ok) throw new Error('Error al cargar cotizador');
-
-                const dataCotizador = await resCotizador.json();
-                
-                const cotizacionMap = new Map();
-                for (let row of dataCotizador) {
-                    const keys = Object.keys(row);
-                    const miniKey = keys.find(k => k.toLowerCase() === 'mini_codigo');
-                    const cantKey = keys.find(k => k.toLowerCase() === 'cantidad');
-                    
-                    if (miniKey && cantKey) {
-                        const mini = normalizarTexto(row[miniKey]);
-                        const cant = normalizarNumero(row[cantKey]);
-                        if (mini && cant > 0) {
-                            cotizacionMap.set(mini, cant);
-                        }
-                    }
-                }
-
-                productosCotizacion = todosProductos
-                    .filter(p => cotizacionMap.has(p.mini))
-                    .map(p => {
-                        p.cantidad = cotizacionMap.get(p.mini) || 1;
-                        return p;
-                    });
-
-                const tc = todosProductos.find(p => p.tipoCambio > 0)?.tipoCambio || 0;
+                // ===== Tipo de cambio =====
+                const tc = allProducts.find(p => p.tipoCambio > 0)?.tipoCambio || 0;
                 document.getElementById('tipoCambioDisplay').textContent = tc ? tc.toFixed(2) : '—';
 
+                // ===== Fecha =====
                 const ahora = new Date();
                 document.getElementById('fechaDisplay').textContent = ahora.toLocaleDateString('es-PE', {
                     weekday: 'long',
@@ -935,7 +1005,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR TABLA PRINCIPAL (con el mismo sistema de imágenes)
+        // RENDERIZAR TABLA PRINCIPAL
         // ============================================================
         function renderizarTablaProductos() {
             const container = document.getElementById('tablaProductosContainer');
@@ -945,7 +1015,9 @@
                     <div class="vacio">
                         <i class="fa-regular fa-list"></i>
                         <p>No hay productos en la cotización</p>
-                        <p style="font-size:11px;color:#ced4da;">Agrega desde los destacados abajo</p>
+                        <p style="font-size:11px;color:#ced4da;">
+                            ${sedeFiltro ? `Filtro activo: <strong>${sedeFiltro}</strong>` : 'Agrega desde los destacados abajo'}
+                        </p>
                     </div>
                 `;
                 return;
@@ -1014,7 +1086,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR CATÁLOGO INFERIOR (con el mismo sistema de imágenes)
+        // RENDERIZAR CATÁLOGO INFERIOR
         // ============================================================
         function renderizarCatalogo() {
             const grid = document.getElementById('catalogoGrid');
@@ -1023,7 +1095,9 @@
                 grid.innerHTML = `
                     <div class="text-center text-gray-400 py-8 col-span-full">
                         <i class="fa-regular fa-star text-2xl"></i>
-                        <p class="text-sm mt-2">No hay productos destacados disponibles</p>
+                        <p class="text-sm mt-2">
+                            ${sedeFiltro ? `No hay destacados para la sede <strong>${sedeFiltro}</strong>` : 'No hay productos destacados disponibles'}
+                        </p>
                     </div>
                 `;
                 return;
@@ -1046,7 +1120,7 @@
                                  onload="this.classList.add('loaded')"
                                  onerror="this.style.display='none'">
                             <span class="view-label"><i class="fa-regular fa-eye"></i> Ver</span>
-                            ${p.isFeatured ? `<span class="badge-featured" style="position:absolute;top:4px;left:4px;z-index:10;"><i class="fa-solid fa-star mr-1"></i>Destacado</span>` : ''}
+                            ${sedeFiltro ? `<span class="badge-featured" style="position:absolute;top:4px;left:4px;z-index:10;"><i class="fa-solid fa-location-dot mr-1"></i>${sedeFiltro}</span>` : ''}
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                             <span class="codigo">${codigoDisplay}</span>
@@ -1089,10 +1163,21 @@
                 return;
             }
 
-            const destacado = productosDestacados.find(p => p.mini === mini);
+            // Buscar en todos los productos (incluyendo los que no están en la cotización actual)
+            const destacado = allProducts.find(p => p.mini === mini);
             if (!destacado) {
                 Swal.fire('Error', 'Producto no encontrado', 'error');
                 return;
+            }
+
+            // Verificar sede
+            if (sedeFiltro) {
+                const productoSede = destacado.sede.toUpperCase();
+                const sedeFiltroUpper = sedeFiltro.toUpperCase();
+                if (!productoSede.includes(sedeFiltroUpper) && !sedeFiltroUpper.includes(productoSede)) {
+                    Swal.fire('Sede no coincide', `Este producto pertenece a ${destacado.sede} y la cotización es para ${sedeFiltro}`, 'warning');
+                    return;
+                }
             }
 
             if (destacado.stock < 1) {
@@ -1217,6 +1302,7 @@
             lines.push('');
             lines.push(`👤 *Cliente:* ${cliente}`);
             lines.push(`📄 *RUC/DNI:* ${documento}`);
+            if (sedeFiltro) lines.push(`📍 *Sede:* ${sedeFiltro}`);
             lines.push(`📅 ${new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`);
             lines.push('');
             lines.push('⭐ *PRODUCTOS:*');
