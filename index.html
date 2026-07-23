@@ -153,6 +153,32 @@
             border-color: #2563eb;
         }
 
+        .badge-specs {
+            background: #f0fdf4;
+            color: #059669;
+            font-weight: 600;
+            font-size: 7px;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 100px;
+            border: 1px solid rgba(5,150,105,0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .badge-specs:hover {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+            transform: scale(1.02);
+        }
+        .badge-specs i {
+            font-size: 8px;
+        }
+
         .badge-add {
             background: #2563eb;
             color: white;
@@ -383,6 +409,13 @@
             color: #9ca3af;
             letter-spacing: 0.04em;
             text-transform: uppercase;
+        }
+
+        .badge-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
         }
 
         @media print {
@@ -709,6 +742,7 @@
                             descripcion: normalizeText(row.descripcion),
                             marca: normalizeText(row.marca) || 'GENÉRICO',
                             detalles: normalizeText(row.detalles),
+                            specs: normalizeText(row.specs) || normalizeText(row.O) || '', // ← NUEVO: columna O (specs)
                             precio: normalizeNumber(row.precio_soles) || normalizeNumber(row.h),
                             precioDolares: normalizeNumber(row.precio_dolares),
                             precioCompra: normalizeNumber(row.precio_compra),
@@ -780,9 +814,7 @@
                 return true;
             });
 
-            // ✅ Destacados mezclados aleatoriamente
             const featured = shuffleArray(filtered.filter(p => p.isFeatured));
-            // ✅ Resto de productos mezclados aleatoriamente
             const rest = shuffleArray(filtered.filter(p => !p.isFeatured));
 
             fullList = [...featured, ...rest];
@@ -911,6 +943,9 @@
 
                 const stockStatus = getStockStatus(p.stock);
                 const isFav = isFavorite(p.mini);
+                
+                // Verificar si tiene especificaciones (columna O)
+                const hasSpecs = p.specs && p.specs.length > 0;
 
                 return `
                 <div class="product-grid-card ${p.isFeatured ? 'featured' : ''}">
@@ -929,11 +964,12 @@
                     </div>
 
                     <div class="p-3 flex flex-col flex-1">
-                        <div class="flex items-center gap-1 flex-wrap mb-1.5">
+                        <div class="badge-actions mb-1.5">
                             <span class="badge-brand"><i class="fa-solid fa-tag mr-1"></i>${p.marca}</span>
                             <button onclick="copyToClipboard('${String(p.mini).replace(/'/g, "\\'")}')" class="badge-mini" title="Copiar minicódigo">
                                 <i class="fa-regular fa-copy mr-1"></i>${p.mini || '---'}
                             </button>
+                            ${hasSpecs ? `<a href="${p.specs}" target="_blank" rel="noopener noreferrer" class="badge-specs" title="Ver especificaciones técnicas"><i class="fa-regular fa-file-lines mr-1"></i>Especificaciones</a>` : ''}
                             <button onclick="addToQuotation('${String(p.mini).replace(/'/g, "\\'")}')" class="badge-add" title="Agregar al carrito">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -942,7 +978,7 @@
                         <h3 class="text-sm font-semibold text-gray-800 leading-snug mb-1 line-clamp-2 min-h-[40px]">${p.descripcion}</h3>
                         <p class="text-[10px] text-gray-400 font-light leading-relaxed line-clamp-1 mb-2">${p.detalles || ''}</p>
 
-                        <div class="flex items-center justify-between pt-1.5 border-t border-gray-50">
+                        <div class="flex items-center justify-between pt-1.5 border-t border-gray-50 mt-auto">
                             <div>
                                 <span class="price-label">Precio</span>
                                 <div class="price-tag">${formatMoney(p.precio)}</div>

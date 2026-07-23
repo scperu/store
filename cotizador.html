@@ -655,6 +655,58 @@
             gap: 4px;
         }
 
+        /* Estilo para el botón de especificaciones en la tabla */
+        .badge-specs {
+            background: #f0fdf4;
+            color: #059669;
+            font-weight: 600;
+            font-size: 8px;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 100px;
+            border: 1px solid rgba(5,150,105,0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+        .badge-specs:hover {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+            transform: scale(1.02);
+        }
+        .badge-specs i {
+            font-size: 8px;
+        }
+
+        /* Estilo para especificaciones en tarjetas pequeñas */
+        .specs-link-small {
+            color: #059669;
+            font-size: 9px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            background: #f0fdf4;
+            border: 1px solid rgba(5,150,105,0.1);
+            transition: all 0.2s ease;
+        }
+        .specs-link-small:hover {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+        .specs-link-small i {
+            font-size: 9px;
+        }
+
         @media print {
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
@@ -876,6 +928,7 @@
                         descripcion: normalizarTexto(row.descripcion),
                         marca: normalizarTexto(row.marca) || 'GENÉRICO',
                         detalles: normalizarTexto(row.detalles),
+                        specs: normalizarTexto(row.specs) || normalizarTexto(row.O) || '', // ← NUEVO: columna O (specs)
                         precio: normalizarNumero(row.precio_soles) || normalizarNumero(row.h),
                         stock: Math.floor(normalizarNumero(row.stock)),
                         tipoCambio: normalizarNumero(row.tipo_cambio) || normalizarNumero(row.k3),
@@ -1044,6 +1097,7 @@
                 const thumb = obtenerMiniatura(p.codigo);
                 const foto = obtenerFoto(p.codigo);
                 const codigoDisplay = p.mini || p.codigo;
+                const hasSpecs = p.specs && p.specs.length > 0;
 
                 html += `
                     <tr>
@@ -1059,7 +1113,10 @@
                                 <span class="view-label-mini"><i class="fa-regular fa-eye"></i> Ver</span>
                             </div>
                         </td>
-                        <td><span class="producto-codigo">${codigoDisplay}</span></td>
+                        <td>
+                            <span class="producto-codigo">${codigoDisplay}</span>
+                            ${hasSpecs ? `<a href="${p.specs}" target="_blank" rel="noopener noreferrer" class="badge-specs" title="Ver especificaciones técnicas"><i class="fa-regular fa-file-lines"></i> Specs</a>` : ''}
+                        </td>
                         <td><span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span></td>
                         <td style="text-align:right;font-weight:600;color:#1a3a5c;">${formatearMoneda(p.precio)}</td>
                         <td style="text-align:center;">
@@ -1108,6 +1165,7 @@
                 const foto = obtenerFoto(p.codigo);
                 const stockClass = obtenerStockClass(p.stock);
                 const codigoDisplay = p.mini || p.codigo;
+                const hasSpecs = p.specs && p.specs.length > 0;
 
                 return `
                     <div class="tarjeta-producto">
@@ -1129,9 +1187,12 @@
                         <div class="nombre">${p.descripcion}</div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
                             <span class="precio">${formatearMoneda(p.precio)}</span>
-                            <button class="btn-agregar" onclick="agregarProducto('${p.mini}')" title="Agregar a cotización">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+                            <div style="display:flex;align-items:center;gap:4px;">
+                                ${hasSpecs ? `<a href="${p.specs}" target="_blank" rel="noopener noreferrer" class="specs-link-small" title="Ver especificaciones técnicas"><i class="fa-regular fa-file-lines"></i></a>` : ''}
+                                <button class="btn-agregar" onclick="agregarProducto('${p.mini}')" title="Agregar a cotización">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1313,6 +1374,9 @@
                 const total = p.precio * p.cantidad;
                 subtotal += total;
                 lines.push(`*${p.mini || p.codigo}* - ${p.descripcion.substring(0, 45)}`);
+                if (p.specs && p.specs.length > 0) {
+                    lines.push(`└ Especificaciones: ${p.specs}`);
+                }
                 lines.push(`└ Cant: ${p.cantidad} | Total: ${formatearMoneda(total)}`);
                 lines.push('');
             }
