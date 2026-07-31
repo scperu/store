@@ -301,6 +301,20 @@
             max-width: 200px;
         }
 
+        /* --- ESTILO PARA DETALLES CON BULLET --- */
+        .producto-detalles {
+            font-size: 11px;
+            color: #6c757d;
+            display: block;
+            margin-top: 2px;
+            max-width: 200px;
+            line-height: 1.3;
+        }
+        .producto-detalles .bullet {
+            margin-right: 4px;
+            color: #adb5bd;
+        }
+
         .btn-accion {
             background: none;
             border: none;
@@ -707,6 +721,18 @@
             font-size: 9px;
         }
 
+        /* Estilo para detalles en tarjetas con bullet */
+        .detalles-small {
+            font-size: 9px;
+            color: #6c757d;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+        .detalles-small .bullet {
+            margin-right: 3px;
+            color: #adb5bd;
+        }
+
         @media print {
             body { background: white; }
             .documento-cotizador { box-shadow: none; border: none; margin: 0; padding: 20px; }
@@ -741,6 +767,7 @@
             .img-wrapper-mini { width: 30px; height: 30px; }
             .img-wrapper-mini .placeholder-icon { font-size: 14px; }
             .producto-nombre { max-width: 120px; font-size: 10px; }
+            .producto-detalles { max-width: 120px; font-size: 9px; }
             .info-cabecera { flex-direction: column; gap: 4px; font-size: 11px; }
         }
 
@@ -926,9 +953,9 @@
                         codigo: normalizarTexto(row.codigo),
                         mini: normalizarTexto(row.mini_codigo),
                         descripcion: normalizarTexto(row.descripcion),
+                        detalles: normalizarTexto(row.detalles) || normalizarTexto(row.detalle) || normalizarTexto(row.Detalles) || '',
                         marca: normalizarTexto(row.marca) || 'GENÉRICO',
-                        detalles: normalizarTexto(row.detalles),
-                        specs: normalizarTexto(row.specs) || normalizarTexto(row.O) || '', // ← NUEVO: columna O (specs)
+                        specs: normalizarTexto(row.specs) || normalizarTexto(row.O) || '',
                         precio: normalizarNumero(row.precio_soles) || normalizarNumero(row.h),
                         stock: Math.floor(normalizarNumero(row.stock)),
                         tipoCambio: normalizarNumero(row.tipo_cambio) || normalizarNumero(row.k3),
@@ -1098,6 +1125,7 @@
                 const foto = obtenerFoto(p.codigo);
                 const codigoDisplay = p.mini || p.codigo;
                 const hasSpecs = p.specs && p.specs.length > 0;
+                const hasDetalles = p.detalles && p.detalles.length > 0;
 
                 html += `
                     <tr>
@@ -1117,7 +1145,10 @@
                             <span class="producto-codigo">${codigoDisplay}</span>
                             ${hasSpecs ? `<a href="${p.specs}" target="_blank" rel="noopener noreferrer" class="badge-specs" title="Ver especificaciones técnicas"><i class="fa-regular fa-file-lines"></i> Specs</a>` : ''}
                         </td>
-                        <td><span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span></td>
+                        <td>
+                            <span class="producto-nombre" title="${p.descripcion}">${p.descripcion}</span>
+                            ${hasDetalles ? `<span class="producto-detalles"><span class="bullet">•</span> ${p.detalles}</span>` : ''}
+                        </td>
                         <td style="text-align:right;font-weight:600;color:#1a3a5c;">${formatearMoneda(p.precio)}</td>
                         <td style="text-align:center;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
@@ -1166,6 +1197,7 @@
                 const stockClass = obtenerStockClass(p.stock);
                 const codigoDisplay = p.mini || p.codigo;
                 const hasSpecs = p.specs && p.specs.length > 0;
+                const hasDetalles = p.detalles && p.detalles.length > 0;
 
                 return `
                     <div class="tarjeta-producto">
@@ -1185,6 +1217,7 @@
                             <span class="stock ${stockClass}">${p.stock}</span>
                         </div>
                         <div class="nombre">${p.descripcion}</div>
+                        ${hasDetalles ? `<div class="detalles-small"><span class="bullet">•</span> ${p.detalles}</div>` : ''}
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
                             <span class="precio">${formatearMoneda(p.precio)}</span>
                             <div style="display:flex;align-items:center;gap:4px;">
@@ -1374,6 +1407,9 @@
                 const total = p.precio * p.cantidad;
                 subtotal += total;
                 lines.push(`*${p.mini || p.codigo}* - ${p.descripcion.substring(0, 45)}`);
+                if (p.detalles && p.detalles.length > 0) {
+                    lines.push(`└ • ${p.detalles}`);
+                }
                 if (p.specs && p.specs.length > 0) {
                     lines.push(`└ Especificaciones: ${p.specs}`);
                 }
